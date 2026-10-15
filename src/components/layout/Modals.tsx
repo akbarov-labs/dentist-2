@@ -33,7 +33,7 @@ export function Modals() {
             )}
           </div>
           <div className="p-6 sm:p-9">
-            <p className="inline-flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-bronze-deep uppercase">
+            <p className="inline-flex items-center gap-2 font-mono text-[12px] tracking-[0.14em] text-bronze-deep uppercase">
               <Clock3 size={13} strokeWidth={1.7} /> {t.intro.read}
             </p>
             <h2 id="intro-title" className="mt-3 pr-10 font-display text-[30px] leading-tight text-ink">
@@ -51,7 +51,7 @@ export function Modals() {
             <dl className="mt-3 grid grid-cols-3 gap-3">
               {doctor.stats.map((s) => (
                 <div key={s.label.uz} className="flex flex-col-reverse justify-end rounded-[12px] bg-stone p-3">
-                  <dt className="mt-1 text-[11.5px] leading-snug text-muted">{s.label[lang]}</dt>
+                  <dt className="mt-1 text-[12px] leading-snug text-muted">{s.label[lang]}</dt>
                   <dd className="font-mono text-[16px] text-ink">{s.value[lang]}</dd>
                 </div>
               ))}
@@ -81,7 +81,7 @@ export function Modals() {
             <div className="relative rounded-[12px] border border-bronze/50 bg-card p-2">
               <div className="rounded-[8px] border border-bronze/30 px-6 py-10 text-center sm:px-12 sm:py-12">
                 <Monogram letters={doctor.monogram} className="mx-auto h-14 w-14" />
-                <p className="mt-6 font-mono text-[11px] tracking-[0.22em] text-bronze-deep uppercase">Certificate of Completion</p>
+                <p className="mt-6 font-mono text-[12px] tracking-[0.14em] text-bronze-deep uppercase">Certificate of Completion</p>
                 <h2 id="cert-title" className="mt-4 font-display text-[28px] leading-tight text-ink sm:text-[34px]">
                   {credential.program[lang]}
                 </h2>
@@ -94,17 +94,17 @@ export function Modals() {
                 </p>
                 <dl className="mx-auto mt-8 grid max-w-[460px] grid-cols-3 gap-3 border-t border-line pt-6 text-left">
                   <div>
-                    <dt className="text-[11.5px] text-muted">{t.credentials.issued}</dt>
+                    <dt className="text-[12px] text-muted">{t.credentials.issued}</dt>
                     <dd className="mt-1 font-mono text-[14px] text-ink">{credential.year}</dd>
                   </div>
                   <div>
-                    <dt className="text-[11.5px] text-muted">{t.credentials.program}</dt>
+                    <dt className="text-[12px] text-muted">{t.credentials.program}</dt>
                     <dd className="mt-1 font-mono text-[14px] text-ink">
                       {credential.hours} {t.credentials.hours}
                     </dd>
                   </div>
                   <div>
-                    <dt className="text-[11.5px] text-muted">{t.credentials.id}</dt>
+                    <dt className="text-[12px] text-muted">{t.credentials.id}</dt>
                     <dd className="mt-1 font-mono text-[12.5px] break-all text-ink">{credential.certificateId}</dd>
                   </div>
                 </dl>

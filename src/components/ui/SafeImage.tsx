@@ -23,7 +23,7 @@ export function SafeImage({ fallbackLabel, className = "", alt, ...props }: Safe
         className={`absolute inset-0 flex items-end bg-[radial-gradient(120%_90%_at_20%_10%,#e6e2da_0%,#c9d6d2_45%,#0f3d3e_100%)] p-5 ${className}`}
       >
         {fallbackLabel ? (
-          <span className="font-mono text-[11px] tracking-[0.14em] text-alabaster/90 uppercase">{fallbackLabel}</span>
+          <span className="font-mono text-[12px] tracking-[0.14em] text-alabaster/90 uppercase">{fallbackLabel}</span>
         ) : null}
       </div>
     );

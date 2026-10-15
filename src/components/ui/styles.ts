@@ -13,5 +13,3 @@ export const btnSmall = `${base} h-10 px-4 text-sm`;
 
 export const chip =
   "inline-flex items-center gap-2 rounded-full border px-4 h-10 text-sm whitespace-nowrap transition duration-200";
-
-export const monoLabel = "font-mono text-[11px] tracking-[0.16em] uppercase";

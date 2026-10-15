@@ -1,18 +1,17 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Mic } from "lucide-react";
+import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { CaseCategory } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
 import { BeforeAfter } from "@/components/ui/BeforeAfter";
+import { Monogram } from "@/components/ui/Monogram";
 import { Reveal } from "@/components/ui/Reveal";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { chip } from "@/components/ui/styles";
 
 type Filter = "all" | CaseCategory;
 const FILTERS: Filter[] = ["all", "implant", "veneers", "allOn6"];
-
-// Deterministic "voice note" waveform heights.
-const WAVE = [5, 9, 14, 8, 18, 12, 6, 15, 20, 11, 7, 16, 10, 5, 13, 19, 9, 6, 12, 17, 8, 5, 11, 7];
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -23,7 +22,8 @@ export function Cases() {
   const [comfort, setComfort] = useState(true);
 
   const list = useMemo(() => doctor.cases.filter((c) => filter === "all" || c.category === filter), [doctor.cases, filter]);
-  const current = list[Math.min(index, list.length - 1)];
+  const safeIndex = Math.min(index, list.length - 1);
+  const current = list[safeIndex];
 
   const choose = (f: Filter) => {
     setFilter(f);
@@ -45,7 +45,7 @@ export function Cases() {
                 type="button"
                 aria-pressed={filter === f}
                 onClick={() => choose(f)}
-                className={`${chip} ${filter === f ? "border-emerald bg-emerald text-alabaster" : "border-line bg-card text-ink-soft hover:border-ink/30"}`}
+                className={`${chip} h-11 ${filter === f ? "border-emerald bg-emerald text-alabaster" : "border-line bg-card text-ink-soft hover:border-ink/30"}`}
               >
                 {t.cases.filters[f]}
               </button>
@@ -56,49 +56,80 @@ export function Cases() {
         {current ? (
           <div className="mt-10 grid gap-6 lg:grid-cols-12 lg:gap-8">
             <Reveal className="lg:col-span-7">
-              <BeforeAfter
-                key={`${current.id}-${doctor.id}`}
-                image={current.image}
-                focus={current.focus}
-                alt={current.title[lang]}
-                beforeLabel={t.cases.before}
-                afterLabel={t.cases.after}
-                sliderLabel={t.cases.sliderLabel}
-                comfort={comfort}
-                comfortHint={t.cases.comfortHint}
-              />
-              <div className="mt-4 flex items-center justify-between gap-4">
-                <label className="inline-flex cursor-pointer items-center gap-3 text-[14px] text-ink-soft">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={comfort}
-                    onClick={() => setComfort((c) => !c)}
-                    className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-300 ${comfort ? "bg-emerald" : "bg-stone-2"}`}
-                  >
-                    <span
-                      className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-card shadow transition-transform duration-300 ease-[var(--ease-atelier)] ${
-                        comfort ? "translate-x-5" : ""
-                      }`}
+              {current.photos ? (
+                <>
+                  <BeforeAfter
+                    key={`${current.id}-${doctor.id}`}
+                    before={current.photos.before}
+                    after={current.photos.after}
+                    focus={current.focus}
+                    alt={current.title[lang]}
+                    beforeLabel={t.cases.before}
+                    afterLabel={t.cases.after}
+                    sliderLabel={t.cases.sliderLabel}
+                    comfort={comfort}
+                    comfortHint={t.cases.comfortHint}
+                  />
+                  <div className="mt-2 flex items-center justify-between gap-4">
+                    <label className="inline-flex min-h-11 cursor-pointer items-center gap-3 text-[14px] text-ink-soft">
+                      <button
+                        type="button"
+                        role="switch"
+                        aria-checked={comfort}
+                        onClick={() => setComfort((c) => !c)}
+                        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-300 ${comfort ? "bg-emerald" : "bg-stone-2"}`}
+                      >
+                        <span
+                          className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-card shadow transition-transform duration-300 ease-[var(--ease-atelier)] ${comfort ? "translate-x-5" : ""}`}
+                        />
+                      </button>
+                      {t.cases.comfort}
+                    </label>
+                    <p className="font-mono text-[12px] text-muted" aria-live="polite">
+                      {pad(safeIndex + 1)} / {pad(list.length)}
+                    </p>
+                  </div>
+                </>
+              ) : (
+                <figure key={`${current.id}-${doctor.id}`} className="hud-in">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-stone">
+                    <SafeImage
+                      src={current.image}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 58vw, 100vw"
+                      className="object-cover saturate-[0.85]"
+                      style={{ objectPosition: current.focus }}
                     />
-                  </button>
-                  {t.cases.comfort}
-                </label>
-                <p className="font-mono text-[12px] text-muted" aria-live="polite">
-                  {pad(Math.min(index, list.length - 1) + 1)} / {pad(list.length)}
-                </p>
-              </div>
+                    <div className="glass absolute right-4 bottom-4 left-4 flex items-start gap-3 rounded-[14px] p-4 sm:right-auto sm:max-w-[400px]">
+                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald text-alabaster">
+                        <ShieldCheck size={17} strokeWidth={1.6} />
+                      </span>
+                      <span>
+                        <span className="block text-[15px] font-medium text-ink">{t.cases.privacyTitle}</span>
+                        <span className="mt-1 block text-[13.5px] leading-snug text-ink-soft">{t.cases.privacyBody}</span>
+                      </span>
+                    </div>
+                  </div>
+                  <figcaption className="mt-3 flex items-center justify-between gap-4 text-[12.5px] text-muted">
+                    <span>{t.cases.illustrative}</span>
+                    <span className="font-mono" aria-live="polite">
+                      {pad(safeIndex + 1)} / {pad(list.length)}
+                    </span>
+                  </figcaption>
+                </figure>
+              )}
             </Reveal>
 
             <Reveal delay={120} className="lg:col-span-5">
-              <article key={`${current.id}-${lang}`} className="hud-in flex h-full flex-col rounded-[20px] border border-line bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8">
+              <article key={`${current.id}-${lang}`} className="hud-in flex h-full flex-col rounded-[16px] bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8">
                 <div className="flex items-center justify-between gap-4">
-                  <p className="font-mono text-[11px] tracking-[0.14em] text-bronze-deep uppercase">{t.cases.passport}</p>
+                  <p className="text-[13px] text-muted">{t.cases.passport}</p>
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => step(-1)} disabled={list.length < 2} aria-label={t.cases.prev} className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink transition hover:bg-stone disabled:opacity-40">
+                    <button type="button" onClick={() => step(-1)} disabled={list.length < 2} aria-label={t.cases.prev} className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink transition hover:bg-stone disabled:opacity-40">
                       <ArrowLeft size={17} strokeWidth={1.6} />
                     </button>
-                    <button type="button" onClick={() => step(1)} disabled={list.length < 2} aria-label={t.cases.next} className="grid h-10 w-10 place-items-center rounded-full border border-line text-ink transition hover:bg-stone disabled:opacity-40">
+                    <button type="button" onClick={() => step(1)} disabled={list.length < 2} aria-label={t.cases.next} className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink transition hover:bg-stone disabled:opacity-40">
                       <ArrowRight size={17} strokeWidth={1.6} />
                     </button>
                   </div>
@@ -113,37 +144,27 @@ export function Cases() {
                     [t.cases.duration, current.duration[lang]],
                   ].map(([k, v], i) => (
                     <div key={k} className={i > 0 ? "border-t border-line pt-5" : ""}>
-                      <dt className="text-[12.5px] text-muted">{k}</dt>
-                      <dd className={`mt-1 text-[15.5px] leading-snug text-ink ${i > 0 ? "font-mono text-[14.5px]" : ""}`}>{v}</dd>
+                      <dt className="text-[13px] text-muted">{k}</dt>
+                      <dd className={`mt-1 leading-snug text-ink ${i > 0 ? "font-mono text-[14.5px]" : "text-[15.5px]"}`}>{v}</dd>
                     </div>
                   ))}
                 </dl>
 
                 <figure className="mt-auto pt-7">
-                  <figcaption className="text-[12.5px] text-muted">{t.cases.note}</figcaption>
-                  <div className="mt-2 rounded-[16px] bg-emerald-soft p-4">
-                    <div className="flex items-center gap-3" aria-hidden>
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald text-alabaster">
-                        <Mic size={16} strokeWidth={1.7} />
-                      </span>
-                      <span className="flex h-6 flex-1 items-center gap-[3px]">
-                        {WAVE.map((h, i) => (
-                          <span key={i} className="w-[3px] rounded-full bg-emerald/55" style={{ height: h }} />
-                        ))}
-                      </span>
-                      <span className="font-mono text-[12px] text-emerald">{current.noteLength}</span>
-                    </div>
-                    <blockquote className="mt-3 font-display text-[16.5px] leading-snug text-emerald italic">
-                      <span className="sr-only">{t.cases.voice}: </span>
-                      “{current.note[lang]}”
-                    </blockquote>
-                  </div>
+                  <blockquote className="border-t border-line pt-6 font-display text-[18px] leading-snug text-emerald italic">“{current.note[lang]}”</blockquote>
+                  <figcaption className="mt-4 flex items-center gap-3 text-[13px] text-muted">
+                    <Monogram letters={doctor.monogram} className="h-8 w-8" />
+                    <span>
+                      <span className="block font-medium text-ink">{doctor.name[lang]}</span>
+                      {t.cases.note}
+                    </span>
+                  </figcaption>
                 </figure>
               </article>
             </Reveal>
           </div>
         ) : (
-          <p className="mt-10 rounded-[20px] border border-dashed border-line p-10 text-center text-muted">{t.cases.empty}</p>
+          <p className="mt-10 rounded-[16px] border border-dashed border-line p-10 text-center text-muted">{t.cases.empty}</p>
         )}
       </div>
     </section>

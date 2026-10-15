@@ -5,7 +5,9 @@ import { useCallback, useRef, useState, type CSSProperties, type KeyboardEvent, 
 import { SafeImage } from "@/components/ui/SafeImage";
 
 interface BeforeAfterProps {
-  image: string;
+  /** Real, consented photos of the same patient. */
+  before: string;
+  after: string;
   focus: string;
   alt: string;
   beforeLabel: string;
@@ -18,9 +20,8 @@ interface BeforeAfterProps {
 /**
  * Drag / touch / keyboard comparison slider.
  * The split position lives in a CSS variable written straight to the DOM, so dragging never re-renders React.
- * Demo images: the "before" side is the same photo with a clinical, unrestored grade applied.
  */
-export function BeforeAfter({ image, focus, alt, beforeLabel, afterLabel, sliderLabel, comfort, comfortHint }: BeforeAfterProps) {
+export function BeforeAfter({ before, after, focus, alt, beforeLabel, afterLabel, sliderLabel, comfort, comfortHint }: BeforeAfterProps) {
   const frame = useRef<HTMLDivElement>(null);
   const handle = useRef<HTMLDivElement>(null);
   const pos = useRef(50);
@@ -82,16 +83,16 @@ export function BeforeAfter({ image, focus, alt, beforeLabel, afterLabel, slider
       onPointerMove={onMove}
       onPointerUp={onUp}
       onPointerCancel={onUp}
-      className="relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden rounded-[20px] bg-stone select-none"
+      className="relative aspect-[4/3] cursor-ew-resize touch-pan-y overflow-hidden rounded-[16px] bg-stone select-none"
       style={{ "--pos": "50%" } as CSSProperties}
     >
       {/* AFTER */}
-      <SafeImage src={image} alt={`${alt}: ${afterLabel}`} fill sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" style={{ objectPosition: focus }} draggable={false} />
+      <SafeImage src={after} alt={`${alt}: ${afterLabel}`} fill sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" style={{ objectPosition: focus }} draggable={false} />
 
       {/* BEFORE, clipped to the left of the handle */}
       <div className="absolute inset-0" style={{ clipPath: "inset(0 calc(100% - var(--pos)) 0 0)" }}>
         <SafeImage
-          src={image}
+          src={before}
           alt={`${alt}: ${beforeLabel}`}
           fill
           sizes="(min-width: 1024px) 58vw, 100vw"
@@ -99,7 +100,7 @@ export function BeforeAfter({ image, focus, alt, beforeLabel, afterLabel, slider
           className="object-cover transition-[filter] duration-700"
           style={{
             objectPosition: focus,
-            filter: `sepia(0.5) saturate(0.7) brightness(0.86) contrast(0.9) hue-rotate(-8deg)${blurred ? " blur(18px)" : ""}`,
+            filter: blurred ? "blur(18px)" : undefined,
           }}
         />
       </div>
@@ -110,10 +111,10 @@ export function BeforeAfter({ image, focus, alt, beforeLabel, afterLabel, slider
         </p>
       ) : null}
 
-      <span className="pointer-events-none absolute top-4 left-4 rounded-full bg-obsidian/70 px-3 py-1.5 font-mono text-[11px] tracking-[0.14em] text-alabaster backdrop-blur">
+      <span className="pointer-events-none absolute top-4 left-4 rounded-full bg-obsidian/70 px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] text-alabaster backdrop-blur">
         {beforeLabel}
       </span>
-      <span className="pointer-events-none absolute top-4 right-4 rounded-full bg-alabaster/85 px-3 py-1.5 font-mono text-[11px] tracking-[0.14em] text-emerald backdrop-blur">
+      <span className="pointer-events-none absolute top-4 right-4 rounded-full bg-alabaster/85 px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] text-emerald backdrop-blur">
         {afterLabel}
       </span>
 

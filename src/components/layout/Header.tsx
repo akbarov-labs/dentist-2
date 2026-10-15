@@ -191,7 +191,7 @@ export function Header() {
                     onClick={(e) => (e.preventDefault(), go(id))}
                     className="flex items-baseline gap-4 py-3 font-display text-[28px] tracking-[-0.01em] text-ink"
                   >
-                    <span className="font-mono text-[11px] text-bronze-deep">0{i + 1}</span>
+                    <span className="font-mono text-[12px] text-bronze-deep">0{i + 1}</span>
                     {labels[id]}
                   </a>
                 </li>

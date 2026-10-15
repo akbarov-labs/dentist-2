@@ -39,6 +39,17 @@ html {
   scroll-padding-top: 88px;
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
+  scrollbar-color: var(--color-bronze-light) var(--color-stone);
+  caret-color: var(--color-emerald);
+}
+
+a {
+  text-underline-offset: 0.22em;
+}
+
+/* Clinical numbers line up: prices, durations, licence and certificate IDs */
+.font-mono {
+  font-variant-numeric: tabular-nums slashed-zero;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -78,13 +89,15 @@ body {
   }
 }
 
-/* Paper grain, fixed and non-interactive so it never repaints while scrolling */
+/* Paper grain, fixed and non-interactive so it never repaints while scrolling.
+   It sits above page content (z-2) but below the mobile bar (40), header (50), menu (60) and dialogs (70),
+   so every surface carries the same texture and no control is ever covered. */
 .grain::after {
   content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 30;
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -107,10 +120,10 @@ body {
   }
 }
 
-/* Scroll reveal (driven by IntersectionObserver in <Reveal />) */
+/* Scroll reveal (IntersectionObserver in <Reveal />). Starts visible, so nothing is ever hidden without JS. */
 .reveal {
-  opacity: 0;
-  transform: translateY(18px);
+  opacity: 0.35;
+  transform: translateY(14px);
   transition:
     opacity 0.8s var(--ease-atelier),
     transform 0.8s var(--ease-atelier);
@@ -205,10 +218,29 @@ body {
   display: none;
 }
 
-/* Hairline grid used behind the HUD */
-.hud-grid {
+/* Blueprint grid: only under the implant technical drawing, where it is a real measuring surface */
+.blueprint {
+  background-color: var(--color-obsidian-2);
   background-image:
-    linear-gradient(rgb(255 255 255 / 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(255 255 255 / 0.045) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(rgb(201 173 131 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(201 173 131 / 0.07) 1px, transparent 1px),
+    linear-gradient(rgb(201 173 131 / 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(201 173 131 / 0.03) 1px, transparent 1px);
+  background-size:
+    80px 80px,
+    80px 80px,
+    16px 16px,
+    16px 16px;
+  background-position: -1px -1px;
+}
+
+/* Implant drawing: scroll writes stroke-dashoffset / opacity on these */
+.draw-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+/* Layered hero planes read one shared progress value, --hp (0 to 1), set by HeroStage */
+.plane {
+  will-change: transform;
 }

@@ -5,7 +5,9 @@ import { useId, useState, type FormEvent } from "react";
 import { useSite } from "@/context/SiteContext";
 import { buildTelegramText, computeEstimate, priceRange, selectionLines } from "@/lib/estimate";
 import { formatUzPhone, mapLinks, phoneHref, telegramLink } from "@/lib/format";
+import { PortraitArch } from "@/components/ui/PortraitArch";
 import { Reveal } from "@/components/ui/Reveal";
+import { Signature } from "@/components/ui/Signature";
 import { btnPrimary } from "@/components/ui/styles";
 
 type Status = "idle" | "sending" | "success" | "error";
@@ -131,19 +133,32 @@ export function Booking() {
     }`;
 
   return (
-    <section id="booking" aria-labelledby="booking-title" className="border-t border-line bg-stone/60 py-20 pb-28 md:py-28">
+    <section id="booking" aria-labelledby="booking-title" className="border-t border-line py-20 pb-28 md:py-28">
       <div className="shell">
-        <Reveal className="max-w-[680px]">
-          <h2 id="booking-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
-            {t.booking.title}
-          </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.booking.sub}</p>
-        </Reveal>
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
+          {/* The close: the hero's arch returns, now signed */}
+          <Reveal className="mx-auto w-full max-w-[360px] lg:col-span-5 lg:max-w-none">
+            <figure className="lg:sticky lg:top-24">
+              <PortraitArch doctor={doctor} lang={lang} sizes="(min-width: 1024px) 34vw, 80vw" />
+              <figcaption className="relative z-[2] -mt-4 text-center">
+                <p className="font-display text-[24px] leading-snug text-ink italic text-balance sm:text-[28px]">“{t.booking.closeLine}”</p>
+                <Signature name={doctor.signature} className="mx-auto mt-1 h-14 w-auto" />
+                <p className="text-[13px] text-muted">{doctor.name[lang]}</p>
+              </figcaption>
+            </figure>
+          </Reveal>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <h2 id="booking-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+                {t.booking.title}
+              </h2>
+              <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">{t.booking.sub.replace("{doctor}", doctor.name[lang])}</p>
+            </Reveal>
+
           {/* Form */}
-          <Reveal className="lg:col-span-7">
-            <div className="rounded-[20px] border border-line bg-card p-6 shadow-[var(--shadow-soft)] sm:p-9 lg:sticky lg:top-24">
+          <Reveal className="mt-8">
+            <div data-booking-card className="rounded-[16px] bg-card p-6 shadow-[var(--shadow-soft)] sm:p-9">
               {status === "success" ? (
                 <div className="hud-in flex min-h-[460px] flex-col items-start justify-center" role="status">
                   <span className="grid h-14 w-14 place-items-center rounded-full bg-emerald-soft text-emerald">
@@ -177,14 +192,14 @@ export function Booking() {
                           {prefill?.kind === "calculator" ? <Calculator size={16} strokeWidth={1.7} /> : <Sparkles size={16} strokeWidth={1.7} />}
                         </span>
                         <div>
-                          <p className="font-mono text-[10.5px] tracking-[0.14em] text-emerald uppercase">
+                          <p className="text-[12.5px] font-medium text-emerald">
                             {prefill?.kind === "calculator" ? t.booking.selected : t.booking.service}
                           </p>
                           <p className="mt-1 text-[14.5px] leading-snug text-ink">{summary.lines.join(" · ")}</p>
                           {summary.price ? <p className="mt-1 font-mono text-[13px] text-emerald">{summary.price}</p> : null}
                         </div>
                       </div>
-                      <button type="button" onClick={() => setPrefill(null)} aria-label={t.booking.remove} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-ink-soft transition hover:bg-card">
+                      <button type="button" onClick={() => setPrefill(null)} aria-label={t.booking.remove} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-soft transition hover:bg-card">
                         <X size={16} strokeWidth={1.7} />
                       </button>
                     </div>
@@ -303,11 +318,13 @@ export function Booking() {
               )}
             </div>
           </Reveal>
+          </div>
+        </div>
 
-          {/* Concierge + map */}
-          <div className="space-y-6 lg:col-span-5">
-            <Reveal delay={100}>
-              <div className="relative overflow-hidden rounded-[20px] bg-emerald p-6 text-alabaster sm:p-8">
+        {/* Concierge + map */}
+        <div className="mt-16 grid gap-6 lg:grid-cols-12 lg:gap-8">
+            <Reveal delay={100} className="lg:col-span-5">
+              <div className="relative h-full overflow-hidden rounded-[16px] bg-emerald p-6 text-alabaster sm:p-8">
                 <h3 className="font-display text-[22px] leading-tight">{t.booking.tgTitle}</h3>
                 <p className="mt-2 text-[14.5px] leading-relaxed text-alabaster/75">{t.booking.tgBody}</p>
                 <p className="mt-5 rounded-[16px] rounded-bl-[4px] bg-alabaster/10 px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line text-alabaster/90">
@@ -324,9 +341,9 @@ export function Booking() {
               </div>
             </Reveal>
 
-            <Reveal delay={160}>
-              <div className="overflow-hidden rounded-[20px] border border-line bg-card">
-                <div className="relative aspect-[16/10] bg-stone">
+            <Reveal delay={160} className="lg:col-span-7">
+              <div className="grid h-full overflow-hidden rounded-[16px] border border-line bg-card md:grid-cols-2">
+                <div className="relative aspect-[16/10] bg-stone md:aspect-auto md:min-h-[360px]">
                   <iframe
                     key={`${doctor.id}-${lang}`}
                     src={links.embed}
@@ -336,7 +353,7 @@ export function Booking() {
                   />
                 </div>
                 <div className="p-6">
-                  <h3 className="font-mono text-[11px] tracking-[0.14em] text-bronze-deep uppercase">{t.booking.mapTitle}</h3>
+                  <h3 className="font-display text-[20px] leading-tight text-ink">{t.booking.mapTitle}</h3>
                   <p className="mt-2 flex items-start gap-2 text-[16px] leading-snug text-ink">
                     <MapPin size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-emerald" />
                     {doctor.address.full[lang]}
@@ -346,12 +363,12 @@ export function Booking() {
                     <Clock3 size={16} strokeWidth={1.6} className="shrink-0 text-emerald" />
                     {doctor.hours.days[lang]} · <span className="font-mono">{doctor.hours.time}</span>
                   </p>
-                  <a href={phoneHref(doctor.contact.phone)} className="mt-3 flex items-center gap-2 pl-0.5 font-mono text-[15px] text-ink transition hover:text-emerald">
+                  <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-1 flex min-h-11 items-center gap-2 pl-0.5 font-mono text-[15px] text-ink transition hover:text-emerald">
                     <Phone size={16} strokeWidth={1.6} className="shrink-0 text-emerald" />
                     {doctor.contact.phone}
                   </a>
 
-                  <div className="mt-6 grid grid-cols-2 gap-2">
+                  <div className="mt-5 grid grid-cols-2 gap-2 md:grid-cols-1 xl:grid-cols-2">
                     {[
                       { href: links.yandex, label: t.booking.maps.yandex, Icon: MapIcon },
                       { href: links.gis, label: t.booking.maps.gis, Icon: Navigation },
@@ -373,7 +390,6 @@ export function Booking() {
                 </div>
               </div>
             </Reveal>
-          </div>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, Check, Send } from "lucide-react";
+import { ArrowDown, Check, Send, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import type { MaterialId, ProblemId } from "@/config/doctorConfig";
 import { site } from "@/config/doctorConfig";
@@ -20,7 +20,7 @@ function Step({ n, legend, children }: { n: number; legend: string; children: Re
         <span className="grid h-8 w-8 place-items-center rounded-full border border-bronze/45 font-mono text-[12px] text-bronze-deep">0{n}</span>
         {legend}
       </legend>
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">{children}</div>
+      <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">{children}</div>
     </fieldset>
   );
 }
@@ -40,7 +40,7 @@ function Option({
 }) {
   return (
     <label
-      className={`group relative flex cursor-pointer items-start gap-3 rounded-[16px] border p-4 transition duration-200 ${
+      className={`group relative flex cursor-pointer items-start gap-2.5 rounded-[14px] border p-3.5 transition duration-200 sm:gap-3 sm:p-4 ${
         checked ? "border-emerald bg-emerald-soft/70 shadow-[inset_0_0_0_1px_var(--color-emerald)]" : "border-line bg-card hover:border-ink/25"
       }`}
     >
@@ -64,6 +64,9 @@ function Option({
 export function Calculator() {
   const { t, doctor, lang, calc, setCalc, setPrefill, scrollToId } = useSite();
   const est = computeEstimate(doctor, calc, lang);
+  // 0% instalments over the practice's plan length, rounded to the nearest thousand so'm
+  const months = doctor.installmentMonths;
+  const monthly = months ? Math.round(est.min / months / 1000) * 1000 : 0;
   const tgText = buildTelegramText(doctor, lang, t, { kind: "calculator", selection: calc });
 
   const fromNote = (p: ProblemId) => {
@@ -105,9 +108,9 @@ export function Calculator() {
           </Reveal>
 
           <Reveal delay={120} className="lg:col-span-5">
-            <div className="overflow-hidden rounded-[20px] border border-line bg-card shadow-[var(--shadow-lift)] lg:sticky lg:top-24">
+            <div className="overflow-hidden rounded-[16px] bg-card shadow-[var(--shadow-lift)] lg:sticky lg:top-24">
               <div className="bg-emerald px-6 py-6 text-alabaster sm:px-8 sm:py-7" aria-live="polite">
-                <p className="font-mono text-[11px] tracking-[0.16em] text-bronze-light uppercase">{t.calc.result}</p>
+                <p className="text-[13px] font-medium text-bronze-light">{t.calc.result}</p>
                 <p key={`${est.min}-${est.max}`} className="hud-in mt-3 font-mono text-[26px] leading-tight tracking-[-0.02em] sm:text-[30px]">
                   {formatUZS(est.min)}
                   <span className="text-alabaster/50"> – </span>
@@ -117,6 +120,19 @@ export function Calculator() {
                   {t.calc.currency}
                   {est.unitNote ? ` · ${est.unitNote}` : ""}
                   <span className="font-mono"> · {t.calc.usd} {formatUSD(est.min, site.usdRate)}–{formatUSD(est.max, site.usdRate).slice(1)}</span>
+                </p>
+                {months ? (
+                  <p className="mt-2 text-[14px] text-alabaster/85">
+                    {t.calc.installment.replace("{months}", String(months))}{" "}
+                    <span className="font-mono whitespace-nowrap">
+                      {formatUZS(monthly)} {t.calc.currency}
+                      {lang === "ru" ? "" : t.services.from}
+                    </span>
+                  </p>
+                ) : null}
+                <p className="mt-5 flex items-start gap-2.5 border-t border-alabaster/15 pt-4 text-[14.5px] leading-snug text-alabaster">
+                  <ShieldCheck size={18} strokeWidth={1.6} className="mt-px shrink-0 text-bronze-light" />
+                  {t.calc.fixed}
                 </p>
               </div>
 
@@ -151,8 +167,6 @@ export function Calculator() {
                     ))}
                   </ul>
                 </div>
-
-                <p className="mt-6 text-[12.5px] leading-relaxed text-muted">{t.calc.disclaimer}</p>
 
                 <div className="mt-6 grid gap-3">
                   <button

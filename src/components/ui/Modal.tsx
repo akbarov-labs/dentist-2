@@ -79,7 +79,7 @@ export function Modal({ open, onClose, labelledBy, closeLabel, children, classNa
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className={`enter relative max-h-[92dvh] w-full overflow-y-auto rounded-t-[20px] bg-alabaster shadow-[var(--shadow-lift)] sm:rounded-[20px] ${className}`}
+        className={`enter relative max-h-[92dvh] w-full overflow-y-auto rounded-t-[16px] bg-alabaster shadow-[var(--shadow-lift)] sm:rounded-[16px] ${className}`}
       >
         <button
           type="button"

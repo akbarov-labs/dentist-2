@@ -1,18 +1,34 @@
 "use client";
 
 import { CalendarCheck, Phone, Send } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useSite } from "@/context/SiteContext";
 import { phoneHref, telegramLink } from "@/lib/format";
 
 /** Fixed thumb-reach action bar for phones (< 768px). */
 export function MobileBar() {
   const { t, doctor, scrollToId } = useSite();
-  const item = "flex h-12 flex-col items-center justify-center gap-0.5 rounded-full text-[11.5px] font-medium";
+  const [hidden, setHidden] = useState(false);
+
+  // Step aside while the booking form itself is on screen, so the bar never covers its fields.
+  useEffect(() => {
+    // Observe the form card itself: the whole #booking section is several viewports tall on phones,
+    // so a ratio threshold on it would never be reached.
+    const target = document.querySelector("#booking [data-booking-card]");
+    if (!target) return;
+    const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting));
+    io.observe(target);
+    return () => io.disconnect();
+  }, []);
+
+  const item = "flex h-12 flex-col items-center justify-center gap-0.5 rounded-full text-[12px] font-medium";
 
   return (
     <nav
       aria-label={t.cta.bookShort}
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line/80 bg-alabaster/90 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] backdrop-blur-xl md:hidden"
+      aria-hidden={hidden || undefined}
+      inert={hidden}
+      className={`fixed inset-x-0 bottom-0 z-40 border-t border-line/80 bg-alabaster/90 px-3 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] backdrop-blur-xl transition-transform duration-500 ease-[var(--ease-atelier)] md:hidden ${hidden ? "translate-y-full" : ""}`}
     >
       <div className="grid grid-cols-[1fr_1fr_1.6fr] gap-2">
         <a href={phoneHref(doctor.contact.phone)} className={`${item} text-ink`}>

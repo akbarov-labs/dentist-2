@@ -4,17 +4,36 @@ import { Check, Settings2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { doctorPresets, site, type PresetId } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
+import { setPref, useClientValue, usePref } from "@/lib/prefs";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { SafeImage } from "@/components/ui/SafeImage";
 
 /**
  * Presenter-only control: swap the demo persona live during a sales pitch.
- * Hidden entirely when `site.showDemoSwitcher` is false.
+ * Invisible to ordinary visitors: it appears when the URL carries `?demo=…`, and Shift + D
+ * shows or hides it (remembered on this device). Removed entirely when `site.showDemoSwitcher` is false.
  */
+const PRESENTER_KEY = "practice.presenter";
+const isFlag = (v: string): v is "on" | "off" => v === "on" || v === "off";
 export function DemoSwitcher() {
   const { t, lang, presetId, setPresetId } = useSite();
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
+  const flag = usePref(PRESENTER_KEY, "presenter", "auto" as "on" | "off" | "auto", (v): v is "on" | "off" | "auto" => isFlag(v));
+  const hasDemoParam = useClientValue(() => new URLSearchParams(window.location.search).has("demo")) ?? false;
+  const visible = flag === "on" || (flag === "auto" && hasDemoParam);
+
+  useEffect(() => {
+    if (!site.showDemoSwitcher) return;
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (e.ctrlKey || e.metaKey || e.altKey || e.repeat) return;
+      if (target?.closest("input, textarea, select, [contenteditable]:not([contenteditable='false'])")) return;
+      if (e.shiftKey && (e.key === "D" || e.key === "d")) setPref(PRESENTER_KEY, visible ? "off" : "on");
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [visible]);
 
   useEffect(() => {
     if (!open) return;
@@ -30,12 +49,12 @@ export function DemoSwitcher() {
     };
   }, [open]);
 
-  if (!site.showDemoSwitcher) return null;
+  if (!site.showDemoSwitcher || !visible) return null;
 
   return (
     <div ref={wrap} className="fixed bottom-[92px] left-3 z-[55] md:bottom-5 md:left-5">
       {open ? (
-        <div id="demo-panel" className="enter mb-3 w-[min(320px,calc(100vw-24px))] rounded-[20px] border border-obsidian-line bg-obsidian p-4 text-alabaster shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.35s" }}>
+        <div id="demo-panel" className="enter mb-3 w-[min(320px,calc(100vw-24px))] rounded-[16px] border border-obsidian-line bg-obsidian p-4 text-alabaster shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.35s" }}>
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[14px] font-medium">{t.demo.title}</p>
@@ -76,6 +95,7 @@ export function DemoSwitcher() {
             <span className="text-[12.5px] text-alabaster/60">{t.demo.lang}</span>
             <LangToggle tone="dark" />
           </div>
+          <p className="mt-3 font-mono text-[12px] text-alabaster/60">{t.demo.hint}</p>
         </div>
       ) : null}
       <button
@@ -84,7 +104,7 @@ export function DemoSwitcher() {
         aria-expanded={open}
         aria-controls="demo-panel"
         aria-label={t.demo.toggle}
-        className="group inline-flex h-10 items-center rounded-full border border-obsidian-line bg-obsidian/90 px-[11px] font-mono text-[11.5px] tracking-[0.04em] text-alabaster/85 shadow-[var(--shadow-soft)] backdrop-blur transition hover:text-alabaster"
+        className="group inline-flex h-10 items-center rounded-full border border-obsidian-line bg-obsidian/90 px-[11px] font-mono text-[12px] tracking-[0.04em] text-alabaster/85 shadow-[var(--shadow-soft)] backdrop-blur transition hover:text-alabaster"
       >
         <Settings2 size={16} strokeWidth={1.6} className={`shrink-0 transition-transform duration-500 ${open ? "rotate-90" : ""}`} />
         <span

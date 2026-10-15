@@ -5,7 +5,6 @@ import { useSite } from "@/context/SiteContext";
 import { Monogram } from "@/components/ui/Monogram";
 import { Reveal } from "@/components/ui/Reveal";
 import { Signature } from "@/components/ui/Signature";
-import { monoLabel } from "@/components/ui/styles";
 
 export function Approach() {
   const { t, doctor, lang } = useSite();
@@ -16,8 +15,7 @@ export function Approach() {
       <div className="shell">
         {/* Personal manifesto */}
         <Reveal className="grid gap-8 lg:grid-cols-12 lg:gap-10">
-          <p className={`${monoLabel} text-bronze-deep lg:col-span-3 lg:pt-3`}>{t.approach.manifestoLabel}</p>
-          <div className="lg:col-span-9">
+          <div className="lg:col-span-9 lg:col-start-4">
             <blockquote>
               <p className="font-display text-[26px] leading-[1.32] tracking-[-0.012em] text-ink text-pretty sm:text-[32px] lg:text-[36px]">
                 {first}
@@ -46,7 +44,7 @@ export function Approach() {
         </Reveal>
 
         <div className="relative mt-10 grid gap-5 lg:grid-cols-12 lg:gap-6">
-          <Reveal className="flex flex-col rounded-[20px] border border-line bg-alabaster/70 p-6 sm:p-8 lg:col-span-4">
+          <Reveal className="flex flex-col rounded-[16px] border border-line bg-alabaster/70 p-6 sm:p-8 lg:col-span-4">
             <h3 className="text-[15px] font-medium text-muted">{t.approach.clinicsTitle}</h3>
             <ul className="mt-6 space-y-5">
               {t.approach.clinics.map((c) => (
@@ -70,13 +68,13 @@ export function Approach() {
 
           <span
             aria-hidden
-            className="absolute top-1/2 left-[33.3%] z-[2] hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-line bg-alabaster font-mono text-[11px] text-bronze-deep lg:grid"
+            className="absolute top-1/2 left-[33.3%] z-[2] hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-line bg-alabaster font-mono text-[12px] text-bronze-deep lg:grid"
           >
             VS
           </span>
 
-          <Reveal delay={120} className="relative overflow-hidden rounded-[20px] border border-emerald/15 bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8 lg:col-span-8 lg:p-10">
-            <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald via-emerald-2 to-bronze" />
+          <Reveal delay={120} className="relative overflow-hidden rounded-[16px] bg-card p-6 shadow-[var(--shadow-soft)] sm:p-8 lg:col-span-8 lg:p-10">
+            <div aria-hidden className="absolute inset-x-0 top-0 h-[2px] bg-emerald" />
             <div className="flex items-center gap-3">
               <Monogram letters={doctor.monogram} className="h-10 w-10" />
               <h3 className="font-display text-[22px] leading-tight text-ink sm:text-[24px]">
@@ -86,7 +84,7 @@ export function Approach() {
             <ol className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2">
               {t.approach.points.map((p) => (
                 <li key={p.k} className="border-t border-line pt-5">
-                  <p className="flex items-center gap-2 font-mono text-[11.5px] tracking-[0.08em] text-bronze-deep">
+                  <p className="flex items-center gap-2 font-mono text-[12.5px] tracking-[0.05em] text-bronze-deep">
                     <Check size={14} strokeWidth={2} className="text-emerald" />
                     {p.k}
                   </p>

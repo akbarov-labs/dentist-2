@@ -61,14 +61,19 @@ export interface ClinicalCase {
   id: string;
   category: CaseCategory;
   title: Localized;
+  /** Illustrative image shown while real patient photos are not configured. */
   image: string;
-  /** CSS object-position for the slider crop. */
+  /** CSS object-position for the image crop. */
   focus: string;
+  /**
+   * Real, consented before/after photos of THIS patient. When set, the drag slider is shown.
+   * Never fake a "before" from the "after" image.
+   */
+  photos?: { before: string; after: string };
   problem: Localized;
   system: Localized;
   duration: Localized;
   note: Localized;
-  noteLength: string;
 }
 
 export interface DoctorProfile {
@@ -85,7 +90,7 @@ export interface DoctorProfile {
   heroLead: Localized;
   heroSub: Localized;
   manifesto: Localized<string[]>;
-  portrait: { src: string; alt: Localized; position: string };
+  portrait: { src: string; alt: Localized; position: string; /** Transparent cut-out (WebP with alpha) for the layered hero and the close. */ cutout: string };
   stats: { value: Localized; label: Localized }[];
   idCard: { licenseId: string; lines: Localized[] };
   contact: {
@@ -115,6 +120,8 @@ export interface DoctorProfile {
   pricing: Record<ProblemId, ProblemPricing>;
   /** Cost of a CBCT scan done at the first visit, in UZS. */
   ctScanPrice: number;
+  /** 0% instalment plan length in months. Omit when the practice offers no instalments (the calculator then hides the line). */
+  installmentMonths?: number;
   credentials: Credential[];
   cases: ClinicalCase[];
   /** Optional MP4 / YouTube-embed URL for the 1-minute intro. */
@@ -190,7 +197,6 @@ const sharedCases: ClinicalCase[] = [
       uz: "Implantni navigatsion shablon bilan, kesishsiz qo‘ydik. Bemor o‘sha kuni kechqurun ishga qaytdi.",
       ru: "Имплант установили по навигационному шаблону, без разрезов. Вечером того же дня пациент вернулся к работе.",
     },
-    noteLength: "0:38",
   },
   {
     id: "case-veneers",
@@ -208,7 +214,6 @@ const sharedCases: ClinicalCase[] = [
       uz: "Tishlarni deyarli charxlamadik. Rangni bemorning ko‘zi va terisi ohangiga moslab tanladik.",
       ru: "Зубы почти не обтачивали. Оттенок подбирали под цвет глаз и кожи пациентки.",
     },
-    noteLength: "0:51",
   },
   {
     id: "case-allon6",
@@ -226,7 +231,6 @@ const sharedCases: ClinicalCase[] = [
       uz: "Barcha 6 implantni bitta seansda qo‘ydik. Uchinchi kuni bemor qattiq ovqat bilan tushlik qildi.",
       ru: "Все 6 имплантов установлены за один сеанс. На третий день пациент уже обедал твёрдой пищей.",
     },
-    noteLength: "1:04",
   },
 ];
 
@@ -264,6 +268,7 @@ const jamshid: DoctorProfile = {
   },
   portrait: {
     src: "/images/portrait-jamshid.jpg",
+    cutout: "/images/cutout-jamshid.webp",
     alt: {
       uz: "Dr. Jamshid Olimov oq xalatda, qo‘llarini qovushtirgan holda",
       ru: "Д-р Джамшид Олимов в белом халате, руки скрещены",
@@ -346,7 +351,7 @@ const jamshid: DoctorProfile = {
         ru: "Естественная прозрачность без агрессивной обточки зубов.",
       },
       specs: [{ uz: "Qalinligi 0.3 mm dan", ru: "Толщина от 0.3 мм" }],
-      image: "/images/smile-design.jpg",
+      image: "/images/case-veneers.jpg",
       calcProblem: "aesthetic",
       priceFrom: 3_600_000,
     },
@@ -367,6 +372,7 @@ const jamshid: DoctorProfile = {
   ],
   pricing: sharedPricing,
   ctScanPrice: 450_000,
+  installmentMonths: 6,
   credentials: [
     {
       id: "seoul",
@@ -445,6 +451,7 @@ const sardor: DoctorProfile = {
   },
   portrait: {
     src: "/images/portrait-sardor.jpg",
+    cutout: "/images/cutout-sardor.webp",
     alt: {
       uz: "Dr. Sardor Rahimov oq ko‘ylakda, stetoskop bilan",
       ru: "Д-р Сардор Рахимов в белой рубашке со стетоскопом",
@@ -492,7 +499,7 @@ const sardor: DoctorProfile = {
         { uz: "2 tashrif, 9 kun", ru: "2 визита, 9 дней" },
         { uz: "Kafolat: 10 yil yozma", ru: "Гарантия: 10 лет письменно" },
       ],
-      image: "/images/smile-design.jpg",
+      image: "/images/case-veneers.jpg",
       calcProblem: "aesthetic",
       priceFrom: 3_600_000,
     },
