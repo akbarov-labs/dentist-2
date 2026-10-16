@@ -1,24 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Mrs_Saint_Delafield, Playfair_Display } from "next/font/google";
+import { Geist, Mrs_Saint_Delafield } from "next/font/google";
 import { defaultDoctor, site } from "@/config/doctorConfig";
 import "./globals.css";
 
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
+// One family for headings, body and numbers; Latin-ext covers Uzbek, Cyrillic covers Russian.
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin", "latin-ext", "cyrillic"],
   style: ["normal", "italic"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  display: "swap",
-});
-
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin", "latin-ext", "cyrillic"],
   display: "swap",
 });
 
@@ -47,7 +36,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f5f0",
+  themeColor: "#f5f6f3",
   width: "device-width",
   initialScale: 1,
 };
@@ -56,9 +45,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={site.defaultLang}
-      className={`${playfair.variable} ${inter.variable} ${jetbrains.variable} ${signature.variable} antialiased`}
+      className={`${geist.variable} ${signature.variable} antialiased`}
     >
-      <body className="grain min-h-dvh">{children}</body>
+      <body className="min-h-dvh">{children}</body>
     </html>
   );
 }

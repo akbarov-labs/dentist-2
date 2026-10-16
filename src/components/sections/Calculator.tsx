@@ -17,7 +17,7 @@ function Step({ n, legend, children }: { n: number; legend: string; children: Re
   return (
     <fieldset>
       <legend className="flex items-center gap-3 text-[17px] font-medium text-ink">
-        <span className="grid h-8 w-8 place-items-center rounded-full border border-bronze/45 font-mono text-[12px] text-bronze-deep">0{n}</span>
+        <span className="grid h-8 w-8 place-items-center rounded-full border border-accent/45 tabular-nums text-[12px] text-accent">0{n}</span>
         {legend}
       </legend>
       <div className="mt-5 grid grid-cols-2 gap-2.5 sm:gap-3">{children}</div>
@@ -41,14 +41,14 @@ function Option({
   return (
     <label
       className={`group relative flex cursor-pointer items-start gap-2.5 rounded-[14px] border p-3.5 transition duration-200 sm:gap-3 sm:p-4 ${
-        checked ? "border-emerald bg-emerald-soft/70 shadow-[inset_0_0_0_1px_var(--color-emerald)]" : "border-line bg-card hover:border-ink/25"
+        checked ? "border-accent bg-accent-soft/70 shadow-[inset_0_0_0_1px_var(--color-accent)]" : "border-line bg-card hover:border-ink/25"
       }`}
     >
       <input type="radio" name={name} checked={checked} onChange={onSelect} className="peer sr-only" />
       <span
         aria-hidden
-        className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border transition peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-bronze ${
-          checked ? "border-emerald bg-emerald text-alabaster" : "border-ink/25"
+        className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full border transition peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent ${
+          checked ? "border-accent bg-accent text-paper" : "border-ink/25"
         }`}
       >
         {checked ? <Check size={12} strokeWidth={2.4} /> : null}
@@ -109,29 +109,29 @@ export function Calculator() {
 
           <Reveal delay={120} className="lg:col-span-5">
             <div className="overflow-hidden rounded-[16px] bg-card shadow-[var(--shadow-lift)] lg:sticky lg:top-24">
-              <div className="bg-emerald px-6 py-6 text-alabaster sm:px-8 sm:py-7" aria-live="polite">
-                <p className="text-[13px] font-medium text-bronze-light">{t.calc.result}</p>
-                <p key={`${est.min}-${est.max}`} className="hud-in mt-3 font-mono text-[26px] leading-tight tracking-[-0.02em] sm:text-[30px]">
+              <div className="bg-accent px-6 py-6 text-paper sm:px-8 sm:py-7" aria-live="polite">
+                <p className="text-[13px] font-medium text-paper/80">{t.calc.result}</p>
+                <p key={`${est.min}-${est.max}`} className="hud-in mt-3 tabular-nums text-[26px] leading-tight tracking-[-0.02em] sm:text-[30px]">
                   {formatUZS(est.min)}
-                  <span className="text-alabaster/50"> – </span>
+                  <span className="text-paper/50"> – </span>
                   <span className="whitespace-nowrap">{formatUZS(est.max)}</span>
                 </p>
-                <p className="mt-2 text-[13.5px] text-alabaster/70">
+                <p className="mt-2 text-[13.5px] text-paper/70">
                   {t.calc.currency}
                   {est.unitNote ? ` · ${est.unitNote}` : ""}
-                  <span className="font-mono"> · {t.calc.usd} {formatUSD(est.min, site.usdRate)}–{formatUSD(est.max, site.usdRate).slice(1)}</span>
+                  <span className="tabular-nums"> · {t.calc.usd} {formatUSD(est.min, site.usdRate)}–{formatUSD(est.max, site.usdRate).slice(1)}</span>
                 </p>
                 {months ? (
-                  <p className="mt-2 text-[14px] text-alabaster/85">
+                  <p className="mt-2 text-[14px] text-paper/85">
                     {t.calc.installment.replace("{months}", String(months))}{" "}
-                    <span className="font-mono whitespace-nowrap">
+                    <span className="tabular-nums whitespace-nowrap">
                       {formatUZS(monthly)} {t.calc.currency}
                       {lang === "ru" ? "" : t.services.from}
                     </span>
                   </p>
                 ) : null}
-                <p className="mt-5 flex items-start gap-2.5 border-t border-alabaster/15 pt-4 text-[14.5px] leading-snug text-alabaster">
-                  <ShieldCheck size={18} strokeWidth={1.6} className="mt-px shrink-0 text-bronze-light" />
+                <p className="mt-5 flex items-start gap-2.5 border-t border-paper/15 pt-4 text-[14.5px] leading-snug text-paper">
+                  <ShieldCheck size={18} strokeWidth={1.6} className="mt-px shrink-0 text-accent-light" />
                   {t.calc.fixed}
                 </p>
               </div>
@@ -140,15 +140,15 @@ export function Calculator() {
                 <dl className="grid grid-cols-2 gap-x-4 gap-y-5">
                   <div>
                     <dt className="text-[12.5px] text-muted">{t.calc.visits}</dt>
-                    <dd className="mt-1 font-mono text-[14.5px] text-ink">{est.visits}</dd>
+                    <dd className="mt-1 tabular-nums text-[14.5px] text-ink">{est.visits}</dd>
                   </div>
                   <div>
                     <dt className="text-[12.5px] text-muted">{t.calc.surgery}</dt>
-                    <dd className="mt-1 font-mono text-[14.5px] text-ink">{est.surgeryTime}</dd>
+                    <dd className="mt-1 tabular-nums text-[14.5px] text-ink">{est.surgeryTime}</dd>
                   </div>
                   <div className="col-span-2">
                     <dt className="text-[12.5px] text-muted">{t.calc.ctLine}</dt>
-                    <dd className="mt-1 font-mono text-[14.5px] text-ink">
+                    <dd className="mt-1 tabular-nums text-[14.5px] text-ink">
                       {est.ctCost ? `+${formatUZS(est.ctCost)} ${t.calc.currency} · ${t.calc.ctAdded}` : t.calc.ctIncluded}
                     </dd>
                   </div>
@@ -159,7 +159,7 @@ export function Calculator() {
                   <ul className="mt-3 space-y-2.5">
                     {est.bonuses.map((b) => (
                       <li key={b} className="flex items-start gap-2.5 text-[14.5px] leading-snug text-ink">
-                        <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-emerald-soft text-emerald">
+                        <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-accent-soft text-accent">
                           <Check size={12} strokeWidth={2.4} />
                         </span>
                         {b}
@@ -172,7 +172,7 @@ export function Calculator() {
                   <button
                     type="button"
                     onClick={bookWithEstimate}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-emerald px-6 py-3 text-center text-[15px] leading-tight font-medium text-alabaster shadow-[0_10px_24px_-12px_rgb(15_61_62/0.7)] transition hover:bg-emerald-2 active:translate-y-px"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-center text-[15px] leading-tight font-medium text-paper shadow-[0_10px_24px_-12px_rgb(15_61_62/0.7)] transition hover:bg-accent-2 active:translate-y-px"
                   >
                     {t.calc.bookWith}
                     <ArrowDown size={16} strokeWidth={1.8} className="shrink-0" />
@@ -183,7 +183,7 @@ export function Calculator() {
                     rel="noopener noreferrer"
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-ink/15 bg-card px-6 py-3 text-center text-[15px] leading-tight font-medium text-ink transition hover:border-ink/35 active:translate-y-px"
                   >
-                    <Send size={16} strokeWidth={1.7} className="shrink-0 text-emerald" />
+                    <Send size={16} strokeWidth={1.7} className="shrink-0 text-accent" />
                     {t.calc.sendTg}
                   </a>
                 </div>

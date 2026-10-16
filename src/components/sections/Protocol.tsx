@@ -1,6 +1,5 @@
 "use client";
 
-import { Clock3, Cpu, HeartPulse } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSite } from "@/context/SiteContext";
 import { useScrollVar } from "@/lib/useScrollVar";
@@ -22,16 +21,6 @@ const useIsLg = () =>
     () => window.matchMedia(LG).matches,
     () => true,
   );
-
-function ComfortPips({ value, label }: { value: number; label: string }) {
-  return (
-    <span className="flex gap-1.5" role="img" aria-label={`${label}: ${value}/5`}>
-      {Array.from({ length: 5 }, (_, i) => (
-        <span key={i} className={`h-1.5 w-6 rounded-full ${i < value ? "bg-bronze-light" : "bg-alabaster/15"}`} />
-      ))}
-    </span>
-  );
-}
 
 export function Protocol() {
   const { t } = useSite();
@@ -94,24 +83,22 @@ export function Protocol() {
   const activeCallouts = CALLOUTS.filter((c) => c.step === active).map((c) => t.protocol.callouts[c.key]);
 
   return (
-    <section id="protocol" aria-labelledby="protocol-title" className="relative bg-obsidian py-20 text-alabaster md:py-28">
+    <section id="protocol" aria-labelledby="protocol-title" className="relative bg-night py-20 text-paper md:py-28">
       <div className="shell">
         <div className="max-w-[640px]">
           <h2 id="protocol-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] sm:text-[46px]">
             {t.protocol.title}
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-alabaster/70">{t.protocol.sub}</p>
+          <p className="mt-4 text-[16px] leading-relaxed text-paper/70">{t.protocol.sub}</p>
         </div>
 
         <div className="mt-10 grid lg:mt-14 lg:grid-cols-12 lg:gap-10">
           {/* Sticky blueprint stage */}
-          <div className="sticky top-[68px] z-[3] -mx-4 bg-obsidian px-4 pt-2 pb-3 lg:top-24 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mx-0 lg:h-[calc(100dvh-8rem)] lg:self-start lg:p-0">
-            <div ref={stageRef} className="blueprint flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-obsidian-line lg:h-full">
-              <div className="flex items-center justify-between gap-3 border-b border-obsidian-line px-4 py-2.5 sm:px-5">
-                <p className="font-mono text-[12px] tracking-[0.1em] text-bronze-light">
-                  {pad(active + 1)} / {t.protocol.stepOf}
-                </p>
-                <div className="flex gap-1" role="group" aria-label={t.protocol.title}>
+          <div className="sticky top-[68px] z-[3] -mx-4 min-w-0 bg-night px-4 pt-2 pb-3 lg:top-24 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mx-0 lg:h-[calc(100dvh-8rem)] lg:self-start lg:p-0">
+            <div ref={stageRef} className="blueprint flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-night-line lg:h-full">
+              <div className="flex items-center justify-between gap-3 border-b border-night-line px-4 py-2.5 sm:px-5">
+                <p className="min-w-0 truncate text-[13px] text-paper/80">{step.title}</p>
+                <div className="flex shrink-0 gap-1" role="group" aria-label={t.protocol.title}>
                   {steps.map((s, i) => (
                     <button
                       key={s.title}
@@ -119,8 +106,8 @@ export function Protocol() {
                       onClick={() => goTo(i)}
                       aria-label={`${pad(i + 1)}. ${s.title}`}
                       aria-current={i === active ? "step" : undefined}
-                      className={`grid h-9 w-9 place-items-center rounded-full font-mono text-[12px] transition-colors lg:h-10 lg:w-10 ${
-                        i === active ? "bg-bronze-light text-obsidian" : i < active ? "text-bronze-light hover:bg-obsidian-line" : "text-alabaster/60 hover:bg-obsidian-line"
+                      className={`grid h-9 w-9 place-items-center rounded-full tabular-nums text-[12px] transition-colors lg:h-10 lg:w-10 ${
+                        i === active ? "bg-accent-light text-night" : i < active ? "text-accent-light hover:bg-night-line" : "text-paper/60 hover:bg-night-line"
                       }`}
                     >
                       {pad(i + 1)}
@@ -134,25 +121,25 @@ export function Protocol() {
               </div>
 
               {/* Desktop legend: a record that fills in as the drawing does */}
-              <ol className="hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-obsidian-line px-6 py-4 lg:grid xl:grid-cols-3">
+              <ol className="hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-night-line px-6 py-4 lg:grid xl:grid-cols-3">
                 {CALLOUTS.map((c) => (
                   <li
                     key={c.n}
                     data-mode="fade"
                     data-a={c.a}
                     data-b={c.b}
-                    className={`flex items-baseline gap-2 text-[12.5px] leading-snug transition-colors ${c.step === active ? "text-alabaster" : "text-alabaster/60"}`}
+                    className={`flex items-baseline gap-2 text-[12.5px] leading-snug transition-colors ${c.step === active ? "text-paper" : "text-paper/60"}`}
                   >
-                    <span className="font-mono text-[12px] text-bronze-light">{c.n}</span>
+                    <span className="tabular-nums text-[12px] text-accent-light">{c.n}</span>
                     {t.protocol.callouts[c.key]}
                   </li>
                 ))}
               </ol>
 
               {/* Phone caption: just this step's parts */}
-              <p className="border-t border-obsidian-line px-4 py-2 text-[12.5px] leading-snug text-alabaster/75 lg:hidden">{activeCallouts.join(" · ")}</p>
+              <p className="border-t border-night-line px-4 py-2 text-[12.5px] leading-snug text-paper/75 lg:hidden">{activeCallouts.join(" · ")}</p>
             </div>
-            <div aria-hidden className="pointer-events-none absolute inset-x-0 top-full h-8 bg-gradient-to-b from-obsidian to-transparent lg:hidden" />
+            <div aria-hidden className="pointer-events-none absolute inset-x-0 top-full h-8 bg-gradient-to-b from-night to-transparent lg:hidden" />
           </div>
 
           {/* Step texts */}
@@ -166,26 +153,19 @@ export function Protocol() {
                   data-step={i}
                   className={`flex min-h-[72vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[80vh] ${isActive ? "opacity-100" : "opacity-45"}`}
                 >
-                  <p className="font-mono text-[12px] tracking-[0.12em] text-bronze-light">
-                    {pad(i + 1)} / {t.protocol.stepOf}
-                  </p>
-                  <h3 className="mt-3 font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
-                  <p className="mt-2 text-[15px] text-bronze-light/90">{s.short}</p>
-                  <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-alabaster/75">{s.body}</p>
+                  <h3 className="font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
+                  <p className="mt-2 text-[15px] text-accent-light/90">{s.short}</p>
+                  <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-paper/75">{s.body}</p>
 
-                  <dl className="mt-7 grid gap-5 border-t border-obsidian-line pt-6 sm:grid-cols-3 sm:gap-4">
+                  <dl className="mt-7 grid gap-5 border-t border-night-line pt-6 sm:grid-cols-3 sm:gap-4">
                     <div>
-                      <dt className="flex items-center gap-2 text-[12.5px] text-alabaster/60">
-                        <Clock3 size={14} strokeWidth={1.6} /> {t.protocol.duration}
-                      </dt>
-                      <dd className="mt-1.5 font-mono text-[15px]">{s.duration}</dd>
+                      <dt className="text-[13px] text-paper/60">{t.protocol.duration}</dt>
+                      <dd className="mt-1.5 tabular-nums text-[15px]">{s.duration}</dd>
                     </div>
                     <div>
-                      <dt className="flex items-center gap-2 text-[12.5px] text-alabaster/60">
-                        <Cpu size={14} strokeWidth={1.6} /> {t.protocol.equipment}
-                      </dt>
+                      <dt className="text-[13px] text-paper/60">{t.protocol.equipment}</dt>
                       <dd className="mt-1.5">
-                        <ul className="space-y-0.5 text-[14px] text-alabaster/85">
+                        <ul className="space-y-0.5 text-[14px] text-paper/85">
                           {s.equipment.map((e) => (
                             <li key={e}>{e}</li>
                           ))}
@@ -193,13 +173,8 @@ export function Protocol() {
                       </dd>
                     </div>
                     <div>
-                      <dt className="flex items-center gap-2 text-[12.5px] text-alabaster/60">
-                        <HeartPulse size={14} strokeWidth={1.6} /> {t.protocol.comfort}
-                      </dt>
-                      <dd className="mt-2.5">
-                        <ComfortPips value={s.comfort} label={t.protocol.comfort} />
-                        <span className="mt-2 block text-[14px] text-alabaster/85">{s.comfortText}</span>
-                      </dd>
+                      <dt className="text-[13px] text-paper/60">{t.protocol.comfort}</dt>
+                      <dd className="mt-1.5 text-[14px] text-paper/85">{s.comfortText}</dd>
                     </div>
                   </dl>
                 </li>

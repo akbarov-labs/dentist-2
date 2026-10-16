@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, CheckCheck, MapPin, Star } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCheck, Star } from "lucide-react";
 import { useRef } from "react";
 import { reviews, type Review } from "@/config/reviews";
 import { useSite } from "@/context/SiteContext";
@@ -14,29 +14,25 @@ const initials = (name: string) =>
     .slice(0, 2)
     .toUpperCase();
 
-function Stars({ color }: { color: string }) {
+function Stars() {
   return (
-    <span className="flex gap-0.5" aria-label="5/5">
+    <span className="flex gap-0.5 text-accent" aria-label="5/5">
       {Array.from({ length: 5 }, (_, i) => (
-        <Star key={i} size={14} strokeWidth={0} fill={color} />
+        <Star key={i} size={13} strokeWidth={0} fill="currentColor" />
       ))}
     </span>
   );
 }
 
-/** Google brand mark composed of the four official colours, used only as a source badge. */
-function GoogleBadge() {
-  return (
-    <span className="font-sans text-[13px] font-semibold tracking-tight" aria-label="Google">
-      <span className="text-[#4285F4]">G</span>
-      <span className="text-[#EA4335]">o</span>
-      <span className="text-[#FBBC05]">o</span>
-      <span className="text-[#4285F4]">g</span>
-      <span className="text-[#34A853]">l</span>
-      <span className="text-[#EA4335]">e</span>
-    </span>
-  );
-}
+const SOURCE: Record<Review["source"], Record<"uz" | "ru", string>> = {
+  google: { uz: "Google", ru: "Google" },
+  yandex: { uz: "Yandex Xarita", ru: "Яндекс Карты" },
+  telegram: { uz: "Telegram", ru: "Telegram" },
+};
+
+const Avatar = ({ name, size = "h-9 w-9" }: { name: string; size?: string }) => (
+  <span className={`grid ${size} shrink-0 place-items-center rounded-full bg-stone text-[12px] font-medium text-ink-soft`}>{initials(name)}</span>
+);
 
 function ReviewCard({ r }: { r: Review }) {
   const { t, lang, doctor } = useSite();
@@ -44,23 +40,23 @@ function ReviewCard({ r }: { r: Review }) {
 
   if (r.source === "telegram") {
     return (
-      <figure className="flex h-full flex-col overflow-hidden rounded-[16px] border border-line bg-[#dfe7df]">
-        <figcaption className="flex items-center gap-3 border-b border-black/5 bg-card/90 px-4 py-3">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-emerald font-mono text-[12px] text-alabaster">{initials(r.author)}</span>
+      <figure className="flex h-full flex-col overflow-hidden rounded-[16px] border border-line bg-stone">
+        <figcaption className="flex items-center gap-3 border-b border-line bg-card px-4 py-3">
+          <Avatar name={r.author} />
           <span className="leading-tight">
             <span className="block text-[14px] font-medium text-ink">{r.author}</span>
-            <span className="text-[12px] text-[#2a6aa8]">Telegram</span>
+            <span className="text-[12px] text-muted">{SOURCE.telegram[lang]}</span>
           </span>
         </figcaption>
-        <div className="flex-1 space-y-2 p-4" style={{ backgroundImage: "radial-gradient(rgb(15 61 62 / 0.06) 1px, transparent 1px)", backgroundSize: "14px 14px" }}>
+        <div className="flex-1 space-y-2 p-4">
           <blockquote className="mr-8 rounded-[16px] rounded-bl-[4px] bg-card px-3.5 py-2.5 text-[14.5px] leading-snug text-ink shadow-sm">
             {text}
-            <span className="ml-2 inline-block translate-y-1 font-mono text-[12px] text-muted">{r.time}</span>
+            <span className="ml-2 inline-block translate-y-1 tabular-nums text-[12px] text-muted">{r.time}</span>
           </blockquote>
           {r.reply ? (
-            <p className="ml-10 rounded-[16px] rounded-br-[4px] bg-[#e1f7cf] px-3.5 py-2.5 text-[14.5px] leading-snug text-ink shadow-sm">
+            <p className="ml-10 rounded-[16px] rounded-br-[4px] bg-accent-soft px-3.5 py-2.5 text-[14.5px] leading-snug text-ink shadow-sm">
               {r.reply[lang]}
-              <span className="ml-2 inline-flex translate-y-1 items-center gap-0.5 font-mono text-[12px] text-[#3a7430]">
+              <span className="ml-2 inline-flex translate-y-1 items-center gap-0.5 tabular-nums text-[12px] text-accent">
                 {r.time} <CheckCheck size={13} strokeWidth={2} />
               </span>
             </p>
@@ -70,27 +66,20 @@ function ReviewCard({ r }: { r: Review }) {
     );
   }
 
-  const isGoogle = r.source === "google";
   return (
     <figure className="h-full rounded-[16px] border border-line bg-card p-5">
       <figcaption className="flex items-center justify-between gap-3">
         <span className="flex items-center gap-3">
-          <span className={`grid h-9 w-9 place-items-center rounded-full font-mono text-[12px] ${isGoogle ? "bg-[#e8eefb] text-[#3561b8]" : "bg-[#fff3cf] text-[#8a6400]"}`}>{initials(r.author)}</span>
+          <Avatar name={r.author} />
           <span className="leading-tight">
             <span className="block text-[14px] font-medium text-ink">{r.author}</span>
             <span className="text-[12px] text-muted">{t.reviews.ago[r.ago]}</span>
           </span>
         </span>
-        {isGoogle ? (
-          <GoogleBadge />
-        ) : (
-          <span className="inline-flex items-center gap-1 text-[12.5px] font-medium text-ink">
-            <MapPin size={14} strokeWidth={0} fill="#fc3f1d" /> {lang === "ru" ? "Яндекс Карты" : "Yandex Xarita"}
-          </span>
-        )}
+        <span className="text-[12.5px] text-muted">{SOURCE[r.source][lang]}</span>
       </figcaption>
       <div className="mt-3">
-        <Stars color={isGoogle ? "#fbbc05" : "#ffcc00"} />
+        <Stars />
       </div>
       <blockquote className="mt-3 text-[15px] leading-relaxed text-ink-soft">{text}</blockquote>
     </figure>
@@ -125,20 +114,18 @@ export function Reviews() {
         {lead ? (
           <Reveal as="figure" className="mt-14 grid gap-8 lg:grid-cols-12 lg:gap-10">
             <blockquote className="font-display text-[26px] leading-[1.3] tracking-[-0.01em] text-ink text-pretty sm:text-[34px] lg:col-span-8">
-              <span aria-hidden className="mr-1 text-bronze">“</span>
+              <span aria-hidden className="mr-1 text-accent">“</span>
               {leadText}
-              <span aria-hidden className="text-bronze">”</span>
+              <span aria-hidden className="text-accent">”</span>
             </blockquote>
             <figcaption className="flex items-start gap-3 lg:col-span-4 lg:border-l lg:border-line lg:pt-3 lg:pl-8">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#e8eefb] font-mono text-[13px] text-[#3561b8]">{initials(lead.author)}</span>
+              <Avatar name={lead.author} size="h-11 w-11" />
               <span className="leading-snug">
                 <span className="block text-[15px] font-medium text-ink">{lead.author}</span>
                 <span className="mt-1 flex items-center gap-2 text-[13px] text-muted">
-                  <Stars color="#fbbc05" /> {t.reviews.ago[lead.ago]}
+                  <Stars /> {t.reviews.ago[lead.ago]}
                 </span>
-                <span className="mt-2 block">
-                  <GoogleBadge />
-                </span>
+                <span className="mt-1 block text-[13px] text-muted">{SOURCE[lead.source][lang]}</span>
               </span>
             </figcaption>
           </Reveal>

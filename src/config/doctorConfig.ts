@@ -135,7 +135,7 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     premium: { min: 7_900_000, max: 9_400_000 },
     swiss: { min: 13_800_000, max: 16_500_000 },
     visits: { uz: "2–3 tashrif", ru: "2–3 визита" },
-    surgeryTime: { uz: "25 daqiqa", ru: "25 минут" },
+    surgeryTime: { uz: "20–25 daqiqa", ru: "20–25 минут" },
     bonuses: [
       { uz: "Bepul shaxsiy 3D reja", ru: "Бесплатный 3D-план лечения" },
       { uz: "Vaqtinchalik estetik toj", ru: "Временная эстетическая коронка" },
@@ -162,7 +162,7 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     surgeryTime: { uz: "2–3 soat (sedatsiya bilan)", ru: "2–3 часа (под седацией)" },
     bonuses: [
       { uz: "Bepul shaxsiy 3D reja", ru: "Бесплатный 3D-план лечения" },
-      { uz: "Doimiy protez 72 soat ichida", ru: "Постоянный протез за 72 часа" },
+      { uz: "Olinmaydigan protez 72 soat ichida", ru: "Несъёмный протез за 72 часа" },
       { uz: "Mehmonxona va transfer (xorijiy bemorlarga)", ru: "Отель и трансфер для иногородних" },
     ],
   },
@@ -194,8 +194,8 @@ const sharedCases: ClinicalCase[] = [
     system: { uz: "Straumann BLX + sirkoniy toj", ru: "Straumann BLX + циркониевая коронка" },
     duration: { uz: "4 kun · 2 tashrif", ru: "4 дня · 2 визита" },
     note: {
-      uz: "Implantni navigatsion shablon bilan, kesishsiz qo‘ydik. Bemor o‘sha kuni kechqurun ishga qaytdi.",
-      ru: "Имплант установили по навигационному шаблону, без разрезов. Вечером того же дня пациент вернулся к работе.",
+      uz: "Implantni navigatsion shablon bilan, kesishsiz qo‘ydim. Bemor o‘sha kuni kechqurun ishga qaytdi.",
+      ru: "Имплант установил по навигационному шаблону, без разрезов. Вечером того же дня пациент вернулся к работе.",
     },
   },
   {
@@ -211,8 +211,8 @@ const sharedCases: ClinicalCase[] = [
     system: { uz: "Ivoclar E-max Press, 0.3 mm", ru: "Ivoclar E-max Press, 0.3 мм" },
     duration: { uz: "9 kun · 2 tashrif", ru: "9 дней · 2 визита" },
     note: {
-      uz: "Tishlarni deyarli charxlamadik. Rangni bemorning ko‘zi va terisi ohangiga moslab tanladik.",
-      ru: "Зубы почти не обтачивали. Оттенок подбирали под цвет глаз и кожи пациентки.",
+      uz: "Tishlarni deyarli charxlamadim. Rangni bemorning ko‘zi va terisi ohangiga moslab tanladim.",
+      ru: "Зубы почти не обтачивал. Оттенок подбирал под цвет глаз и кожи пациентки.",
     },
   },
   {
@@ -228,8 +228,8 @@ const sharedCases: ClinicalCase[] = [
     system: { uz: "All-on-6 · Osstem TS III + titan karkas", ru: "All-on-6 · Osstem TS III + титановый каркас" },
     duration: { uz: "5 kun · 3 tashrif", ru: "5 дней · 3 визита" },
     note: {
-      uz: "Barcha 6 implantni bitta seansda qo‘ydik. Uchinchi kuni bemor qattiq ovqat bilan tushlik qildi.",
-      ru: "Все 6 имплантов установлены за один сеанс. На третий день пациент уже обедал твёрдой пищей.",
+      uz: "Barcha 6 implantni bitta seansda qo‘ydim. Uchinchi kuni bemor qattiq ovqat bilan tushlik qildi.",
+      ru: "Все 6 имплантов установил за один сеанс. На третий день пациент уже обедал твёрдой пищей.",
     },
   },
 ];
@@ -238,32 +238,32 @@ const sharedCases: ClinicalCase[] = [
 
 const jamshid: DoctorProfile = {
   id: "jamshid",
-  presetLabel: { uz: "Jarroh-Implantolog & Ortoped", ru: "Хирург-имплантолог и ортопед" },
+  presetLabel: { uz: "Jarroh-implantolog va ortoped", ru: "Хирург-имплантолог и ортопед" },
   name: { uz: "Dr. Jamshid Olimov", ru: "Д-р Джамшид Олимов" },
   signature: "Jamshid Olimov",
   firstName: { uz: "Jamshid", ru: "Джамшид" },
   monogram: "JO",
   title: {
-    uz: "Xalqaro toifadagi Jarroh-Implantolog va Stomatolog-Ortoped",
+    uz: "Xalqaro toifadagi jarroh-implantolog va stomatolog-ortoped",
     ru: "Хирург-имплантолог и стоматолог-ортопед международной категории",
   },
   practice: {
-    uz: "Shaxsiy Stomatologik Amaliyot · Toshkent",
+    uz: "Shaxsiy stomatologik amaliyot · Toshkent",
     ru: "Частная стоматологическая практика · Ташкент",
   },
-  heroLead: { uz: "Stomatologiyada konveyer yo‘q.", ru: "В стоматологии нет конвейера." },
+  heroLead: { uz: "Bu yerda konveyer yo‘q.", ru: "Здесь нет конвейера." },
   heroSub: {
-    uz: "Katta klinikalarda bemor yosh assistentlar qo‘lidan qo‘liga o‘tadi. Bu yerda 3D tashxis, mikro-jarrohlik va yakuniy estetik fiksatsiyani boshidan oxirigacha faqat Dr. Jamshid Olimov o‘zi bajaradi.",
-    ru: "В крупных клиниках пациента передают от ассистента к ассистенту. Здесь 3D-диагностику, микрохирургию и финальную эстетическую фиксацию от начала до конца проводит лично Д-р Джамшид Олимов.",
+    uz: "3D tashxisdan yakuniy tojgacha davolashning har bir bosqichini Dr. Jamshid Olimov o‘zi bajaradi. Sizni assistentlarga topshirmaydi.",
+    ru: "От 3D-диагностики до финальной коронки каждый этап лечения проводит лично Д-р Джамшид Олимов. Без передачи ассистентам.",
   },
   manifesto: {
     uz: [
       "Men 12 yil oldin o‘zimga bitta qoida qo‘ydim: bemorni hech qachon boshqa birovning qo‘liga topshirmayman. Shuning uchun kuniga faqat to‘rt kishini qabul qilaman.",
-      "Har bir implant, har bir toj mening ismim bilan chiqadi. Agar men natijaga o‘zim ishonmasam, uni og‘zingizga qo‘ymayman.",
+      "Har bir implant, har bir toj mening ismim bilan chiqadi. Agar natijaga o‘zim ishonmasam, bu ishni qilmayman.",
     ],
     ru: [
       "12 лет назад я поставил себе одно правило: никогда не передавать пациента в чужие руки. Поэтому я принимаю только четырёх человек в день.",
-      "Каждый имплант и каждая коронка выходят под моим именем. Если я сам не уверен в результате, я не установлю его вам.",
+      "Каждый имплант и каждая коронка выходят под моим именем. Если я сам не уверен в результате, я не возьмусь за работу.",
     ],
   },
   portrait: {
@@ -276,7 +276,7 @@ const jamshid: DoctorProfile = {
     position: "50% 20%",
   },
   stats: [
-    { value: { uz: "12+ YIL", ru: "12+ ЛЕТ" }, label: { uz: "Uzluksiz mikro-jarrohlik tajribasi", ru: "Непрерывной практики в микрохирургии" } },
+    { value: { uz: "12+ yil", ru: "12+ лет" }, label: { uz: "Uzluksiz mikro-jarrohlik tajribasi", ru: "Непрерывной практики в микрохирургии" } },
     { value: { uz: "2,400+", ru: "2\u00A0400+" }, label: { uz: "O‘rnatilgan Osstem va Straumann implantlari", ru: "Установленных имплантов Osstem и Straumann" } },
     { value: { uz: "99.4%", ru: "99,4%" }, label: { uz: "Rasmiy tasdiqlangan osteointegratsiya ko‘rsatkichi", ru: "Подтверждённый показатель остеоинтеграции" } },
   ],
@@ -284,7 +284,7 @@ const jamshid: DoctorProfile = {
     licenseId: "UZ-SSV-0412-2014",
     lines: [
       { uz: "ESCD a’zosi (European Society of Cosmetic Dentistry)", ru: "Член ESCD (European Society of Cosmetic Dentistry)" },
-      { uz: "Carl Zeiss 25x optik kattalashtirish amaliyotchisi", ru: "Практик оптического увеличения Carl Zeiss 25x" },
+      { uz: "Carl Zeiss mikroskopi (25×) bilan ishlaydi", ru: "Работает под микроскопом Carl Zeiss (25×)" },
     ],
   },
   contact: {
@@ -318,7 +318,7 @@ const jamshid: DoctorProfile = {
   services: [
     {
       id: "navigated-implant",
-      title: { uz: "Navigatsion 3D Implantatsiya", ru: "Навигационная 3D-имплантация" },
+      title: { uz: "Navigatsion 3D implantatsiya", ru: "Навигационная 3D-имплантация" },
       lead: {
         uz: "Osstem yoki Straumann implanti 3D shablon bo‘yicha, kesishsiz va choklarsiz o‘rnatiladi.",
         ru: "Имплант Osstem или Straumann по 3D-шаблону, без разрезов и швов.",
@@ -334,10 +334,10 @@ const jamshid: DoctorProfile = {
     },
     {
       id: "all-on-x",
-      title: { uz: "Total Reabilitatsiya (All-on-4 / All-on-6)", ru: "Тотальная реабилитация (All-on-4 / All-on-6)" },
+      title: { uz: "Total reabilitatsiya (All-on-4 / All-on-6)", ru: "Тотальная реабилитация (All-on-4 / All-on-6)" },
       lead: {
-        uz: "Butun jag‘ni 3–5 kun ichida tiklash. Doimiy protez bilan uyga qaytasiz.",
-        ru: "Восстановление всей челюсти за 3–5 дней. Уходите домой с постоянным протезом.",
+        uz: "Butun jag‘ni 3–5 kun ichida tiklash. Uyga olinmaydigan protez bilan qaytasiz.",
+        ru: "Восстановление всей челюсти за 3–5 дней. Уходите домой с несъёмным протезом.",
       },
       specs: [{ uz: "4 yoki 6 implant", ru: "4 или 6 имплантов" }],
       calcProblem: "fullArch",
@@ -345,7 +345,7 @@ const jamshid: DoctorProfile = {
     },
     {
       id: "micro-veneers",
-      title: { uz: "Mualliflik Mikro-Vinirlari (E-max & Sirkoniy)", ru: "Авторские микро-виниры (E-max и цирконий)" },
+      title: { uz: "Mikro-vinirlar (E-max va sirkoniy)", ru: "Авторские микро-виниры (E-max и цирконий)" },
       lead: {
         uz: "Tabiiy shaffoflik, tishni agressiv charxlamasdan.",
         ru: "Естественная прозрачность без агрессивной обточки зубов.",
@@ -362,8 +362,8 @@ const jamshid: DoctorProfile = {
         ru: "Спасение сложных зубов под микроскопом",
       },
       lead: {
-        uz: "Endodontiya va gnatologiya: boshqalar “olib tashlash kerak” degan tishlarni saqlaymiz.",
-        ru: "Эндодонтия и гнатология: сохраняем зубы, которые другие советуют удалить.",
+        uz: "Endodontiya: boshqalar “olib tashlash kerak” degan tishlarni saqlab qolaman.",
+        ru: "Эндодонтия: сохраняю зубы, которые другие советуют удалить.",
       },
       specs: [{ uz: "Carl Zeiss 25x", ru: "Carl Zeiss 25x" }],
       image: "/images/microscope.jpg",
@@ -397,7 +397,7 @@ const jamshid: DoctorProfile = {
     {
       id: "escd",
       city: { uz: "Brussel", ru: "Брюссель" },
-      country: { uz: "Yevropa", ru: "Европа" },
+      country: { uz: "Belgiya", ru: "Бельгия" },
       institution: "European Society of Cosmetic Dentistry",
       program: { uz: "Faol a’zolik va estetik restavratsiya standarti", ru: "Действительное членство и стандарт эстетической реставрации" },
       year: 2022,
@@ -421,22 +421,22 @@ const jamshid: DoctorProfile = {
 const sardor: DoctorProfile = {
   ...jamshid,
   id: "sardor",
-  presetLabel: { uz: "Estetik Stomatolog · Mikro-Vinirlar", ru: "Эстетический стоматолог · Микро-виниры" },
+  presetLabel: { uz: "Estetik stomatolog · mikro-vinirlar", ru: "Эстетический стоматолог · Микро-виниры" },
   name: { uz: "Dr. Sardor Rahimov", ru: "Д-р Сардор Рахимов" },
   signature: "Sardor Rahimov",
   firstName: { uz: "Sardor", ru: "Сардор" },
   monogram: "SR",
   title: {
-    uz: "Estetik Stomatolog · Mikro-Vinirlar va Gnatologiya mutaxassisi",
+    uz: "Estetik stomatolog · mikro-vinirlar va gnatologiya mutaxassisi",
     ru: "Эстетический стоматолог · специалист по микро-винирам и гнатологии",
   },
   practice: {
-    uz: "Shaxsiy Estetik Stomatologiya Studiyasi · Toshkent",
+    uz: "Shaxsiy estetik stomatologiya studiyasi · Toshkent",
     ru: "Частная студия эстетической стоматологии · Ташкент",
   },
   heroLead: { uz: "Tabassum shablon emas.", ru: "Улыбка не по шаблону." },
   heroSub: {
-    uz: "Har bir vinir yuzingiz, ovozingiz va tishlash tizimingiz asosida loyihalanadi. Dizayndan fiksatsiyagacha Dr. Sardor Rahimov o‘zi ishlaydi.",
+    uz: "Har bir vinir yuzingiz, mimikangiz va tishlashingiz asosida loyihalanadi. Dizayndan fiksatsiyagacha Dr. Sardor Rahimov o‘zi ishlaydi.",
     ru: "Каждый винир проектируется по вашему лицу, мимике и прикусу. От дизайна до фиксации работает лично Д-р Сардор Рахимов.",
   },
   manifesto: {
@@ -459,7 +459,7 @@ const sardor: DoctorProfile = {
     position: "50% 18%",
   },
   stats: [
-    { value: { uz: "9+ YIL", ru: "9+ ЛЕТ" }, label: { uz: "Estetik restavratsiya tajribasi", ru: "Опыта в эстетической реставрации" } },
+    { value: { uz: "9+ yil", ru: "9+ лет" }, label: { uz: "Estetik restavratsiya tajribasi", ru: "Опыта в эстетической реставрации" } },
     { value: { uz: "1,850+", ru: "1\u00A0850+" }, label: { uz: "O‘rnatilgan E-max va sirkoniy vinirlar", ru: "Установленных виниров E-max и цирконий" } },
     { value: { uz: "0.3 mm", ru: "0,3 мм" }, label: { uz: "Minimal preparatsiya qalinligi", ru: "Минимальная толщина препарирования" } },
   ],
@@ -489,7 +489,7 @@ const sardor: DoctorProfile = {
   services: [
     {
       id: "micro-veneers",
-      title: { uz: "Mualliflik Mikro-Vinirlari (E-max & Sirkoniy)", ru: "Авторские микро-виниры (E-max и цирконий)" },
+      title: { uz: "Mikro-vinirlar (E-max va sirkoniy)", ru: "Авторские микро-виниры (E-max и цирконий)" },
       lead: {
         uz: "0.3 mm qalinlikdagi vinirlar: tabiiy shaffoflik, tishni agressiv charxlamasdan.",
         ru: "Виниры толщиной от 0.3 мм: естественная прозрачность без агрессивной обточки.",
@@ -497,7 +497,7 @@ const sardor: DoctorProfile = {
       specs: [
         { uz: "Raqamli dizayn + mock-up", ru: "Цифровой дизайн + mock-up" },
         { uz: "2 tashrif, 9 kun", ru: "2 визита, 9 дней" },
-        { uz: "Kafolat: 10 yil yozma", ru: "Гарантия: 10 лет письменно" },
+        { uz: "Kafolat: 5 yil yozma", ru: "Гарантия: 5 лет письменно" },
       ],
       image: "/images/case-veneers.jpg",
       calcProblem: "aesthetic",
@@ -515,7 +515,7 @@ const sardor: DoctorProfile = {
     },
     {
       id: "navigated-implant",
-      title: { uz: "Navigatsion 3D Implantatsiya", ru: "Навигационная 3D-имплантация" },
+      title: { uz: "Navigatsion 3D implantatsiya", ru: "Навигационная 3D-имплантация" },
       lead: {
         uz: "Estetik zonada implant: shablon bo‘yicha, kesishsiz.",
         ru: "Имплант в эстетической зоне: по шаблону, без разрезов.",
@@ -529,8 +529,8 @@ const sardor: DoctorProfile = {
       id: "micro-endo",
       title: { uz: "Mikroskop ostida tishni saqlab qolish", ru: "Сохранение зуба под микроскопом" },
       lead: {
-        uz: "Endodontiya: boshqalar “olib tashlash kerak” degan tishlarni saqlaymiz.",
-        ru: "Эндодонтия: сохраняем зубы, которые другие советуют удалить.",
+        uz: "Endodontiya: boshqalar “olib tashlash kerak” degan tishlarni saqlab qolaman.",
+        ru: "Эндодонтия: сохраняю зубы, которые другие советуют удалить.",
       },
       specs: [{ uz: "Carl Zeiss 25x", ru: "Carl Zeiss 25x" }],
       image: "/images/microscope.jpg",
@@ -561,7 +561,7 @@ const sardor: DoctorProfile = {
     {
       id: "escd",
       city: { uz: "Brussel", ru: "Брюссель" },
-      country: { uz: "Yevropa", ru: "Европа" },
+      country: { uz: "Belgiya", ru: "Бельгия" },
       institution: "European Society of Cosmetic Dentistry",
       program: { uz: "Faol a’zolik va estetik restavratsiya standarti", ru: "Действительное членство и стандарт эстетической реставрации" },
       year: 2023,

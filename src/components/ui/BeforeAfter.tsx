@@ -106,20 +106,20 @@ export function BeforeAfter({ before, after, focus, alt, beforeLabel, afterLabel
       </div>
 
       {blurred ? (
-        <p className="glass pointer-events-none absolute bottom-4 left-1/2 inline-flex w-max max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full px-3.5 py-2 text-[12px] leading-snug text-ink">
+        <p className="pointer-events-none border border-line bg-card absolute bottom-4 left-1/2 inline-flex w-max max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-2 rounded-full px-3.5 py-2 text-[12px] leading-snug text-ink">
           <EyeOff size={14} strokeWidth={1.7} className="shrink-0" /> {comfortHint}
         </p>
       ) : null}
 
-      <span className="pointer-events-none absolute top-4 left-4 rounded-full bg-obsidian/70 px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] text-alabaster backdrop-blur">
+      <span className="pointer-events-none absolute top-4 left-4 rounded-full bg-night/70 px-3 py-1.5 tabular-nums text-[12px] tracking-[0.1em] text-paper backdrop-blur">
         {beforeLabel}
       </span>
-      <span className="pointer-events-none absolute top-4 right-4 rounded-full bg-alabaster/85 px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] text-emerald backdrop-blur">
+      <span className="pointer-events-none absolute top-4 right-4 rounded-full bg-paper/85 px-3 py-1.5 tabular-nums text-[12px] tracking-[0.1em] text-accent backdrop-blur">
         {afterLabel}
       </span>
 
       {/* Handle */}
-      <div className="pointer-events-none absolute inset-y-0 left-[var(--pos)] w-px -translate-x-1/2 bg-alabaster shadow-[0_0_0_1px_rgb(18_21_24/0.08)]" />
+      <div className="pointer-events-none absolute inset-y-0 left-[var(--pos)] w-px -translate-x-1/2 bg-paper shadow-[0_0_0_1px_rgb(18_21_24/0.08)]" />
       <div
         ref={handle}
         role="slider"
@@ -129,7 +129,7 @@ export function BeforeAfter({ before, after, focus, alt, beforeLabel, afterLabel
         aria-valuemax={100}
         aria-valuenow={50}
         onKeyDown={onKey}
-        className="absolute top-1/2 left-[var(--pos)] grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/70 bg-alabaster text-emerald shadow-[var(--shadow-lift)] focus-visible:outline-2"
+        className="absolute top-1/2 left-[var(--pos)] grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/70 bg-paper text-accent shadow-[var(--shadow-lift)] focus-visible:outline-2"
       >
         <ChevronsLeftRight size={20} strokeWidth={1.6} />
       </div>

@@ -54,13 +54,13 @@ export function DemoSwitcher() {
   return (
     <div ref={wrap} className="fixed bottom-[92px] left-3 z-[55] md:bottom-5 md:left-5">
       {open ? (
-        <div id="demo-panel" className="enter mb-3 w-[min(320px,calc(100vw-24px))] rounded-[16px] border border-obsidian-line bg-obsidian p-4 text-alabaster shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.35s" }}>
+        <div id="demo-panel" className="enter mb-3 w-[min(320px,calc(100vw-24px))] rounded-[16px] border border-night-line bg-night p-4 text-paper shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.35s" }}>
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-[14px] font-medium">{t.demo.title}</p>
-              <p className="mt-0.5 text-[12.5px] leading-snug text-alabaster/60">{t.demo.sub}</p>
+              <p className="mt-0.5 text-[12.5px] leading-snug text-paper/60">{t.demo.sub}</p>
             </div>
-            <button type="button" onClick={() => setOpen(false)} aria-label={t.modal.close} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-alabaster/70 hover:bg-obsidian-2 hover:text-alabaster">
+            <button type="button" onClick={() => setOpen(false)} aria-label={t.modal.close} className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-paper/70 hover:bg-night-2 hover:text-paper">
               <X size={16} strokeWidth={1.7} />
             </button>
           </div>
@@ -75,27 +75,27 @@ export function DemoSwitcher() {
                     aria-pressed={active}
                     onClick={() => setPresetId(id)}
                     className={`flex w-full items-center gap-3 rounded-[14px] border p-2.5 text-left transition ${
-                      active ? "border-bronze/60 bg-obsidian-2" : "border-obsidian-line hover:bg-obsidian-2/70"
+                      active ? "border-accent/60 bg-night-2" : "border-night-line hover:bg-night-2/70"
                     }`}
                   >
-                    <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-obsidian-2">
+                    <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-night-2">
                       <SafeImage src={p.portrait.src} alt="" fill sizes="44px" className="object-cover" style={{ objectPosition: p.portrait.position }} />
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-[14px] font-medium">{p.name[lang]}</span>
-                      <span className="block truncate text-[12px] text-alabaster/55">{p.presetLabel[lang]}</span>
+                      <span className="block truncate text-[12px] text-paper/55">{p.presetLabel[lang]}</span>
                     </span>
-                    {active ? <Check size={16} strokeWidth={2} className="shrink-0 text-bronze-light" /> : null}
+                    {active ? <Check size={16} strokeWidth={2} className="shrink-0 text-accent-light" /> : null}
                   </button>
                 </li>
               );
             })}
           </ul>
-          <div className="mt-4 flex items-center justify-between border-t border-obsidian-line pt-4">
-            <span className="text-[12.5px] text-alabaster/60">{t.demo.lang}</span>
+          <div className="mt-4 flex items-center justify-between border-t border-night-line pt-4">
+            <span className="text-[12.5px] text-paper/60">{t.demo.lang}</span>
             <LangToggle tone="dark" />
           </div>
-          <p className="mt-3 font-mono text-[12px] text-alabaster/60">{t.demo.hint}</p>
+          <p className="mt-3 tabular-nums text-[12px] text-paper/60">{t.demo.hint}</p>
         </div>
       ) : null}
       <button
@@ -104,7 +104,7 @@ export function DemoSwitcher() {
         aria-expanded={open}
         aria-controls="demo-panel"
         aria-label={t.demo.toggle}
-        className="group inline-flex h-10 items-center rounded-full border border-obsidian-line bg-obsidian/90 px-[11px] font-mono text-[12px] tracking-[0.04em] text-alabaster/85 shadow-[var(--shadow-soft)] backdrop-blur transition hover:text-alabaster"
+        className="group inline-flex h-10 items-center rounded-full border border-night-line bg-night/90 px-[11px] tabular-nums text-[12px] tracking-[0.04em] text-paper/85 shadow-[var(--shadow-soft)] backdrop-blur transition hover:text-paper"
       >
         <Settings2 size={16} strokeWidth={1.6} className={`shrink-0 transition-transform duration-500 ${open ? "rotate-90" : ""}`} />
         <span

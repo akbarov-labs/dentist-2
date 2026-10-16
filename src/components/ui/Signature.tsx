@@ -8,7 +8,7 @@ interface SignatureProps {
 
 /** Handwritten signature that draws itself in once scrolled into view. */
 export function Signature({ name, className = "h-14 w-auto", tone = "ink" }: SignatureProps) {
-  const ink = tone === "ink" ? "var(--color-ink)" : "var(--color-alabaster)";
+  const ink = tone === "ink" ? "var(--color-ink)" : "var(--color-paper)";
   return (
     <Reveal bare className="inline-block">
       <svg viewBox="0 0 340 96" className={`signature-reveal ${className}`} role="img" aria-label={name}>
@@ -25,8 +25,9 @@ export function Signature({ name, className = "h-14 w-auto", tone = "ink" }: Sig
         <path
           d="M14 78 C 70 70, 150 88, 236 74 S 318 60, 330 66"
           fill="none"
-          stroke="var(--color-bronze)"
-          strokeWidth="1.3"
+          stroke="var(--color-accent)"
+          strokeOpacity="0.45"
+          strokeWidth="1.2"
           strokeLinecap="round"
         />
       </svg>

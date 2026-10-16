@@ -32,7 +32,7 @@ export function Footer() {
             <ul className="grid grid-cols-2 gap-x-6 lg:grid-cols-1">
               {NAV_IDS.map((id, i) => (
                 <li key={id}>
-                  <a href={`#${id}`} onClick={(e) => (e.preventDefault(), scrollToId(id))} className="inline-flex min-h-11 items-center text-[14.5px] text-ink-soft transition hover:text-emerald">
+                  <a href={`#${id}`} onClick={(e) => (e.preventDefault(), scrollToId(id))} className="inline-flex min-h-11 items-center text-[14.5px] text-ink-soft transition hover:text-accent">
                     {labels[i]}
                   </a>
                 </li>
@@ -42,23 +42,23 @@ export function Footer() {
 
           <ul className="space-y-0.5 text-[14.5px] lg:col-span-4">
             <li>
-              <a href={phoneHref(doctor.contact.phone)} className="inline-flex min-h-11 items-center gap-2.5 font-mono text-ink transition hover:text-emerald">
-                <Phone size={16} strokeWidth={1.6} className="text-emerald" /> {doctor.contact.phone}
+              <a href={phoneHref(doctor.contact.phone)} className="inline-flex min-h-11 items-center gap-2.5 tabular-nums text-ink transition hover:text-accent">
+                <Phone size={16} strokeWidth={1.6} className="text-accent" /> {doctor.contact.phone}
               </a>
             </li>
             <li>
-              <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-emerald">
-                <Send size={16} strokeWidth={1.6} className="text-emerald" /> @{doctor.contact.telegram}
+              <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-accent">
+                <Send size={16} strokeWidth={1.6} className="text-accent" /> @{doctor.contact.telegram}
               </a>
             </li>
             <li>
-              <a href={instagramLink(doctor.contact.instagram)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-emerald">
-                <AtSign size={16} strokeWidth={1.6} className="text-emerald" /> @{doctor.contact.instagram}
+              <a href={instagramLink(doctor.contact.instagram)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-accent">
+                <AtSign size={16} strokeWidth={1.6} className="text-accent" /> @{doctor.contact.instagram}
               </a>
             </li>
             <li>
-              <a href={`mailto:${doctor.contact.email}`} className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-emerald">
-                <Mail size={16} strokeWidth={1.6} className="text-emerald" /> {doctor.contact.email}
+              <a href={`mailto:${doctor.contact.email}`} className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-accent">
+                <Mail size={16} strokeWidth={1.6} className="text-accent" /> {doctor.contact.email}
               </a>
             </li>
             <li className="pt-2 text-muted">{doctor.address.full[lang]}</li>
@@ -69,7 +69,7 @@ export function Footer() {
           <p>
             © {year ? `${year} ` : ""}{doctor.name[lang]}. {t.footer.rights}
           </p>
-          <p className="font-mono">
+          <p className="tabular-nums">
             {t.footer.license}: {doctor.idCard.licenseId}
           </p>
         </div>

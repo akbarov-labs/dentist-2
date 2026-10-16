@@ -10,7 +10,7 @@ type SafeImageProps = Omit<ImageProps, "onError"> & {
 
 /**
  * next/image with a designed fallback: if a photo is missing or blocked,
- * an emerald-to-stone surface with a label takes its place instead of a broken icon.
+ * an accent-to-stone surface with a label takes its place instead of a broken icon.
  */
 export function SafeImage({ fallbackLabel, className = "", alt, ...props }: SafeImageProps) {
   const [failed, setFailed] = useState(false);
@@ -20,10 +20,10 @@ export function SafeImage({ fallbackLabel, className = "", alt, ...props }: Safe
       <div
         role="img"
         aria-label={alt}
-        className={`absolute inset-0 flex items-end bg-[radial-gradient(120%_90%_at_20%_10%,#e6e2da_0%,#c9d6d2_45%,#0f3d3e_100%)] p-5 ${className}`}
+        className={`absolute inset-0 flex items-end bg-[radial-gradient(120%_90%_at_20%_10%,#eceeea_0%,#c9d8d1_45%,#355e54_100%)] p-5 ${className}`}
       >
         {fallbackLabel ? (
-          <span className="font-mono text-[12px] tracking-[0.14em] text-alabaster/90 uppercase">{fallbackLabel}</span>
+          <span className="tabular-nums text-[12px] tracking-[0.14em] text-paper/90 uppercase">{fallbackLabel}</span>
         ) : null}
       </div>
     );

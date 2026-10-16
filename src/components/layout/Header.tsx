@@ -77,13 +77,18 @@ export function Header() {
   const status = (compact: boolean) => (
     <span title={`${doctor.hours.days[lang]}, ${doctor.hours.time}`} className="inline-flex items-center gap-2 text-[13px] whitespace-nowrap text-ink-soft">
       <span
-        className={`live-dot relative h-2 w-2 rounded-full ${open === false ? "bg-bronze text-bronze" : "bg-[#2f8f5b] text-[#2f8f5b]"}`}
+        className={`h-2 w-2 rounded-full ${open === false ? "bg-ink/30" : "bg-accent"}`}
         aria-hidden
       />
+      {/* Open/closed is spelled out, not left to the dot colour; the hours label covers the moment before the clock is read. */}
       <span>
-        {t.status.label}: <span className={compact ? "" : "hidden"}>{doctor.hours.daysShort[lang]}</span>
-        <span className={compact ? "hidden" : ""}>{doctor.hours.days[lang]}</span>
-        <span className="sr-only">. {open ? t.status.openNow : t.status.closedNow}</span>
+        {open === null ? `${t.status.label}: ${doctor.hours.daysShort[lang]}` : open ? t.status.openNow : t.status.closedNow}
+        {compact ? null : (
+          <span className="text-muted">
+            {" "}
+            · {doctor.hours.days[lang]}, {doctor.hours.time}
+          </span>
+        )}
       </span>
     </span>
   );
@@ -92,13 +97,13 @@ export function Header() {
     <>
       <a
         href="#main"
-        className="sr-only z-[80] rounded-full bg-emerald px-4 py-2 text-alabaster focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="sr-only z-[80] rounded-full bg-accent px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
         {t.nav.skip}
       </a>
       <header
         className={`sticky top-0 z-50 transition-[background-color,box-shadow,border-color] duration-500 ${
-          scrolled ? "border-b border-line/80 bg-alabaster/85 backdrop-blur-xl" : "border-b border-transparent bg-alabaster"
+          scrolled ? "border-b border-line/80 bg-paper/85 backdrop-blur-xl" : "border-b border-transparent bg-paper"
         }`}
       >
         <div className="shell flex h-[68px] items-center gap-4 lg:h-[76px]">
@@ -121,12 +126,12 @@ export function Header() {
                     onClick={(e) => (e.preventDefault(), go(id))}
                     aria-current={active === id ? "true" : undefined}
                     className={`relative rounded-full px-2 py-2 text-[13.5px] whitespace-nowrap transition-colors ${
-                      active === id ? "text-emerald" : "text-ink-soft hover:text-ink"
+                      active === id ? "text-accent" : "text-ink-soft hover:text-ink"
                     }`}
                   >
                     {labels[id]}
                     <span
-                      className={`absolute inset-x-2 -bottom-0.5 h-px origin-left bg-bronze transition-transform duration-500 ${
+                      className={`absolute inset-x-2 -bottom-0.5 h-px origin-left bg-accent transition-transform duration-500 ${
                         active === id ? "scale-x-100" : "scale-x-0"
                       }`}
                     />
@@ -167,10 +172,10 @@ export function Header() {
             type="button"
             tabIndex={-1}
             aria-label={t.nav.close}
-            className="absolute inset-0 bg-obsidian/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-night/40 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
-          <div className="enter absolute inset-y-0 right-0 flex w-full max-w-[400px] flex-col bg-alabaster px-6 pt-5 pb-8 shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.4s" }}>
+          <div className="enter absolute inset-y-0 right-0 flex w-full max-w-[400px] flex-col bg-paper px-6 pt-5 pb-8 shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.4s" }}>
             <div className="flex items-center justify-between">
               <LangToggle />
               <button
@@ -184,14 +189,13 @@ export function Header() {
               </button>
             </div>
             <ul className="mt-10 space-y-1">
-              {NAV_IDS.map((id, i) => (
+              {NAV_IDS.map((id) => (
                 <li key={id}>
                   <a
                     href={`#${id}`}
                     onClick={(e) => (e.preventDefault(), go(id))}
-                    className="flex items-baseline gap-4 py-3 font-display text-[28px] tracking-[-0.01em] text-ink"
+                    className="flex py-3 font-display text-[28px] tracking-[-0.01em] text-ink"
                   >
-                    <span className="font-mono text-[12px] text-bronze-deep">0{i + 1}</span>
                     {labels[id]}
                   </a>
                 </li>

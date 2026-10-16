@@ -21,7 +21,7 @@ export function Faq() {
             </h2>
             <p className="mt-4 max-w-[34ch] text-[16px] leading-relaxed text-muted">{t.faq.sub}</p>
             <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className={`${btnSecondary} mt-7`}>
-              <Send size={16} strokeWidth={1.7} className="text-emerald" /> @{doctor.contact.telegram}
+              <Send size={16} strokeWidth={1.7} className="text-accent" /> @{doctor.contact.telegram}
             </a>
           </div>
         </Reveal>
@@ -41,13 +41,10 @@ export function Faq() {
                       onClick={() => setOpen(isOpen ? null : i)}
                       className="flex w-full items-center justify-between gap-6 py-6 text-left"
                     >
-                      <span className="flex items-baseline gap-4">
-                        <span className="font-mono text-[12px] text-bronze-deep">0{i + 1}</span>
-                        <span className="text-[18px] leading-snug font-medium text-ink sm:text-[19px]">{item.q}</span>
-                      </span>
+                      <span className="text-[18px] leading-snug font-medium text-ink sm:text-[19px]">{item.q}</span>
                       <span
                         className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border transition duration-300 ${
-                          isOpen ? "rotate-45 border-emerald bg-emerald text-alabaster" : "border-line text-ink"
+                          isOpen ? "rotate-45 border-accent bg-accent text-paper" : "border-line text-ink"
                         }`}
                       >
                         <Plus size={16} strokeWidth={1.7} />
@@ -61,7 +58,7 @@ export function Faq() {
                     className={`grid transition-[grid-template-rows] duration-500 ease-[var(--ease-atelier)] ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                   >
                     <div className="overflow-hidden" inert={!isOpen}>
-                      <p className="max-w-[64ch] pb-7 pl-9 text-[16px] leading-relaxed text-muted">{item.a}</p>
+                      <p className="max-w-[64ch] pb-7 text-[16px] leading-relaxed text-muted">{item.a}</p>
                     </div>
                   </div>
                 </li>

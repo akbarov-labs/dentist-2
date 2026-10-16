@@ -71,7 +71,7 @@ export function Modal({ open, onClose, labelledBy, closeLabel, children, classNa
         aria-label={closeLabel}
         tabIndex={-1}
         onClick={onClose}
-        className="enter absolute inset-0 cursor-default bg-obsidian/55 backdrop-blur-sm"
+        className="enter absolute inset-0 cursor-default bg-night/55 backdrop-blur-sm"
         style={{ animationDuration: "0.35s" }}
       />
       <div
@@ -79,7 +79,7 @@ export function Modal({ open, onClose, labelledBy, closeLabel, children, classNa
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelledBy}
-        className={`enter relative max-h-[92dvh] w-full overflow-y-auto rounded-t-[16px] bg-alabaster shadow-[var(--shadow-lift)] sm:rounded-[16px] ${className}`}
+        className={`enter relative max-h-[92dvh] w-full overflow-y-auto rounded-t-[16px] bg-paper shadow-[var(--shadow-lift)] sm:rounded-[16px] ${className}`}
       >
         <button
           type="button"

@@ -33,7 +33,7 @@ export function Modals() {
             )}
           </div>
           <div className="p-6 sm:p-9">
-            <p className="inline-flex items-center gap-2 font-mono text-[12px] tracking-[0.14em] text-bronze-deep uppercase">
+            <p className="inline-flex items-center gap-2 tabular-nums text-[12px] tracking-[0.14em] text-accent uppercase">
               <Clock3 size={13} strokeWidth={1.7} /> {t.intro.read}
             </p>
             <h2 id="intro-title" className="mt-3 pr-10 font-display text-[30px] leading-tight text-ink">
@@ -52,7 +52,7 @@ export function Modals() {
               {doctor.stats.map((s) => (
                 <div key={s.label.uz} className="flex flex-col-reverse justify-end rounded-[12px] bg-stone p-3">
                   <dt className="mt-1 text-[12px] leading-snug text-muted">{s.label[lang]}</dt>
-                  <dd className="font-mono text-[16px] text-ink">{s.value[lang]}</dd>
+                  <dd className="tabular-nums text-[16px] text-ink">{s.value[lang]}</dd>
                 </div>
               ))}
             </dl>
@@ -60,11 +60,11 @@ export function Modals() {
             <ul className="mt-6 divide-y divide-line border-y border-line">
               {doctor.credentials.map((c) => (
                 <li key={c.id}>
-                  <button type="button" onClick={() => setModal({ kind: "credential", id: c.id })} className="flex w-full items-center justify-between gap-4 py-3 text-left text-[14.5px] text-ink transition hover:text-emerald">
+                  <button type="button" onClick={() => setModal({ kind: "credential", id: c.id })} className="flex w-full items-center justify-between gap-4 py-3 text-left text-[14.5px] text-ink transition hover:text-accent">
                     <span>
                       {c.city[lang]} · <span className="text-muted">{c.institution}</span>
                     </span>
-                    <span className="inline-flex shrink-0 items-center gap-1 font-mono text-[12px]">
+                    <span className="inline-flex shrink-0 items-center gap-1 tabular-nums text-[12px]">
                       {c.year} <ArrowUpRight size={14} strokeWidth={1.7} />
                     </span>
                   </button>
@@ -78,10 +78,10 @@ export function Modals() {
       <Modal open={!!credential} onClose={close} labelledBy="cert-title" closeLabel={t.modal.close} className="sm:max-w-[760px]">
         {credential ? (
           <div className="p-4 sm:p-8">
-            <div className="relative rounded-[12px] border border-bronze/50 bg-card p-2">
-              <div className="rounded-[8px] border border-bronze/30 px-6 py-10 text-center sm:px-12 sm:py-12">
+            <div className="relative rounded-[12px] border border-accent/50 bg-card p-2">
+              <div className="rounded-[8px] border border-accent/30 px-6 py-10 text-center sm:px-12 sm:py-12">
                 <Monogram letters={doctor.monogram} className="mx-auto h-14 w-14" />
-                <p className="mt-6 font-mono text-[12px] tracking-[0.14em] text-bronze-deep uppercase">Certificate of Completion</p>
+                <p className="mt-6 tabular-nums text-[12px] tracking-[0.14em] text-accent uppercase">Certificate of Completion</p>
                 <h2 id="cert-title" className="mt-4 font-display text-[28px] leading-tight text-ink sm:text-[34px]">
                   {credential.program[lang]}
                 </h2>
@@ -95,23 +95,23 @@ export function Modals() {
                 <dl className="mx-auto mt-8 grid max-w-[460px] grid-cols-3 gap-3 border-t border-line pt-6 text-left">
                   <div>
                     <dt className="text-[12px] text-muted">{t.credentials.issued}</dt>
-                    <dd className="mt-1 font-mono text-[14px] text-ink">{credential.year}</dd>
+                    <dd className="mt-1 tabular-nums text-[14px] text-ink">{credential.year}</dd>
                   </div>
                   <div>
                     <dt className="text-[12px] text-muted">{t.credentials.program}</dt>
-                    <dd className="mt-1 font-mono text-[14px] text-ink">
+                    <dd className="mt-1 tabular-nums text-[14px] text-ink">
                       {credential.hours} {t.credentials.hours}
                     </dd>
                   </div>
                   <div>
                     <dt className="text-[12px] text-muted">{t.credentials.id}</dt>
-                    <dd className="mt-1 font-mono text-[12.5px] break-all text-ink">{credential.certificateId}</dd>
+                    <dd className="mt-1 tabular-nums text-[12.5px] break-all text-ink">{credential.certificateId}</dd>
                   </div>
                 </dl>
                 <div className="mt-8 flex items-end justify-center gap-6">
                   <Signature name={doctor.signature} className="h-12 w-auto" />
-                  <span aria-hidden className="relative grid h-16 w-16 place-items-center rounded-full border-2 border-emerald/70 text-emerald">
-                    <span className="absolute inset-1.5 rounded-full border border-dashed border-emerald/50" />
+                  <span aria-hidden className="relative grid h-16 w-16 place-items-center rounded-full border-2 border-accent/70 text-accent">
+                    <span className="absolute inset-1.5 rounded-full border border-dashed border-accent/50" />
                     <BadgeCheck size={22} strokeWidth={1.5} />
                   </span>
                 </div>

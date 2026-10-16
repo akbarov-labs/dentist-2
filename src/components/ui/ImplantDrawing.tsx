@@ -82,8 +82,8 @@ export function applyDrawing(root: HTMLElement | null, p: number) {
 }
 
 const INK = "rgb(247 245 240 / 0.78)";
-const BRONZE = "#c9ad83";
-const GROUND = "#1a1e22";
+const BRONZE = "#a9c5bb";
+const GROUND = "#1f2925";
 
 const TOOTH =
   "M58 212 C 50 172 54 134 76 120 C 94 108 124 110 138 124 C 152 140 150 180 142 212 L 136 212 C 130 272 120 336 114 390 C 112 402 100 404 94 392 C 80 350 70 280 66 212 Z";
@@ -158,7 +158,7 @@ export function ImplantDrawing({ title }: { title: string }) {
       <path d={CROWN} stroke="rgb(247 245 240 / 0.95)" strokeWidth="1.8" {...draw(3.3, 3.75)} />
       <circle cx="334" cy="64" r="30" stroke={BRONZE} strokeWidth="1.2" {...draw(3.6, 3.85)} />
       <path d="M318 88 L 240 206" stroke={BRONZE} strokeWidth="0.9" strokeDasharray="2 4" {...fade(3.7, 3.9)} />
-      <text x="334" y="69" textAnchor="middle" fill={BRONZE} style={{ fontFamily: "var(--font-mono)", fontSize: 15 }} {...fade(3.75, 3.95)}>
+      <text x="334" y="69" textAnchor="middle" fill={BRONZE} style={{ fontFamily: "var(--font-sans)", fontSize: 15 }} {...fade(3.75, 3.95)}>
         25×
       </text>
 
@@ -177,7 +177,7 @@ export function ImplantDrawing({ title }: { title: string }) {
           <line x1={c.ax} y1={c.ay} x2={c.bx} y2={c.by} stroke="rgb(201 173 131 / 0.6)" strokeWidth="0.8" />
           <circle cx={c.ax} cy={c.ay} r="2" fill={BRONZE} />
           <circle cx={c.bx} cy={c.by} r="10.5" fill={GROUND} stroke={BRONZE} strokeWidth="1" />
-          <text x={c.bx} y={c.by + 3.6} textAnchor="middle" fill="#f7f5f0" style={{ fontFamily: "var(--font-mono)", fontSize: 10.5 }}>
+          <text x={c.bx} y={c.by + 3.6} textAnchor="middle" fill="#f5f6f3" style={{ fontFamily: "var(--font-sans)", fontSize: 10.5 }}>
             {c.n}
           </text>
         </g>

@@ -5,15 +5,12 @@ import { useMemo, useState } from "react";
 import type { CaseCategory } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
 import { BeforeAfter } from "@/components/ui/BeforeAfter";
-import { Monogram } from "@/components/ui/Monogram";
 import { Reveal } from "@/components/ui/Reveal";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { chip } from "@/components/ui/styles";
 
 type Filter = "all" | CaseCategory;
 const FILTERS: Filter[] = ["all", "implant", "veneers", "allOn6"];
-
-const pad = (n: number) => String(n).padStart(2, "0");
 
 export function Cases() {
   const { t, doctor, lang } = useSite();
@@ -45,7 +42,7 @@ export function Cases() {
                 type="button"
                 aria-pressed={filter === f}
                 onClick={() => choose(f)}
-                className={`${chip} h-11 ${filter === f ? "border-emerald bg-emerald text-alabaster" : "border-line bg-card text-ink-soft hover:border-ink/30"}`}
+                className={`${chip} h-11 ${filter === f ? "border-accent bg-accent text-paper" : "border-line bg-card text-ink-soft hover:border-ink/30"}`}
               >
                 {t.cases.filters[f]}
               </button>
@@ -70,14 +67,14 @@ export function Cases() {
                     comfort={comfort}
                     comfortHint={t.cases.comfortHint}
                   />
-                  <div className="mt-2 flex items-center justify-between gap-4">
+                  <div className="mt-2">
                     <label className="inline-flex min-h-11 cursor-pointer items-center gap-3 text-[14px] text-ink-soft">
                       <button
                         type="button"
                         role="switch"
                         aria-checked={comfort}
                         onClick={() => setComfort((c) => !c)}
-                        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-300 ${comfort ? "bg-emerald" : "bg-stone-2"}`}
+                        className={`relative h-7 w-12 shrink-0 rounded-full transition-colors duration-300 ${comfort ? "bg-accent" : "bg-stone-2"}`}
                       >
                         <span
                           className={`absolute top-1 left-1 h-5 w-5 rounded-full bg-card shadow transition-transform duration-300 ease-[var(--ease-atelier)] ${comfort ? "translate-x-5" : ""}`}
@@ -85,9 +82,6 @@ export function Cases() {
                       </button>
                       {t.cases.comfort}
                     </label>
-                    <p className="font-mono text-[12px] text-muted" aria-live="polite">
-                      {pad(safeIndex + 1)} / {pad(list.length)}
-                    </p>
                   </div>
                 </>
               ) : (
@@ -101,20 +95,14 @@ export function Cases() {
                       className="object-cover saturate-[0.85]"
                       style={{ objectPosition: current.focus }}
                     />
-                    <div className="glass absolute right-4 bottom-4 left-4 flex items-start gap-3 rounded-[14px] p-4 sm:right-auto sm:max-w-[400px]">
-                      <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald text-alabaster">
-                        <ShieldCheck size={17} strokeWidth={1.6} />
-                      </span>
-                      <span>
-                        <span className="block text-[15px] font-medium text-ink">{t.cases.privacyTitle}</span>
-                        <span className="mt-1 block text-[13.5px] leading-snug text-ink-soft">{t.cases.privacyBody}</span>
-                      </span>
-                    </div>
                   </div>
-                  <figcaption className="mt-3 flex items-center justify-between gap-4 text-[12.5px] text-muted">
-                    <span>{t.cases.illustrative}</span>
-                    <span className="font-mono" aria-live="polite">
-                      {pad(safeIndex + 1)} / {pad(list.length)}
+                  <figcaption className="mt-4 flex items-start gap-3">
+                    <ShieldCheck size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                    <span>
+                      <span className="block text-[15px] font-medium text-ink">{t.cases.privacyTitle}</span>
+                      <span className="mt-1 block max-w-[60ch] text-[14px] leading-snug text-muted">
+                        {t.cases.privacyBody} {t.cases.illustrative}
+                      </span>
                     </span>
                   </figcaption>
                 </figure>
@@ -145,19 +133,15 @@ export function Cases() {
                   ].map(([k, v], i) => (
                     <div key={k} className={i > 0 ? "border-t border-line pt-5" : ""}>
                       <dt className="text-[13px] text-muted">{k}</dt>
-                      <dd className={`mt-1 leading-snug text-ink ${i > 0 ? "font-mono text-[14.5px]" : "text-[15.5px]"}`}>{v}</dd>
+                      <dd className={`mt-1 leading-snug text-ink ${i > 0 ? "tabular-nums text-[14.5px]" : "text-[15.5px]"}`}>{v}</dd>
                     </div>
                   ))}
                 </dl>
 
                 <figure className="mt-auto pt-7">
-                  <blockquote className="border-t border-line pt-6 font-display text-[18px] leading-snug text-emerald italic">“{current.note[lang]}”</blockquote>
-                  <figcaption className="mt-4 flex items-center gap-3 text-[13px] text-muted">
-                    <Monogram letters={doctor.monogram} className="h-8 w-8" />
-                    <span>
-                      <span className="block font-medium text-ink">{doctor.name[lang]}</span>
-                      {t.cases.note}
-                    </span>
+                  <blockquote className="border-t border-line pt-6 text-[17px] leading-relaxed text-ink-soft">“{current.note[lang]}”</blockquote>
+                  <figcaption className="mt-3 text-[13px] text-muted">
+                    <span className="font-medium text-ink">{doctor.name[lang]}</span>, {t.cases.note.toLowerCase()}
                   </figcaption>
                 </figure>
               </article>

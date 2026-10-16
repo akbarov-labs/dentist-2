@@ -28,12 +28,12 @@ function Segmented<T extends string>({
   return (
     <fieldset>
       <legend className="text-[14px] font-medium text-ink">{label}</legend>
-      <div className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-line bg-alabaster p-1">
+      <div className="mt-2 grid grid-cols-2 gap-1 rounded-full border border-line bg-paper p-1">
         {options.map((o) => (
           <label
             key={o.id}
-            className={`flex h-10 cursor-pointer items-center justify-center rounded-full text-[14px] transition has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-bronze ${
-              value === o.id ? "bg-emerald text-alabaster shadow-sm" : "text-ink-soft hover:text-ink"
+            className={`flex h-10 cursor-pointer items-center justify-center rounded-full text-[14px] transition has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent ${
+              value === o.id ? "bg-accent text-paper shadow-sm" : "text-ink-soft hover:text-ink"
             }`}
           >
             <input type="radio" name={name} value={o.id} checked={value === o.id} onChange={() => onChange(o.id)} className="sr-only" />
@@ -128,7 +128,7 @@ export function Booking() {
   };
 
   const inputCls = (err?: string) =>
-    `mt-2 h-12 w-full rounded-[12px] border bg-alabaster px-4 text-[16px] text-ink placeholder:text-[#7c8085] transition focus:border-emerald focus:bg-card focus:outline-none focus:ring-4 focus:ring-emerald/10 ${
+    `mt-2 h-12 w-full rounded-[12px] border bg-paper px-4 text-[16px] text-ink placeholder:text-[#7c8085] transition focus:border-accent focus:bg-card focus:outline-none focus:ring-4 focus:ring-accent/10 ${
       err ? "border-[#b4432f]" : "border-line"
     }`;
 
@@ -153,7 +153,7 @@ export function Booking() {
               <h2 id="booking-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
                 {t.booking.title}
               </h2>
-              <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">{t.booking.sub.replace("{doctor}", doctor.name[lang])}</p>
+              <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">{t.booking.sub}</p>
             </Reveal>
 
           {/* Form */}
@@ -161,15 +161,15 @@ export function Booking() {
             <div data-booking-card className="rounded-[16px] bg-card p-6 shadow-[var(--shadow-soft)] sm:p-9">
               {status === "success" ? (
                 <div className="hud-in flex min-h-[460px] flex-col items-start justify-center" role="status">
-                  <span className="grid h-14 w-14 place-items-center rounded-full bg-emerald-soft text-emerald">
+                  <span className="grid h-14 w-14 place-items-center rounded-full bg-accent-soft text-accent">
                     <CheckCircle2 size={28} strokeWidth={1.5} />
                   </span>
                   <h3 className="mt-6 font-display text-[30px] leading-tight text-ink">{t.booking.successTitle}</h3>
                   <p className="mt-3 max-w-[46ch] text-[16px] leading-relaxed text-muted">
-                    {t.booking.successBody} <span className="font-mono text-ink">{refNo}</span>
+                    {t.booking.successBody} <span className="tabular-nums text-ink">{refNo}</span>
                   </p>
                   {summary ? (
-                    <p className="mt-5 rounded-[12px] bg-alabaster px-4 py-3 font-mono text-[13px] leading-relaxed text-ink-soft">
+                    <p className="mt-5 rounded-[12px] bg-paper px-4 py-3 tabular-nums text-[13px] leading-relaxed text-ink-soft">
                       {summary.lines.join(" · ")}
                       {summary.price ? <><br />{summary.price}</> : null}
                     </p>
@@ -186,17 +186,17 @@ export function Booking() {
               ) : (
                 <form onSubmit={submit} noValidate className="space-y-6">
                   {summary ? (
-                    <div className="hud-in flex items-start justify-between gap-4 rounded-[16px] border border-emerald/20 bg-emerald-soft/70 p-4">
+                    <div className="hud-in flex items-start justify-between gap-4 rounded-[16px] border border-accent/20 bg-accent-soft/70 p-4">
                       <div className="flex items-start gap-3">
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-emerald text-alabaster">
+                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-paper">
                           {prefill?.kind === "calculator" ? <Calculator size={16} strokeWidth={1.7} /> : <Sparkles size={16} strokeWidth={1.7} />}
                         </span>
                         <div>
-                          <p className="text-[12.5px] font-medium text-emerald">
+                          <p className="text-[12.5px] font-medium text-accent">
                             {prefill?.kind === "calculator" ? t.booking.selected : t.booking.service}
                           </p>
                           <p className="mt-1 text-[14.5px] leading-snug text-ink">{summary.lines.join(" · ")}</p>
-                          {summary.price ? <p className="mt-1 font-mono text-[13px] text-emerald">{summary.price}</p> : null}
+                          {summary.price ? <p className="mt-1 tabular-nums text-[13px] text-accent">{summary.price}</p> : null}
                         </div>
                       </div>
                       <button type="button" onClick={() => setPrefill(null)} aria-label={t.booking.remove} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-soft transition hover:bg-card">
@@ -235,7 +235,7 @@ export function Booking() {
                         {t.booking.phone}
                       </label>
                       <div className="relative">
-                        <span className="pointer-events-none absolute top-1/2 left-4 mt-1 -translate-y-1/2 font-mono text-[15px] text-ink-soft">+998</span>
+                        <span className="pointer-events-none absolute top-1/2 left-4 mt-1 -translate-y-1/2 tabular-nums text-[15px] text-ink-soft">+998</span>
                         <input
                           id="bk-phone"
                           name="phone"
@@ -247,7 +247,7 @@ export function Booking() {
                           placeholder="90 123 45 67"
                           aria-invalid={!!errors.phone}
                           aria-describedby={errors.phone ? "bk-phone-err" : undefined}
-                          className={`${inputCls(errors.phone)} pl-[4.25rem] font-mono`}
+                          className={`${inputCls(errors.phone)} pl-[4.25rem] tabular-nums`}
                         />
                       </div>
                       {errors.phone ? (
@@ -290,7 +290,7 @@ export function Booking() {
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                       placeholder={t.booking.commentPh}
-                      className="mt-2 w-full resize-none rounded-[12px] border border-line bg-alabaster px-4 py-3 text-[16px] text-ink placeholder:text-[#7c8085] transition focus:border-emerald focus:bg-card focus:ring-4 focus:ring-emerald/10 focus:outline-none"
+                      className="mt-2 w-full resize-none rounded-[12px] border border-line bg-paper px-4 py-3 text-[16px] text-ink placeholder:text-[#7c8085] transition focus:border-accent focus:bg-card focus:ring-4 focus:ring-accent/10 focus:outline-none"
                     />
                   </div>
 
@@ -324,17 +324,17 @@ export function Booking() {
         {/* Concierge + map */}
         <div className="mt-16 grid gap-6 lg:grid-cols-12 lg:gap-8">
             <Reveal delay={100} className="lg:col-span-5">
-              <div className="relative h-full overflow-hidden rounded-[16px] bg-emerald p-6 text-alabaster sm:p-8">
+              <div className="relative h-full overflow-hidden rounded-[16px] bg-accent p-6 text-paper sm:p-8">
                 <h3 className="font-display text-[22px] leading-tight">{t.booking.tgTitle}</h3>
-                <p className="mt-2 text-[14.5px] leading-relaxed text-alabaster/75">{t.booking.tgBody}</p>
-                <p className="mt-5 rounded-[16px] rounded-bl-[4px] bg-alabaster/10 px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line text-alabaster/90">
+                <p className="mt-2 text-[14.5px] leading-relaxed text-paper/75">{t.booking.tgBody}</p>
+                <p className="mt-5 rounded-[16px] rounded-bl-[4px] bg-paper/10 px-4 py-3 text-[13px] leading-relaxed whitespace-pre-line text-paper/90">
                   {tgText}
                 </p>
                 <a
                   href={telegramLink(doctor.contact.telegram, tgText)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-alabaster px-6 py-3 text-center text-[15px] leading-tight font-medium text-emerald transition hover:bg-white active:translate-y-px"
+                  className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-paper px-6 py-3 text-center text-[15px] leading-tight font-medium text-accent transition hover:bg-white active:translate-y-px"
                 >
                   <Send size={16} strokeWidth={1.7} className="shrink-0" /> {t.booking.tgTitle}
                 </a>
@@ -355,16 +355,16 @@ export function Booking() {
                 <div className="p-6">
                   <h3 className="font-display text-[20px] leading-tight text-ink">{t.booking.mapTitle}</h3>
                   <p className="mt-2 flex items-start gap-2 text-[16px] leading-snug text-ink">
-                    <MapPin size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-emerald" />
+                    <MapPin size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
                     {doctor.address.full[lang]}
                   </p>
                   <p className="mt-1 pl-[26px] text-[13.5px] text-muted">{doctor.address.landmark[lang]}</p>
                   <p className="mt-3 flex items-center gap-2 pl-0.5 text-[14px] text-ink-soft">
-                    <Clock3 size={16} strokeWidth={1.6} className="shrink-0 text-emerald" />
-                    {doctor.hours.days[lang]} · <span className="font-mono">{doctor.hours.time}</span>
+                    <Clock3 size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
+                    {doctor.hours.days[lang]} · <span className="tabular-nums">{doctor.hours.time}</span>
                   </p>
-                  <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-1 flex min-h-11 items-center gap-2 pl-0.5 font-mono text-[15px] text-ink transition hover:text-emerald">
-                    <Phone size={16} strokeWidth={1.6} className="shrink-0 text-emerald" />
+                  <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-1 flex min-h-11 items-center gap-2 pl-0.5 tabular-nums text-[15px] text-ink transition hover:text-accent">
+                    <Phone size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
                     {doctor.contact.phone}
                   </a>
 
@@ -380,7 +380,7 @@ export function Booking() {
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-alabaster px-4 py-2 text-[13.5px] leading-tight text-ink transition hover:border-emerald hover:text-emerald"
+                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-paper px-4 py-2 text-[13.5px] leading-tight text-ink transition hover:border-accent hover:text-accent"
                       >
                         <Icon size={15} strokeWidth={1.6} className="shrink-0" />
                         {label}
