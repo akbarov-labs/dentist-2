@@ -78,7 +78,12 @@ export interface ClinicalCase {
    * Real, consented before/after photos of THIS patient. When set, the drag slider is shown.
    * Never fake a "before" from the "after" image.
    */
-  photos?: { before: string; after: string };
+  photos?: {
+    before: string;
+    after: string;
+    /** false when the two shots differ in framing or scale: shown side by side instead of on the drag slider. */
+    aligned?: boolean;
+  };
   /** Where a real case was published (the doctor's own post); replaces the "illustrative" note. */
   source?: { url: string; date: Localized };
   problem: Localized;
@@ -814,7 +819,7 @@ const iqboljon: DoctorProfile = {
       category: "veneers",
       title: { uz: "Keramik vinirlar: tug‘ma nuqson", ru: "Керамические виниры: врождённый дефект" },
       image: "/images/cases/veneers-after.jpg",
-      focus: "50% 62%",
+      focus: "50% 50%",
       photos: { before: "/images/cases/veneers-before.jpg", after: "/images/cases/veneers-after.jpg" },
       source: { url: "https://www.instagram.com/p/DclSKG7gkM4/", date: { uz: "28.08.2026", ru: "28.08.2026" } },
       problem: { uz: "O‘ng yon kurak tishning shakli tug‘ma o‘zgargan, chap yon kurak tish tug‘ma yo‘q va uning o‘rniga qoziq tish siljigan.", ru: "Врождённо изменена форма правого бокового резца; левого бокового резца нет с рождения, на его место сместился клык." },
@@ -826,12 +831,12 @@ const iqboljon: DoctorProfile = {
       category: "crowns",
       title: { uz: "Eski koronkalarni yangilash", ru: "Замена старых коронок" },
       image: "/images/cases/zirconia-renew-after.jpg",
-      focus: "50% 58%",
+      focus: "50% 50%",
       photos: { before: "/images/cases/zirconia-renew-before.jpg", after: "/images/cases/zirconia-renew-after.jpg" },
       source: { url: "https://www.instagram.com/p/DbIuTPagoYE/", date: { uz: "22.07.2026", ru: "22.07.2026" } },
-      problem: { uz: "Eski, sarg‘aygan koronkalar tabassumni xira qilib qo‘ygan edi.", ru: "Старые пожелтевшие коронки делали улыбку тусклой." },
+      problem: { uz: "Eski metall koronkalar tabassumni buzib turardi.", ru: "Старые металлические коронки портили улыбку." },
       system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
-      note: { uz: "Eski sariq koronkalarni sirkon keramikaga almashtirdik, tishlarning tabiiy shaklini saqlab qoldik.", ru: "Заменили старые жёлтые коронки на циркониевую керамику и сохранили естественную форму зубов." },
+      note: { uz: "Eski koronkalarni sirkon keramikaga almashtirdik, tishlarning tabiiy shaklini saqlab qoldik.", ru: "Заменили старые коронки на циркониевую керамику и сохранили естественную форму зубов." },
     },
     {
       id: "ig-composite",
@@ -862,8 +867,8 @@ const iqboljon: DoctorProfile = {
       category: "crowns",
       title: { uz: "Ikki jag‘ga sirkon qoplamalar", ru: "Циркониевые коронки на обе челюсти" },
       image: "/images/cases/zirconia-full-after.jpg",
-      focus: "50% 55%",
-      photos: { before: "/images/cases/zirconia-full-before.jpg", after: "/images/cases/zirconia-full-after.jpg" },
+      focus: "50% 50%",
+      photos: { before: "/images/cases/zirconia-full-before.jpg", after: "/images/cases/zirconia-full-after.jpg", aligned: false },
       source: { url: "https://www.instagram.com/p/DPluH_XguUI/", date: { uz: "09.10.2025", ru: "09.10.2025" } },
       problem: { uz: "Yuqori va pastki jag‘ tishlarida estetik muammolar.", ru: "Эстетические проблемы зубов верхней и нижней челюсти." },
       system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
@@ -874,7 +879,7 @@ const iqboljon: DoctorProfile = {
       category: "rehab",
       title: { uz: "Ikki jag‘ni to‘liq tiklash", ru: "Полное восстановление обеих челюстей" },
       image: "/images/cases/full-rehab-after.jpg",
-      focus: "50% 80%",
+      focus: "50% 50%",
       photos: { before: "/images/cases/full-rehab-before.jpg", after: "/images/cases/full-rehab-after.jpg" },
       source: { url: "https://www.instagram.com/p/DQUJ2DHAoDr/", date: { uz: "27.10.2025", ru: "27.10.2025" } },
       problem: { uz: "Yuqori va pastki jag‘da tishlar to‘liq yo‘q edi.", ru: "На верхней и нижней челюсти полностью отсутствовали зубы." },
@@ -955,7 +960,7 @@ const iqboljon: DoctorProfile = {
         surgery: "Muolaja vaqti",
         fixed: "Yakuniy narx ko‘rikdan keyin yozma belgilanadi va o‘zgarmaydi.",
       },
-      cases: { filters: { veneers: "Vinirlar" } },
+      cases: { system: "Qanday davolandi" },
       faq: {
         items: [
           {
@@ -1061,7 +1066,7 @@ const iqboljon: DoctorProfile = {
         surgery: "Время процедуры",
         fixed: "Итоговая цена фиксируется письменно после осмотра и не меняется.",
       },
-      cases: { filters: { veneers: "Виниры" } },
+      cases: { system: "Как лечили" },
       faq: {
         items: [
           {
