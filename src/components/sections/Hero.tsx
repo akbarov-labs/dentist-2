@@ -25,7 +25,7 @@ export function Hero() {
 
         <div className="shell relative grid items-center gap-10 pt-6 pb-16 md:pt-12 lg:min-h-[calc(100dvh-76px)] lg:grid-cols-12 lg:gap-8 lg:py-10">
           {/* Copy: headline, one line of promise, one sentence, two actions */}
-          <div className="lg:col-span-6 xl:col-span-7 xl:pr-8">
+          <div className="lg:col-span-6 xl:pr-8">
             <h1 id="hero-title" className="text-balance">
               <span
                 className="enter block font-display text-[40px] leading-[1.05] font-medium tracking-[-0.035em] text-ink sm:text-[54px] xl:text-[64px]"
@@ -75,7 +75,8 @@ export function Hero() {
           </div>
 
           {/* Layered portrait */}
-          <div className="relative order-first mx-auto w-full max-w-[290px] sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[520px] xl:col-span-5">
+          {/* Desktop: as large as the column allows, but never taller than the screen below the header */}
+          <div className="relative order-first mx-auto w-full max-w-[290px] sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">
             <div className="enter" style={delay(120)}>
               <PortraitArch doctor={doctor} lang={lang} preload sizes="(min-width: 1024px) 40vw, 92vw" />
             </div>
