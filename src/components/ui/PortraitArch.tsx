@@ -45,9 +45,9 @@ export function PortraitArch({ doctor, lang, preload = false, sizes, className =
         <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-paper/10 via-transparent to-accent/15" />
       </div>
 
-      {/* 2. The doctor (bottom-anchored so the contact line never floats) */}
+      {/* 2. The doctor (bottom-anchored so the contact line never floats), drawn larger than the arch so the head breaks out above it */}
       <div
-        className="plane absolute inset-x-[2%] top-[2%] bottom-[3%] origin-bottom"
+        className="plane absolute -inset-x-[8%] -top-[7%] bottom-[3%] origin-bottom"
         style={t("translate3d(0, calc(var(--hp, 0) * -18px), 0) scale(calc(1 + var(--hp, 0) * 0.045))")}
       >
         <SafeImage
