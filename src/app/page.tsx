@@ -54,11 +54,12 @@ export default function Home() {
         <Hero />
         <Approach />
         <Protocol />
+        {/* Patients' own words right after the painless-visit story: the proof the anxious visitor looks for first */}
+        <Reviews />
         <Cases />
         <Services />
         <Calculator />
         <Credentials />
-        <Reviews />
         <Faq />
         <Booking />
       </main>

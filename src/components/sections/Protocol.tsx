@@ -1,7 +1,9 @@
 "use client";
 
+import { ArrowRight, Send } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSite } from "@/context/SiteContext";
+import { telegramLink } from "@/lib/format";
 import { useScrollVar } from "@/lib/useScrollVar";
 import { CALLOUTS, ImplantDrawing, applyDrawing } from "@/components/ui/ImplantDrawing";
 import { VISIT_CALLOUTS, VisitDrawing } from "@/components/ui/VisitDrawing";
@@ -30,7 +32,7 @@ const useIsLg = () =>
   );
 
 export function Protocol() {
-  const { t, doctor } = useSite();
+  const { t, doctor, lang, scrollToId } = useSite();
   const steps = t.protocol.steps;
   const { callouts, Drawing } = DRAWINGS[doctor.protocolDrawing ?? "implant"];
   const [active, setActive] = useState(0);
@@ -159,7 +161,7 @@ export function Protocol() {
                   key={s.title}
                   id={`protocol-step-${i}`}
                   data-step={i}
-                  className={`flex min-h-[58vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[70vh] ${isActive ? "opacity-100" : "opacity-60"}`}
+                  className={`flex min-h-[50vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[58vh] ${isActive ? "opacity-100" : "opacity-60"}`}
                 >
                   <h3 className="font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
                   <p className="mt-2 text-[15px] text-accent-light/90">{s.short}</p>
@@ -191,6 +193,32 @@ export function Protocol() {
               );
             })}
           </ol>
+        </div>
+
+        {/* The story ends on its peak, so the next step is offered right here, not twelve screens later */}
+        <div className="mt-10 flex flex-col gap-5 border-t border-night-line pt-10 sm:flex-row sm:items-center sm:justify-between lg:mt-4">
+          <p className="font-display text-[24px] leading-tight tracking-[-0.01em] text-balance sm:text-[28px]">{t.protocol.ctaTitle}</p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => scrollToId("booking")}
+              className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-paper px-6 py-3 text-[15px] font-medium text-accent transition hover:bg-white active:translate-y-px"
+            >
+              {t.protocol.cta}
+              <ArrowRight size={17} strokeWidth={1.7} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
+            {doctor.urgentCta ? (
+              <a
+                href={telegramLink(doctor.contact.telegram, `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.urgent}`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-night-line px-6 py-3 text-[15px] text-paper transition hover:border-accent-light"
+              >
+                <Send size={16} strokeWidth={1.7} className="text-accent-light" />
+                {t.cta.urgent}
+              </a>
+            ) : null}
+          </div>
         </div>
 
         {/* Screen-reader summary of the current step for the sticky stage */}

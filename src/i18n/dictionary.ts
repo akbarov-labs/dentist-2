@@ -61,6 +61,8 @@ const uz = {
     equipment: "Uskunalar",
     comfort: "Komfort darajasi",
     drawingLabel: "Implant rejasi chizmasi, qadamlar bo‘yicha",
+    ctaTitle: "Shunday qabulga yozilasizmi?",
+    cta: "Qabulga yozilish",
     callouts: {
       bone: "Jag‘ suyagi",
       gum: "Milk",
@@ -388,6 +390,8 @@ const ru: Dict = {
     equipment: "Оборудование",
     comfort: "Уровень комфорта",
     drawingLabel: "Чертёж плана имплантации по этапам",
+    ctaTitle: "Хотите такой приём?",
+    cta: "Записаться на приём",
     callouts: {
       bone: "Челюстная кость",
       gum: "Десна",
