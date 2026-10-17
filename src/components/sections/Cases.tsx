@@ -90,6 +90,15 @@ export function Cases() {
                       {t.cases.comfort}
                     </label>
                   </div>
+                  {current.source ? (
+                    <p className="mt-1 flex items-start gap-3 text-[14px] leading-snug text-muted">
+                      <BadgeCheck size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                      <span>
+                        <span className="block text-[15px] font-medium text-ink">{t.cases.realTitle}</span>
+                        <span className="mt-1 block max-w-[60ch]">{t.cases.realBody}</span>
+                      </span>
+                    </p>
+                  ) : null}
                 </>
               ) : (
                 <figure key={`${current.id}-${doctor.id}`} className="hud-in">
@@ -124,6 +133,22 @@ export function Cases() {
                   )}
                 </figure>
               )}
+              {/* Phones: the case switcher sits under the photo, not a screen below it in the passport card */}
+              {list.length > 1 ? (
+                <div className="mt-3 flex items-center justify-between gap-3 lg:hidden">
+                  <p className="tabular-nums text-[14px] text-muted" aria-live="polite">
+                    {safeIndex + 1} / {list.length}
+                  </p>
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => step(-1)} aria-label={t.cases.prev} className="grid h-11 w-11 place-items-center rounded-full border border-line bg-card text-ink transition hover:bg-stone">
+                      <ArrowLeft size={17} strokeWidth={1.6} />
+                    </button>
+                    <button type="button" onClick={() => step(1)} aria-label={t.cases.next} className="grid h-11 w-11 place-items-center rounded-full border border-line bg-card text-ink transition hover:bg-stone">
+                      <ArrowRight size={17} strokeWidth={1.6} />
+                    </button>
+                  </div>
+                </div>
+              ) : null}
             </Reveal>
 
             <Reveal delay={120} className="lg:col-span-5">

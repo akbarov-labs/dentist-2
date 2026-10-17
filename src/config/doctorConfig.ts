@@ -696,8 +696,10 @@ const iqboljon: DoctorProfile = {
     telegram: "Doctor_Iqboljon",
     instagram: "iqbol_joraev",
   },
-  calcProblems: ["treatment", "aesthetic", "rootCanal", "single"],
-  // His own inclusions: no free whitening or microscope claims, and the implant plan no longer says "free 3D" next to a CT fee.
+  calcProblems: ["treatment", "aesthetic", "rootCanal", "checkup"],
+  // Hidden until his real certificates are added (the inherited ones belonged to the template doctor).
+  credentials: [],
+  // His own inclusions: no free whitening or microscope claims.
   pricing: {
     ...sharedPricing,
     aesthetic: {
@@ -706,14 +708,6 @@ const iqboljon: DoctorProfile = {
         { uz: "Rang va shaklni oldindan birga tanlaymiz", ru: "Цвет и форму подбираем вместе заранее" },
         { uz: "Vaqtinchalik qoplamalar narxga kiritilgan", ru: "Временные коронки включены в цену" },
         { uz: "5 yillik yozma kafolat", ru: "Письменная гарантия 5 лет" },
-      ],
-    },
-    single: {
-      ...sharedPricing.single,
-      bonuses: [
-        { uz: "Shaxsiy davolash rejasi va yozma narx", ru: "Личный план лечения и письменная цена" },
-        { uz: "Vaqtinchalik estetik toj", ru: "Временная эстетическая коронка" },
-        { uz: "Implantga 10 yillik yozma kafolat", ru: "Письменная гарантия на имплант 10 лет" },
       ],
     },
     rootCanal: {
@@ -746,8 +740,8 @@ const iqboljon: DoctorProfile = {
       ago: 1,
       time: "10:12",
       text: {
-        uz: "Onamning tishlari umuman yo‘q edi. Implantlar va qoplamalardan keyin yana bemalol ovqatlanyapti va kulyapti. Rahmat, doktor!",
-        ru: "У мамы совсем не было зубов. После имплантов и коронок она снова спокойно ест и улыбается. Спасибо, доктор!",
+        uz: "Onamning tishlari deyarli qolmagan edi. To‘liq tiklashdan keyin yana bemalol ovqatlanyapti va kulyapti. Rahmat, doktor!",
+        ru: "У мамы почти не осталось зубов. После полного восстановления она снова спокойно ест и улыбается. Спасибо, доктор!",
       },
     },
     {
@@ -776,7 +770,7 @@ const iqboljon: DoctorProfile = {
         { uz: "2 tashrif", ru: "2 визита" },
         { uz: "Kafolat: 5 yil yozma", ru: "Гарантия: 5 лет письменно" },
       ],
-      image: "/images/cases/zirconia-renew.jpg",
+      image: "/images/cases/zirconia-renew-after.jpg",
       calcProblem: "aesthetic",
       priceFrom: 3_600_000,
     },
@@ -793,14 +787,13 @@ const iqboljon: DoctorProfile = {
     },
     {
       id: "full-rehab",
-      title: { uz: "To‘liq tiklash va implantlar", ru: "Полное восстановление и импланты" },
+      title: { uz: "Tishlarni to‘liq tiklash", ru: "Полное восстановление зубов" },
       lead: {
-        uz: "Tishlar to‘liq yo‘q bo‘lsa ham: implantlar va qoplamalar bilan funksiya va tabassumni tiklayman.",
-        ru: "Даже при полном отсутствии зубов восстанавливаю функцию и улыбку имплантами и коронками.",
+        uz: "Ko‘p tishlar yo‘q yoki shikastlangan bo‘lsa ham: chaynash va tabassumni ikki jag‘da to‘liq tiklayman.",
+        ru: "Даже если многих зубов нет или они разрушены: восстанавливаю жевание и улыбку на обеих челюстях.",
       },
-      specs: [{ uz: "Implant + qoplamalar", ru: "Импланты + коронки" }],
-      image: "/images/implant-model.jpg",
-      calcProblem: "single",
+      specs: [{ uz: "Ikki jag‘ · qoplamalar", ru: "Обе челюсти · коронки" }],
+      image: "/images/cases/full-rehab-after.jpg",
       priceFrom: 7_900_000,
     },
     {
@@ -820,8 +813,9 @@ const iqboljon: DoctorProfile = {
       id: "ig-veneers",
       category: "veneers",
       title: { uz: "Keramik vinirlar: tug‘ma nuqson", ru: "Керамические виниры: врождённый дефект" },
-      image: "/images/cases/veneers.jpg",
+      image: "/images/cases/veneers-after.jpg",
       focus: "50% 62%",
+      photos: { before: "/images/cases/veneers-before.jpg", after: "/images/cases/veneers-after.jpg" },
       source: { url: "https://www.instagram.com/p/DclSKG7gkM4/", date: { uz: "28.08.2026", ru: "28.08.2026" } },
       problem: { uz: "O‘ng yon kurak tishning shakli tug‘ma o‘zgargan, chap yon kurak tish tug‘ma yo‘q va uning o‘rniga qoziq tish siljigan.", ru: "Врождённо изменена форма правого бокового резца; левого бокового резца нет с рождения, на его место сместился клык." },
       system: { uz: "Estetik keramik vinirlar", ru: "Эстетические керамические виниры" },
@@ -831,8 +825,9 @@ const iqboljon: DoctorProfile = {
       id: "ig-zirconia-renew",
       category: "crowns",
       title: { uz: "Eski koronkalarni yangilash", ru: "Замена старых коронок" },
-      image: "/images/cases/zirconia-renew.jpg",
+      image: "/images/cases/zirconia-renew-after.jpg",
       focus: "50% 58%",
+      photos: { before: "/images/cases/zirconia-renew-before.jpg", after: "/images/cases/zirconia-renew-after.jpg" },
       source: { url: "https://www.instagram.com/p/DbIuTPagoYE/", date: { uz: "22.07.2026", ru: "22.07.2026" } },
       problem: { uz: "Eski, sarg‘aygan koronkalar tabassumni xira qilib qo‘ygan edi.", ru: "Старые пожелтевшие коронки делали улыбку тусклой." },
       system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
@@ -842,8 +837,9 @@ const iqboljon: DoctorProfile = {
       id: "ig-composite",
       category: "composite",
       title: { uz: "Oldingi tishlarda kompozit restavratsiya", ru: "Композитная реставрация передних зубов" },
-      image: "/images/cases/composite.jpg",
+      image: "/images/cases/composite-after.jpg",
       focus: "50% 62%",
+      photos: { before: "/images/cases/composite-before.jpg", after: "/images/cases/composite-after.jpg" },
       source: { url: "https://www.instagram.com/p/DbDkpLZArAd/", date: { uz: "20.07.2026", ru: "20.07.2026" } },
       problem: { uz: "Yuqori oldingi tishlarda karies va estetik nuqson.", ru: "Кариес и эстетический дефект передних зубов верхней челюсти." },
       system: { uz: "Nur bilan qotuvchi kompozit plombalar", ru: "Светоотверждаемые композитные пломбы" },
@@ -853,8 +849,9 @@ const iqboljon: DoctorProfile = {
       id: "ig-emax",
       category: "crowns",
       title: { uz: "Oldingi tishlarga E-max qoplamalar", ru: "Коронки E-max на передние зубы" },
-      image: "/images/cases/emax-crowns.jpg",
+      image: "/images/cases/emax-crowns-after.jpg",
       focus: "50% 55%",
+      photos: { before: "/images/cases/emax-crowns-before.jpg", after: "/images/cases/emax-crowns-after.jpg" },
       source: { url: "https://www.instagram.com/p/DOBkocSAgjP/", date: { uz: "31.08.2025", ru: "31.08.2025" } },
       problem: { uz: "Yuqori jag‘ oldingi tishlarining rangi va shaklidan bemor norozi edi.", ru: "Пациента не устраивали цвет и форма передних зубов верхней челюсти." },
       system: { uz: "E-max keramik qoplamalar", ru: "Керамические коронки E-max" },
@@ -864,8 +861,9 @@ const iqboljon: DoctorProfile = {
       id: "ig-zirconia-full",
       category: "crowns",
       title: { uz: "Ikki jag‘ga sirkon qoplamalar", ru: "Циркониевые коронки на обе челюсти" },
-      image: "/images/cases/zirconia-full.jpg",
+      image: "/images/cases/zirconia-full-after.jpg",
       focus: "50% 55%",
+      photos: { before: "/images/cases/zirconia-full-before.jpg", after: "/images/cases/zirconia-full-after.jpg" },
       source: { url: "https://www.instagram.com/p/DPluH_XguUI/", date: { uz: "09.10.2025", ru: "09.10.2025" } },
       problem: { uz: "Yuqori va pastki jag‘ tishlarida estetik muammolar.", ru: "Эстетические проблемы зубов верхней и нижней челюсти." },
       system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
@@ -874,9 +872,10 @@ const iqboljon: DoctorProfile = {
     {
       id: "ig-full-rehab",
       category: "rehab",
-      title: { uz: "To‘liq tiklash: 12 ta implant", ru: "Полное восстановление: 12 имплантов" },
-      image: "/images/cases/full-rehab.jpg",
+      title: { uz: "Ikki jag‘ni to‘liq tiklash", ru: "Полное восстановление обеих челюстей" },
+      image: "/images/cases/full-rehab-after.jpg",
       focus: "50% 80%",
+      photos: { before: "/images/cases/full-rehab-before.jpg", after: "/images/cases/full-rehab-after.jpg" },
       source: { url: "https://www.instagram.com/p/DQUJ2DHAoDr/", date: { uz: "27.10.2025", ru: "27.10.2025" } },
       problem: { uz: "Yuqori va pastki jag‘da tishlar to‘liq yo‘q edi.", ru: "На верхней и нижней челюсти полностью отсутствовали зубы." },
       system: { uz: "12 ta implant va metallokeramik qoplamalar", ru: "12 имплантов и металлокерамические коронки" },
@@ -890,7 +889,7 @@ const iqboljon: DoctorProfile = {
           { k: "Bitta mas’ul shifokor", v: "Ko‘rikdan oxirgi plombagacha sizni faqat men davolayman." },
           { k: "Og‘riqsiz protokol", v: "Avval anestetik gel, keyin kompyuterli anesteziya: ukol deyarli sezilmaydi." },
           { k: "Shaxsiy Telegram aloqa", v: "Davolashdan keyin savollaringizga ma’mur emas, o‘zim javob beraman." },
-          { k: "Yozma kafolat", v: "Har bir plomba, toj va implantga yozma kafolat beriladi." },
+          { k: "Yozma kafolat", v: "Har bir plomba va qoplamaga yozma kafolat beriladi." },
         ],
       },
       protocol: {
@@ -943,11 +942,11 @@ const iqboljon: DoctorProfile = {
       },
       services: {
         title: "Plombadan to‘liq tiklashgacha.",
-        sub: "Kompozit, keramik qoplamalar, kanallar va implantlar: hammasini bitta shifokor, og‘riqsiz bajaradi. Narxlar oldindan ma’lum.",
+        sub: "Kompozit, keramik qoplamalar, kanallar va to‘liq tiklash: hammasini bitta shifokor, og‘riqsiz bajaradi. Narxlar oldindan ma’lum.",
       },
       calc: {
         sub: "Bir necha savolga javob bering va taxminiy narxni hoziroq ko‘ring.",
-        problems: { single: "Tish yo‘q (implant)", aesthetic: "Qoplama yoki vinir (sirkon, E-max)" },
+        problems: { aesthetic: "Qoplama yoki vinir (sirkon, E-max)" },
         materials: { premium: "Optimal", swiss: "Premium" },
         materialNotes: {
           premium: "Sifatli Koreya va Yevropa materiallari",
@@ -977,15 +976,15 @@ const iqboljon: DoctorProfile = {
           },
           {
             q: "Kafolat qanday rasmiylashtiriladi?",
-            a: "Har bir ish uchun yozma kafolat beriladi: plombaga 2 yil, tojga 5 yil, implantga 10 yil.",
+            a: "Har bir ish uchun yozma kafolat beriladi: plombaga 2 yil, keramik qoplamaga 5 yil.",
           },
           {
             q: "Bo‘lib to‘lash mumkinmi?",
-            a: "Implant va protezlash uchun 6 oygacha 0% muddatli to‘lov bor. Uzcard, Humo, Visa va naqd pul qabul qilinadi.",
+            a: "Qoplamalar va to‘liq tiklash uchun 6 oygacha 0% muddatli to‘lov bor. Uzcard, Humo, Visa va naqd pul qabul qilinadi.",
           },
           {
             q: "Davolash qancha vaqt oladi?",
-            a: "Plomba yoki tozalash: 1 tashrif. Kanal davolash: 1–2 tashrif. Bitta implant: 2–3 tashrif. Aniq jadvalni ko‘rikdan keyin beraman.",
+            a: "Plomba yoki tozalash: 1 tashrif. Kanal davolash: 1–2 tashrif. Keramik qoplama yoki vinir: 2 tashrif. Aniq jadvalni ko‘rikdan keyin beraman.",
           },
         ],
       },
@@ -996,7 +995,7 @@ const iqboljon: DoctorProfile = {
           { k: "Один ответственный врач", v: "От осмотра до последней пломбы вас лечу только я." },
           { k: "Безболезненный протокол", v: "Сначала анестезирующий гель, затем компьютерная анестезия: укол почти не чувствуется." },
           { k: "Личная связь в Telegram", v: "После лечения на ваши вопросы отвечаю я сам, а не администратор." },
-          { k: "Письменная гарантия", v: "На каждую пломбу, коронку и имплант выдаётся письменная гарантия." },
+          { k: "Письменная гарантия", v: "На каждую пломбу и коронку выдаётся письменная гарантия." },
         ],
       },
       protocol: {
@@ -1049,11 +1048,11 @@ const iqboljon: DoctorProfile = {
       },
       services: {
         title: "От пломбы до полного восстановления.",
-        sub: "Композит, керамические коронки, каналы и импланты: всё делает один врач и без боли. Цены известны заранее.",
+        sub: "Композит, керамические коронки, каналы и полное восстановление: всё делает один врач и без боли. Цены известны заранее.",
       },
       calc: {
         sub: "Ответьте на несколько вопросов и сразу увидите ориентировочную цену.",
-        problems: { single: "Нет зуба (имплант)", aesthetic: "Коронка или винир (цирконий, E-max)" },
+        problems: { aesthetic: "Коронка или винир (цирконий, E-max)" },
         materials: { premium: "Оптимальный", swiss: "Премиум" },
         materialNotes: {
           premium: "Качественные корейские и европейские материалы",
@@ -1083,15 +1082,15 @@ const iqboljon: DoctorProfile = {
           },
           {
             q: "Как оформляется гарантия?",
-            a: "На каждую работу выдаётся письменная гарантия: на пломбу 2 года, на коронку 5 лет, на имплант 10 лет.",
+            a: "На каждую работу выдаётся письменная гарантия: на пломбу 2 года, на керамическую коронку 5 лет.",
           },
           {
             q: "Можно ли платить частями?",
-            a: "На импланты и протезирование есть рассрочка 0% до 6 месяцев. Принимаем Uzcard, Humo, Visa и наличные.",
+            a: "На коронки и полное восстановление есть рассрочка 0% до 6 месяцев. Принимаем Uzcard, Humo, Visa и наличные.",
           },
           {
             q: "Сколько длится лечение?",
-            a: "Пломба или чистка: 1 визит. Лечение каналов: 1–2 визита. Один имплант: 2–3 визита. Точный график дам после осмотра.",
+            a: "Пломба или чистка: 1 визит. Лечение каналов: 1–2 визита. Керамическая коронка или винир: 2 визита. Точный график дам после осмотра.",
           },
         ],
       },

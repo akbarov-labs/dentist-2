@@ -7,6 +7,8 @@ import { Reveal } from "@/components/ui/Reveal";
 export function Credentials() {
   const { t, doctor, lang, setModal } = useSite();
   const timeline = [...doctor.credentials].sort((a, b) => a.year - b.year);
+  // No verified certificates yet: show nothing rather than borrowed ones.
+  if (!timeline.length) return null;
 
   return (
     <section id="credentials" aria-labelledby="cred-title" className="border-t border-line bg-stone/60 py-20 md:py-28">

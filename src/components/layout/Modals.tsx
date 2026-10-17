@@ -63,20 +63,22 @@ export function Modals() {
               ))}
             </dl>
 
-            <ul className="mt-6 divide-y divide-line border-y border-line">
-              {doctor.credentials.map((c) => (
-                <li key={c.id}>
-                  <button type="button" onClick={() => setModal({ kind: "credential", id: c.id })} className="flex w-full items-center justify-between gap-4 py-3 text-left text-[14.5px] text-ink transition hover:text-accent">
-                    <span>
-                      {c.city[lang]} · <span className="text-muted">{c.institution}</span>
-                    </span>
-                    <span className="inline-flex shrink-0 items-center gap-1 tabular-nums text-[12px]">
-                      {c.year} <ArrowUpRight size={14} strokeWidth={1.7} />
-                    </span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            {doctor.credentials.length ? (
+              <ul className="mt-6 divide-y divide-line border-y border-line">
+                {doctor.credentials.map((c) => (
+                  <li key={c.id}>
+                    <button type="button" onClick={() => setModal({ kind: "credential", id: c.id })} className="flex w-full items-center justify-between gap-4 py-3 text-left text-[14.5px] text-ink transition hover:text-accent">
+                      <span>
+                        {c.city[lang]} · <span className="text-muted">{c.institution}</span>
+                      </span>
+                      <span className="inline-flex shrink-0 items-center gap-1 tabular-nums text-[12px]">
+                        {c.year} <ArrowUpRight size={14} strokeWidth={1.7} />
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
 
             <button type="button" onClick={bookFromIntro} className={`${btnPrimary} group mt-7 w-full sm:w-auto`}>
               {t.cta.book}

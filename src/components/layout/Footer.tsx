@@ -18,7 +18,7 @@ export function Footer() {
     { id: "cases", label: t.nav.cases },
     { id: "credentials", label: t.nav.credentials },
     { id: "faq", label: t.nav.faq },
-  ];
+  ].filter((l) => l.id !== "credentials" || doctor.credentials.length);
 
   return (
     <footer className="border-t border-line pt-16 pb-28 md:pb-12">
