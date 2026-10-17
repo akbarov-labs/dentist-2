@@ -11,6 +11,8 @@ export interface Estimate {
   needsCt: boolean;
   /** Whether the 0% instalment plan applies. */
   installment: boolean;
+  /** No material choice: the range spans both tiers. */
+  singleTier: boolean;
   unitNote?: string;
   visits: string;
   surgeryTime: string;
@@ -19,7 +21,8 @@ export interface Estimate {
 
 export function computeEstimate(doctor: DoctorProfile, sel: CalcSelection, lang: Lang): Estimate {
   const p = doctor.pricing[sel.problem];
-  const tier = p[sel.material];
+  const singleTier = p.singleTier === true;
+  const tier = singleTier ? { min: p.premium.min, max: p.swiss.max } : p[sel.material];
   const needsCt = p.needsCt !== false;
   const ctCost = !needsCt || sel.hasCt ? 0 : doctor.ctScanPrice;
   return {
@@ -28,6 +31,7 @@ export function computeEstimate(doctor: DoctorProfile, sel: CalcSelection, lang:
     ctCost,
     needsCt,
     installment: p.installment !== false,
+    singleTier,
     unitNote: p.unitNote?.[lang],
     visits: p.visits[lang],
     surgeryTime: p.surgeryTime[lang],
@@ -58,7 +62,7 @@ export function buildTelegramText(doctor: DoctorProfile, lang: Lang, t: Dict, pr
       hello,
       t.tg.calcIntro,
       `• ${t.tg.problem}: ${lines.problem}`,
-      `• ${t.tg.material}: ${lines.material}`,
+      ...(est.singleTier ? [] : [`• ${t.tg.material}: ${lines.material}`]),
       ...(est.needsCt ? [`• ${t.tg.ct}: ${lines.ct}`] : []),
       `• ${t.tg.price}: ${priceRange(est, t)}${est.unitNote ? ` (${est.unitNote})` : ""}`,
       "",

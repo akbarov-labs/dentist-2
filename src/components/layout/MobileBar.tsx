@@ -7,7 +7,9 @@ import { phoneHref, telegramLink } from "@/lib/format";
 
 /** Fixed thumb-reach action bar for phones (< 768px). */
 export function MobileBar() {
-  const { t, doctor, scrollToId } = useSite();
+  const { t, doctor, lang, scrollToId } = useSite();
+  // For a practice that offers the urgent path, the thumb-reach Telegram button is that path.
+  const tgText = doctor.urgentCta ? `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.urgent}` : undefined;
   const [hidden, setHidden] = useState(false);
 
   // Step aside while the booking form itself is on screen, so the bar never covers its fields.
@@ -35,7 +37,7 @@ export function MobileBar() {
           <Phone size={18} strokeWidth={1.6} className="text-accent" />
           {t.cta.call}
         </a>
-        <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className={`${item} text-ink`}>
+        <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className={`${item} text-ink`}>
           <Send size={18} strokeWidth={1.6} className="text-accent" />
           {t.cta.telegram}
         </a>

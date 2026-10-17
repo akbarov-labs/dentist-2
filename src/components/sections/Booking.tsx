@@ -85,7 +85,10 @@ export function Booking() {
     if (prefill?.kind === "calculator") {
       const l = selectionLines(prefill.selection, t);
       const est = computeEstimate(doctor, prefill.selection, lang);
-      return { lines: [l.problem, l.material, ...(est.needsCt ? [`${t.calc.ctLine}: ${l.ct}`] : [])], price: priceRange(est, t) };
+      return {
+        lines: [l.problem, ...(est.singleTier ? [] : [l.material]), ...(est.needsCt ? [`${t.calc.ctLine}: ${l.ct}`] : [])],
+        price: priceRange(est, t),
+      };
     }
     if (service) return { lines: [service.title[lang]], price: "" };
     return null;

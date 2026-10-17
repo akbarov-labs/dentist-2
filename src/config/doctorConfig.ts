@@ -19,7 +19,7 @@ export type Localized<T = string> = Record<Lang, T>;
 
 export type ProblemId = "single" | "multiple" | "fullArch" | "aesthetic" | "checkup" | "treatment" | "rootCanal";
 export type MaterialId = "premium" | "swiss";
-export type CaseCategory = "implant" | "veneers" | "allOn6";
+export type CaseCategory = "implant" | "veneers" | "allOn6" | "crowns" | "composite" | "rehab";
 
 export interface PriceTier {
   /** Price range in UZS. */
@@ -39,6 +39,8 @@ export interface ProblemPricing {
   needsCt?: boolean;
   /** false: the 0% instalment line is hidden (small one-visit treatments). */
   installment?: boolean;
+  /** true: no material choice; the calculator skips that question and quotes the full premium-to-swiss range. */
+  singleTier?: boolean;
 }
 
 export interface ServiceItem {
@@ -76,9 +78,11 @@ export interface ClinicalCase {
    * Never fake a "before" from the "after" image.
    */
   photos?: { before: string; after: string };
+  /** Where a real case was published (the doctor's own post); replaces the "illustrative" note. */
+  source?: { url: string; date: Localized };
   problem: Localized;
   system: Localized;
-  duration: Localized;
+  duration?: Localized;
   note: Localized;
 }
 
@@ -187,6 +191,7 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     swiss: { min: 5_200_000, max: 6_100_000 },
     unitNote: { uz: "1 birlik (vinir / toj) uchun", ru: "за 1 единицу (винир / коронка)" },
     visits: { uz: "2 tashrif", ru: "2 визита" },
+    needsCt: false,
     surgeryTime: { uz: "Jarrohliksiz · 2×90 daqiqa", ru: "Без хирургии · 2×90 минут" },
     bonuses: [
       { uz: "Bepul raqamli tabassum dizayni", ru: "Бесплатный цифровой дизайн улыбки" },
@@ -201,6 +206,7 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     surgeryTime: { uz: "45–60 daqiqa", ru: "45–60 минут" },
     needsCt: false,
     installment: false,
+    singleTier: true,
     bonuses: [
       { uz: "Davolash rejasi va yozma narx", ru: "План лечения и письменная цена" },
       { uz: "Air-Flow va ultratovush bilan tozalash", ru: "Чистка Air-Flow и ультразвуком" },
@@ -215,6 +221,7 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     surgeryTime: { uz: "40–60 daqiqa", ru: "40–60 минут" },
     needsCt: false,
     installment: false,
+    singleTier: true,
     bonuses: [
       { uz: "Og‘riqsiz kompyuterli anesteziya", ru: "Безболезненная компьютерная анестезия" },
       { uz: "Rentgen tasvir narxga kiritilgan", ru: "Рентген-снимок включён в цену" },
@@ -229,6 +236,7 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     surgeryTime: { uz: "60–90 daqiqa", ru: "60–90 минут" },
     needsCt: false,
     installment: false,
+    singleTier: true,
     bonuses: [
       { uz: "Mikroskop ostida kanal davolash", ru: "Лечение каналов под микроскопом" },
       { uz: "Nazorat rentgeni narxga kiritilgan", ru: "Контрольный снимок включён в цену" },
@@ -685,59 +693,127 @@ const iqboljon: DoctorProfile = {
     telegram: "Doctor_Iqboljon",
     instagram: "iqbol_joraev",
   },
-  calcProblems: ["treatment", "checkup", "rootCanal", "single"],
+  calcProblems: ["treatment", "aesthetic", "rootCanal", "single"],
   protocolDrawing: "visit",
   urgentCta: true,
   services: [
     {
-      id: "painless-treatment",
-      title: { uz: "Og‘riqsiz tish davolash va plomba", ru: "Безболезненное лечение и пломбы" },
+      id: "ceramic-crowns",
+      title: { uz: "Keramik qoplamalar: sirkon va E-max", ru: "Керамические коронки: цирконий и E-max" },
       lead: {
-        uz: "Karies va og‘riyotgan tishni kompyuterli anesteziya bilan, shoshilmasdan davolayman.",
-        ru: "Лечу кариес и больные зубы под компьютерной анестезией, без спешки.",
+        uz: "Eski yoki shikastlangan tishlarga tabiiy rang va shakldagi qoplamalar va vinirlar.",
+        ru: "Коронки и виниры естественного цвета и формы на старые или повреждённые зубы.",
       },
       specs: [
-        { uz: "Kompyuterli anesteziya", ru: "Компьютерная анестезия" },
-        { uz: "1 tashrif · 40–60 daqiqa", ru: "1 визит · 40–60 минут" },
-        { uz: "Kafolat: 2 yil yozma", ru: "Гарантия: 2 года письменно" },
+        { uz: "Sirkon yoki E-max", ru: "Цирконий или E-max" },
+        { uz: "2 tashrif", ru: "2 визита" },
+        { uz: "Kafolat: 5 yil yozma", ru: "Гарантия: 5 лет письменно" },
       ],
-      image: "/images/xray-review.jpg",
+      image: "/images/cases/zirconia-renew.jpg",
+      calcProblem: "aesthetic",
+      priceFrom: 3_600_000,
+    },
+    {
+      id: "composite-restoration",
+      title: { uz: "Kompozit restavratsiya", ru: "Композитная реставрация" },
+      lead: {
+        uz: "Karies va nuqsonli tishlarni bir tashrifda, tish rangidagi plomba bilan tiklayman.",
+        ru: "Восстанавливаю зубы после кариеса и сколов за один визит пломбой в цвет зуба.",
+      },
+      specs: [{ uz: "Nur bilan qotuvchi kompozit", ru: "Светоотверждаемый композит" }],
       calcProblem: "treatment",
       priceFrom: 450_000,
     },
     {
-      id: "checkup-hygiene",
-      title: { uz: "Ko‘rik va professional tozalash", ru: "Осмотр и профессиональная чистка" },
+      id: "full-rehab",
+      title: { uz: "To‘liq tiklash va implantlar", ru: "Полное восстановление и импланты" },
       lead: {
-        uz: "Tosh va dog‘larni Air-Flow bilan tozalayman, muammoni boshlanishidayoq topamiz.",
-        ru: "Удаляю камень и налёт Air-Flow, находим проблему на самой ранней стадии.",
+        uz: "Tishlar to‘liq yo‘q bo‘lsa ham: implantlar va qoplamalar bilan funksiya va tabassumni tiklayman.",
+        ru: "Даже при полном отсутствии зубов восстанавливаю функцию и улыбку имплантами и коронками.",
       },
-      specs: [{ uz: "Har 6 oyda tavsiya etiladi", ru: "Рекомендуется каждые 6 месяцев" }],
-      calcProblem: "checkup",
-      priceFrom: 350_000,
-    },
-    {
-      id: "implant",
-      title: { uz: "Implantatsiya", ru: "Имплантация" },
-      lead: {
-        uz: "Yo‘qolgan tishni og‘riqsiz tiklash: Osstem yoki Straumann implanti.",
-        ru: "Безболезненное восстановление зуба: имплант Osstem или Straumann.",
-      },
-      specs: [{ uz: "Osstem / Straumann", ru: "Osstem / Straumann" }],
+      specs: [{ uz: "Implant + qoplamalar", ru: "Импланты + коронки" }],
       image: "/images/implant-model.jpg",
       calcProblem: "single",
       priceFrom: 7_900_000,
     },
     {
-      id: "root-canal",
-      title: { uz: "Kanal davolash: tishni saqlab qolish", ru: "Лечение каналов: сохраняем зуб" },
+      id: "painless-treatment",
+      title: { uz: "Og‘riqsiz davolash va kanallar", ru: "Безболезненное лечение и каналы" },
       lead: {
-        uz: "Boshqalar “olib tashlash kerak” degan tishlarni mikroskop ostida saqlab qolaman.",
-        ru: "Сохраняю под микроскопом зубы, которые другие советуют удалить.",
+        uz: "Karies, pulpit va kanallarni kompyuterli anesteziya bilan davolayman.",
+        ru: "Лечу кариес, пульпит и каналы под компьютерной анестезией.",
       },
-      specs: [{ uz: "Mikroskop ostida", ru: "Под микроскопом" }],
+      specs: [{ uz: "Kompyuterli anesteziya", ru: "Компьютерная анестезия" }],
       calcProblem: "rootCanal",
       priceFrom: 1_200_000,
+    },
+  ],
+  cases: [
+    {
+      id: "ig-veneers",
+      category: "veneers",
+      title: { uz: "Keramik vinirlar: tug‘ma nuqson", ru: "Керамические виниры: врождённый дефект" },
+      image: "/images/cases/veneers.jpg",
+      focus: "50% 62%",
+      source: { url: "https://www.instagram.com/p/DclSKG7gkM4/", date: { uz: "28.08.2026", ru: "28.08.2026" } },
+      problem: { uz: "O‘ng yon kurak tishning shakli tug‘ma o‘zgargan, chap yon kurak tish tug‘ma yo‘q va uning o‘rniga qoziq tish siljigan.", ru: "Врождённо изменена форма правого бокового резца; левого бокового резца нет с рождения, на его место сместился клык." },
+      system: { uz: "Estetik keramik vinirlar", ru: "Эстетические керамические виниры" },
+      note: { uz: "Maksimal tabiiylikni saqlash va sog‘lom tishlarga zarar yetkazmaslik: har kungi vazifamiz.", ru: "Сохранить максимальную естественность и не навредить здоровым зубам: наша ежедневная задача." },
+    },
+    {
+      id: "ig-zirconia-renew",
+      category: "crowns",
+      title: { uz: "Eski koronkalarni yangilash", ru: "Замена старых коронок" },
+      image: "/images/cases/zirconia-renew.jpg",
+      focus: "50% 58%",
+      source: { url: "https://www.instagram.com/p/DbIuTPagoYE/", date: { uz: "22.07.2026", ru: "22.07.2026" } },
+      problem: { uz: "Eski, sarg‘aygan koronkalar tabassumni xira qilib qo‘ygan edi.", ru: "Старые пожелтевшие коронки делали улыбку тусклой." },
+      system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
+      note: { uz: "Eski sariq koronkalarni sirkon keramikaga almashtirdik, tishlarning tabiiy shaklini saqlab qoldik.", ru: "Заменили старые жёлтые коронки на циркониевую керамику и сохранили естественную форму зубов." },
+    },
+    {
+      id: "ig-composite",
+      category: "composite",
+      title: { uz: "Oldingi tishlarda kompozit restavratsiya", ru: "Композитная реставрация передних зубов" },
+      image: "/images/cases/composite.jpg",
+      focus: "50% 62%",
+      source: { url: "https://www.instagram.com/p/DbDkpLZArAd/", date: { uz: "20.07.2026", ru: "20.07.2026" } },
+      problem: { uz: "Yuqori oldingi tishlarda karies va estetik nuqson.", ru: "Кариес и эстетический дефект передних зубов верхней челюсти." },
+      system: { uz: "Nur bilan qotuvchi kompozit plombalar", ru: "Светоотверждаемые композитные пломбы" },
+      note: { uz: "Kariesni davoladik va tishlarning tabiiy ko‘rinishini tikladik.", ru: "Вылечили кариес и вернули зубам естественный вид." },
+    },
+    {
+      id: "ig-emax",
+      category: "crowns",
+      title: { uz: "Oldingi tishlarga E-max qoplamalar", ru: "Коронки E-max на передние зубы" },
+      image: "/images/cases/emax-crowns.jpg",
+      focus: "50% 55%",
+      source: { url: "https://www.instagram.com/p/DOBkocSAgjP/", date: { uz: "31.08.2025", ru: "31.08.2025" } },
+      problem: { uz: "Yuqori jag‘ oldingi tishlarining rangi va shaklidan bemor norozi edi.", ru: "Пациента не устраивали цвет и форма передних зубов верхней челюсти." },
+      system: { uz: "E-max keramik qoplamalar", ru: "Керамические коронки E-max" },
+      note: { uz: "Tishlarning rangi va shakli tabiiy ko‘rinishda o‘zgartirildi. Go‘zal tabassum ishonch manbai.", ru: "Цвет и форма зубов изменены естественно. Красивая улыбка даёт уверенность." },
+    },
+    {
+      id: "ig-zirconia-full",
+      category: "crowns",
+      title: { uz: "Ikki jag‘ga sirkon qoplamalar", ru: "Циркониевые коронки на обе челюсти" },
+      image: "/images/cases/zirconia-full.jpg",
+      focus: "50% 55%",
+      source: { url: "https://www.instagram.com/p/DPluH_XguUI/", date: { uz: "09.10.2025", ru: "09.10.2025" } },
+      problem: { uz: "Yuqori va pastki jag‘ tishlarida estetik muammolar.", ru: "Эстетические проблемы зубов верхней и нижней челюсти." },
+      system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
+      note: { uz: "Rang va shakl tabiiy ko‘rinishda: bemor yangi tabassum bilan ketdi.", ru: "Естественные цвет и форма: пациент ушёл с новой улыбкой." },
+    },
+    {
+      id: "ig-full-rehab",
+      category: "rehab",
+      title: { uz: "To‘liq tiklash: 12 ta implant", ru: "Полное восстановление: 12 имплантов" },
+      image: "/images/cases/full-rehab.jpg",
+      focus: "50% 80%",
+      source: { url: "https://www.instagram.com/p/DQUJ2DHAoDr/", date: { uz: "27.10.2025", ru: "27.10.2025" } },
+      problem: { uz: "Yuqori va pastki jag‘da tishlar to‘liq yo‘q edi.", ru: "На верхней и нижней челюсти полностью отсутствовали зубы." },
+      system: { uz: "12 ta implant va metallokeramik qoplamalar", ru: "12 имплантов и металлокерамические коронки" },
+      note: { uz: "Tish qatorlarini funksional va estetik tikladik.", ru: "Восстановили зубные ряды функционально и эстетично." },
     },
   ],
   copy: {
@@ -799,12 +875,12 @@ const iqboljon: DoctorProfile = {
         ],
       },
       services: {
-        title: "Tish og‘rig‘idan implantgacha.",
-        sub: "Ko‘rik, davolash, kanal va implant: hammasini bitta shifokor, og‘riqsiz bajaradi. Narxlar oldindan ma’lum.",
+        title: "Plombadan to‘liq tiklashgacha.",
+        sub: "Kompozit, keramik qoplamalar, kanallar va implantlar: hammasini bitta shifokor, og‘riqsiz bajaradi. Narxlar oldindan ma’lum.",
       },
       calc: {
         sub: "Bir necha savolga javob bering va taxminiy narxni hoziroq ko‘ring.",
-        problems: { single: "Tish yo‘q (implant)" },
+        problems: { single: "Tish yo‘q (implant)", aesthetic: "Qoplama yoki vinir (sirkon, E-max)" },
         materials: { premium: "Optimal", swiss: "Premium" },
         materialNotes: {
           premium: "Sifatli Koreya va Yevropa materiallari",
@@ -813,6 +889,7 @@ const iqboljon: DoctorProfile = {
         surgery: "Muolaja vaqti",
         fixed: "Yakuniy narx ko‘rikdan keyin yozma belgilanadi va o‘zgarmaydi.",
       },
+      cases: { filters: { veneers: "Vinirlar" } },
       faq: {
         items: [
           {
@@ -900,12 +977,12 @@ const iqboljon: DoctorProfile = {
         ],
       },
       services: {
-        title: "От зубной боли до имплантов.",
-        sub: "Осмотр, лечение, каналы и импланты: всё делает один врач и без боли. Цены известны заранее.",
+        title: "От пломбы до полного восстановления.",
+        sub: "Композит, керамические коронки, каналы и импланты: всё делает один врач и без боли. Цены известны заранее.",
       },
       calc: {
         sub: "Ответьте на несколько вопросов и сразу увидите ориентировочную цену.",
-        problems: { single: "Нет зуба (имплант)" },
+        problems: { single: "Нет зуба (имплант)", aesthetic: "Коронка или винир (цирконий, E-max)" },
         materials: { premium: "Оптимальный", swiss: "Премиум" },
         materialNotes: {
           premium: "Качественные корейские и европейские материалы",
@@ -914,6 +991,7 @@ const iqboljon: DoctorProfile = {
         surgery: "Время процедуры",
         fixed: "Итоговая цена фиксируется письменно после осмотра и не меняется.",
       },
+      cases: { filters: { veneers: "Виниры" } },
       faq: {
         items: [
           {

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, BadgeCheck, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { CaseCategory } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
@@ -10,7 +10,6 @@ import { SafeImage } from "@/components/ui/SafeImage";
 import { chip } from "@/components/ui/styles";
 
 type Filter = "all" | CaseCategory;
-const FILTERS: Filter[] = ["all", "implant", "veneers", "allOn6"];
 
 export function Cases() {
   const { t, doctor, lang } = useSite();
@@ -18,7 +17,13 @@ export function Cases() {
   const [index, setIndex] = useState(0);
   const [comfort, setComfort] = useState(true);
 
-  const list = useMemo(() => doctor.cases.filter((c) => filter === "all" || c.category === filter), [doctor.cases, filter]);
+  // Filters come from the doctor's own cases, in order of first appearance; one category needs no filter row.
+  const filters = useMemo<Filter[]>(() => ["all", ...new Set(doctor.cases.map((c) => c.category))], [doctor.cases]);
+  const activeFilter = filters.includes(filter) ? filter : "all";
+  const list = useMemo(
+    () => doctor.cases.filter((c) => activeFilter === "all" || c.category === activeFilter),
+    [doctor.cases, activeFilter],
+  );
   const safeIndex = Math.min(index, list.length - 1);
   const current = list[safeIndex];
 
@@ -35,19 +40,21 @@ export function Cases() {
           <h2 id="cases-title" className="max-w-[20ch] font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
             {t.cases.title}
           </h2>
-          <div className="no-scrollbar -mx-4 mt-8 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0" role="group" aria-label={t.cases.title}>
-            {FILTERS.map((f) => (
-              <button
-                key={f}
-                type="button"
-                aria-pressed={filter === f}
-                onClick={() => choose(f)}
-                className={`${chip} h-11 ${filter === f ? "border-accent bg-accent text-paper" : "border-line bg-card text-ink-soft hover:border-ink/30"}`}
-              >
-                {t.cases.filters[f]}
-              </button>
-            ))}
-          </div>
+          {filters.length > 2 ? (
+            <div className="no-scrollbar -mx-4 mt-8 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0" role="group" aria-label={t.cases.title}>
+              {filters.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  aria-pressed={activeFilter === f}
+                  onClick={() => choose(f)}
+                  className={`${chip} h-11 shrink-0 ${activeFilter === f ? "border-accent bg-accent text-paper" : "border-line bg-card text-ink-soft hover:border-ink/30"}`}
+                >
+                  {t.cases.filters[f]}
+                </button>
+              ))}
+            </div>
+          ) : null}
         </Reveal>
 
         {current ? (
@@ -92,19 +99,29 @@ export function Cases() {
                       alt=""
                       fill
                       sizes="(min-width: 1024px) 58vw, 100vw"
-                      className="object-cover saturate-[0.85]"
+                      className={`object-cover ${current.source ? "" : "saturate-[0.85]"}`}
                       style={{ objectPosition: current.focus }}
                     />
                   </div>
-                  <figcaption className="mt-4 flex items-start gap-3">
-                    <ShieldCheck size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
-                    <span>
-                      <span className="block text-[15px] font-medium text-ink">{t.cases.privacyTitle}</span>
-                      <span className="mt-1 block max-w-[60ch] text-[14px] leading-snug text-muted">
-                        {t.cases.privacyBody} {t.cases.illustrative}
+                  {current.source ? (
+                    <figcaption className="mt-4 flex items-start gap-3">
+                      <BadgeCheck size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                      <span>
+                        <span className="block text-[15px] font-medium text-ink">{t.cases.realTitle}</span>
+                        <span className="mt-1 block max-w-[60ch] text-[14px] leading-snug text-muted">{t.cases.realBody}</span>
                       </span>
-                    </span>
-                  </figcaption>
+                    </figcaption>
+                  ) : (
+                    <figcaption className="mt-4 flex items-start gap-3">
+                      <ShieldCheck size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                      <span>
+                        <span className="block text-[15px] font-medium text-ink">{t.cases.privacyTitle}</span>
+                        <span className="mt-1 block max-w-[60ch] text-[14px] leading-snug text-muted">
+                          {t.cases.privacyBody} {t.cases.illustrative}
+                        </span>
+                      </span>
+                    </figcaption>
+                  )}
                 </figure>
               )}
             </Reveal>
@@ -126,16 +143,34 @@ export function Cases() {
                 <h3 className="mt-5 font-display text-[26px] leading-tight text-ink">{current.title[lang]}</h3>
 
                 <dl className="mt-6 space-y-5">
-                  {[
-                    [t.cases.problem, current.problem[lang]],
-                    [t.cases.system, current.system[lang]],
-                    [t.cases.duration, current.duration[lang]],
-                  ].map(([k, v], i) => (
+                  {(
+                    [
+                      [t.cases.problem, current.problem[lang]],
+                      [t.cases.system, current.system[lang]],
+                      current.duration ? [t.cases.duration, current.duration[lang]] : null,
+                    ].filter(Boolean) as [string, string][]
+                  ).map(([k, v], i) => (
                     <div key={k} className={i > 0 ? "border-t border-line pt-5" : ""}>
                       <dt className="text-[13px] text-muted">{k}</dt>
                       <dd className={`mt-1 leading-snug text-ink ${i > 0 ? "tabular-nums text-[14.5px]" : "text-[15.5px]"}`}>{v}</dd>
                     </div>
                   ))}
+                  {current.source ? (
+                    <div className="border-t border-line pt-5">
+                      <dt className="text-[13px] text-muted">{t.cases.source}</dt>
+                      <dd className="mt-1">
+                        <a
+                          href={current.source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-11 items-center gap-1.5 text-[14.5px] text-ink underline decoration-accent/40 underline-offset-4 transition hover:text-accent"
+                        >
+                          {t.cases.viewPost} · <span className="tabular-nums">{current.source.date[lang]}</span>
+                          <ArrowUpRight size={15} strokeWidth={1.7} />
+                        </a>
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
 
                 <figure className="mt-auto pt-7">

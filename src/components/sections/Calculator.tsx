@@ -97,13 +97,15 @@ export function Calculator() {
                 <Option key={p} name="problem" checked={calc.problem === p} onSelect={() => setCalc({ problem: p })} title={t.calc.problems[p]} note={fromNote(p)} />
               ))}
             </Step>
-            <Step n={2} legend={t.calc.q2}>
-              {MATERIALS.map((m) => (
-                <Option key={m} name="material" checked={calc.material === m} onSelect={() => setCalc({ material: m })} title={t.calc.materials[m]} note={t.calc.materialNotes[m]} />
-              ))}
-            </Step>
+            {est.singleTier ? null : (
+              <Step n={2} legend={t.calc.q2}>
+                {MATERIALS.map((m) => (
+                  <Option key={m} name="material" checked={calc.material === m} onSelect={() => setCalc({ material: m })} title={t.calc.materials[m]} note={t.calc.materialNotes[m]} />
+                ))}
+              </Step>
+            )}
             {est.needsCt ? (
-              <Step n={3} legend={t.calc.q3}>
+              <Step n={est.singleTier ? 2 : 3} legend={t.calc.q3}>
                 <Option name="ct" checked={calc.hasCt} onSelect={() => setCalc({ hasCt: true })} title={t.calc.ct.yes} note={t.calc.ctNotes.yes} />
                 <Option name="ct" checked={!calc.hasCt} onSelect={() => setCalc({ hasCt: false })} title={t.calc.ct.no} note={t.calc.ctNotes.no} />
               </Step>
