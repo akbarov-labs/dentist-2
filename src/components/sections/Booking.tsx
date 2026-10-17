@@ -1,16 +1,20 @@
 "use client";
 
 import { ArrowRight, Calculator, Car, CheckCircle2, Clock3, Loader2, Map as MapIcon, MapPin, Navigation, Phone, Send, Sparkles, X } from "lucide-react";
-import { useId, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 import { useSite } from "@/context/SiteContext";
 import { buildTelegramText, computeEstimate, priceRange, selectionLines } from "@/lib/estimate";
 import { formatUzPhone, mapLinks, phoneHref, telegramLink } from "@/lib/format";
+import { openTime, useOpenNow } from "@/lib/useOpenNow";
 import { PortraitArch } from "@/components/ui/PortraitArch";
 import { Reveal } from "@/components/ui/Reveal";
 import { Signature } from "@/components/ui/Signature";
 import { btnPrimary } from "@/components/ui/styles";
 
 type Status = "idle" | "sending" | "success" | "error";
+
+/** Milliseconds since `start` (0 when the form was never focused). */
+const msSince = (start: number) => (start ? Date.now() - start : 0);
 type ContactMethod = "call" | "telegram";
 
 function Segmented<T extends string>({
@@ -46,7 +50,7 @@ function Segmented<T extends string>({
 }
 
 export function Booking() {
-  const { t, doctor, lang, prefill, setPrefill } = useSite();
+  const { t, doctor, lang, calc, prefill, setPrefill } = useSite();
   const [name, setName] = useState("");
   const [digits, setDigits] = useState("");
   const [method, setMethod] = useState<ContactMethod>("telegram");
@@ -55,6 +59,12 @@ export function Booking() {
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
   const [status, setStatus] = useState<Status>("idle");
   const [refNo, setRefNo] = useState("");
+  // Spam guards: a field people never see, and the moment the form was first shown.
+  const [trap, setTrap] = useState("");
+  const shownAt = useRef(0);
+  const open = useOpenNow(doctor);
+  const closed = open === false;
+  const time = openTime(doctor);
 
   // Carry the calculator's CT answer into the form whenever a new estimate arrives.
   const [seenPrefill, setSeenPrefill] = useState(prefill);
@@ -62,6 +72,10 @@ export function Booking() {
     setSeenPrefill(prefill);
     if (prefill?.kind === "calculator") setHasCt(prefill.selection.hasCt ? "yes" : "no");
   }
+
+  // The CT question only matters for treatments that involve a 3D scan.
+  const ctSelection = prefill?.kind === "calculator" ? prefill.selection : calc;
+  const askCt = computeEstimate(doctor, ctSelection, lang).needsCt;
 
   const links = mapLinks(doctor, lang);
   const tgText = buildTelegramText(doctor, lang, t, prefill);
@@ -71,7 +85,7 @@ export function Booking() {
     if (prefill?.kind === "calculator") {
       const l = selectionLines(prefill.selection, t);
       const est = computeEstimate(doctor, prefill.selection, lang);
-      return { lines: [l.problem, l.material, `${t.calc.ctLine}: ${l.ct}`], price: priceRange(est, t) };
+      return { lines: [l.problem, l.material, ...(est.needsCt ? [`${t.calc.ctLine}: ${l.ct}`] : [])], price: priceRange(est, t) };
     }
     if (service) return { lines: [service.title[lang]], price: "" };
     return null;
@@ -103,11 +117,13 @@ export function Booking() {
           name: name.trim(),
           phone: `+998${digits}`,
           contactMethod: method,
-          hasCt: hasCt === "yes",
+          hasCt: askCt && hasCt === "yes",
           comment: comment.trim(),
           lang,
           doctorId: doctor.id,
           selection: summary ? [...summary.lines, summary.price].filter(Boolean).join(" · ") : "",
+          website: trap,
+          elapsedMs: msSince(shownAt.current),
         }),
       });
       const data = (await res.json()) as { ok: boolean; ref?: string };
@@ -128,7 +144,7 @@ export function Booking() {
   };
 
   const inputCls = (err?: string) =>
-    `mt-2 h-12 w-full rounded-[12px] border bg-paper px-4 text-[16px] text-ink placeholder:text-[#7c8085] transition focus:border-accent focus:bg-card focus:outline-none focus:ring-4 focus:ring-accent/10 ${
+    `mt-2 h-12 w-full rounded-[12px] border bg-paper px-4 text-[16px] text-ink placeholder:text-muted transition focus:border-accent focus:bg-card focus:outline-none focus:ring-4 focus:ring-accent/10 ${
       err ? "border-[#b4432f]" : "border-line"
     }`;
 
@@ -137,7 +153,8 @@ export function Booking() {
       <div className="shell">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
           {/* The close: the hero's arch returns, now signed */}
-          <Reveal className="mx-auto w-full max-w-[360px] lg:col-span-5 lg:max-w-none">
+          {/* Phones: the form comes first, so every "book" button lands on it; the signed portrait follows. */}
+          <Reveal className="order-last mx-auto w-full max-w-[360px] lg:order-none lg:col-span-5 lg:max-w-none">
             <figure className="lg:sticky lg:top-24">
               <PortraitArch doctor={doctor} lang={lang} sizes="(min-width: 1024px) 34vw, 80vw" />
               <figcaption className="relative z-[2] -mt-4 text-center">
@@ -150,10 +167,12 @@ export function Booking() {
 
           <div className="lg:col-span-7">
             <Reveal>
-              <h2 id="booking-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+              <h2 id="booking-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[46px]">
                 {t.booking.title}
               </h2>
-              <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">{t.booking.sub}</p>
+              <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">
+                {closed ? t.booking.subClosed.replace("{time}", time) : t.booking.sub}
+              </p>
             </Reveal>
 
           {/* Form */}
@@ -166,7 +185,8 @@ export function Booking() {
                   </span>
                   <h3 className="mt-6 font-display text-[30px] leading-tight text-ink">{t.booking.successTitle}</h3>
                   <p className="mt-3 max-w-[46ch] text-[16px] leading-relaxed text-muted">
-                    {t.booking.successBody} <span className="tabular-nums text-ink">{refNo}</span>
+                    {closed ? t.booking.successBodyClosed.replace("{time}", time) : t.booking.successBody}{" "}
+                    <span className="tabular-nums text-ink">{refNo}</span>
                   </p>
                   {summary ? (
                     <p className="mt-5 rounded-[12px] bg-paper px-4 py-3 tabular-nums text-[13px] leading-relaxed text-ink-soft">
@@ -184,7 +204,21 @@ export function Booking() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={submit} noValidate className="space-y-6">
+                <form
+                  onSubmit={submit}
+                  onFocus={() => {
+                    if (!shownAt.current) shownAt.current = Date.now();
+                  }}
+                  noValidate
+                  className="relative space-y-6"
+                >
+                  {/* Honeypot: hidden from people and assistive tech, filled in by bots */}
+                  <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                    <label>
+                      Website
+                      <input type="text" name="website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+                    </label>
+                  </div>
                   {summary ? (
                     <div className="hud-in flex items-start justify-between gap-4 rounded-[16px] border border-accent/20 bg-accent-soft/70 p-4">
                       <div className="flex items-start gap-3">
@@ -258,7 +292,7 @@ export function Booking() {
                     </div>
                   </div>
 
-                  <div className="grid gap-6 sm:grid-cols-2">
+                  <div className={`grid gap-6 ${askCt ? "sm:grid-cols-2" : ""}`}>
                     <Segmented
                       label={t.booking.contact}
                       value={method}
@@ -268,15 +302,17 @@ export function Booking() {
                         { id: "telegram", label: t.booking.contactTg },
                       ]}
                     />
-                    <Segmented
-                      label={t.booking.ct}
-                      value={hasCt}
-                      onChange={setHasCt}
-                      options={[
-                        { id: "yes", label: t.booking.ctYes },
-                        { id: "no", label: t.booking.ctNo },
-                      ]}
-                    />
+                    {askCt ? (
+                      <Segmented
+                        label={t.booking.ct}
+                        value={hasCt}
+                        onChange={setHasCt}
+                        options={[
+                          { id: "yes", label: t.booking.ctYes },
+                          { id: "no", label: t.booking.ctNo },
+                        ]}
+                      />
+                    ) : null}
                   </div>
 
                   <div>
@@ -290,13 +326,21 @@ export function Booking() {
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                       placeholder={t.booking.commentPh}
-                      className="mt-2 w-full resize-none rounded-[12px] border border-line bg-paper px-4 py-3 text-[16px] text-ink placeholder:text-[#7c8085] transition focus:border-accent focus:bg-card focus:ring-4 focus:ring-accent/10 focus:outline-none"
+                      className="mt-2 w-full resize-none rounded-[12px] border border-line bg-paper px-4 py-3 text-[16px] text-ink placeholder:text-muted transition focus:border-accent focus:bg-card focus:ring-4 focus:ring-accent/10 focus:outline-none"
                     />
                   </div>
 
+                  <p className="flex items-start gap-2.5 rounded-[12px] bg-paper px-4 py-3 text-[14px] leading-relaxed text-ink-soft">
+                    <Clock3 size={17} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                    {t.booking.next}
+                  </p>
+
                   {status === "error" ? (
                     <p role="alert" className="rounded-[12px] border border-[#b4432f]/30 bg-[#fbeeea] px-4 py-3 text-[14px] text-[#8a3324]">
-                      {t.booking.errSubmit}
+                      {t.booking.errSubmit}{" "}
+                      <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className="font-medium underline">
+                        {t.booking.errSubmitTg}
+                      </a>
                     </p>
                   ) : null}
 

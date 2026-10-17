@@ -4,6 +4,13 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSite } from "@/context/SiteContext";
 import { useScrollVar } from "@/lib/useScrollVar";
 import { CALLOUTS, ImplantDrawing, applyDrawing } from "@/components/ui/ImplantDrawing";
+import { VISIT_CALLOUTS, VisitDrawing } from "@/components/ui/VisitDrawing";
+
+// Each doctor's story picks its drawing; both run on the same scroll engine and five-step windows.
+const DRAWINGS = {
+  implant: { callouts: CALLOUTS, Drawing: ImplantDrawing },
+  visit: { callouts: VISIT_CALLOUTS, Drawing: VisitDrawing },
+} as const;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -23,8 +30,9 @@ const useIsLg = () =>
   );
 
 export function Protocol() {
-  const { t } = useSite();
+  const { t, doctor } = useSite();
   const steps = t.protocol.steps;
+  const { callouts, Drawing } = DRAWINGS[doctor.protocolDrawing ?? "implant"];
   const [active, setActive] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
@@ -80,7 +88,7 @@ export function Protocol() {
   };
 
   const step = steps[active];
-  const activeCallouts = CALLOUTS.filter((c) => c.step === active).map((c) => t.protocol.callouts[c.key]);
+  const activeCallouts = callouts.filter((c) => c.step === active).map((c) => t.protocol.callouts[c.key]);
 
   return (
     <section id="protocol" aria-labelledby="protocol-title" className="relative bg-night py-20 text-paper md:py-28">
@@ -117,12 +125,12 @@ export function Protocol() {
               </div>
 
               <div className="relative min-h-0 flex-1 px-3 py-2 lg:px-8 lg:py-5">
-                <ImplantDrawing title={t.protocol.drawingLabel} />
+                <Drawing key={doctor.id} title={t.protocol.drawingLabel} />
               </div>
 
               {/* Desktop legend: a record that fills in as the drawing does */}
               <ol className="hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-night-line px-6 py-4 lg:grid xl:grid-cols-3">
-                {CALLOUTS.map((c) => (
+                {callouts.map((c) => (
                   <li
                     key={c.n}
                     data-mode="fade"
@@ -151,27 +159,29 @@ export function Protocol() {
                   key={s.title}
                   id={`protocol-step-${i}`}
                   data-step={i}
-                  className={`flex min-h-[72vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[80vh] ${isActive ? "opacity-100" : "opacity-45"}`}
+                  className={`flex min-h-[58vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[70vh] ${isActive ? "opacity-100" : "opacity-60"}`}
                 >
                   <h3 className="font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
                   <p className="mt-2 text-[15px] text-accent-light/90">{s.short}</p>
                   <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-paper/75">{s.body}</p>
 
-                  <dl className="mt-7 grid gap-5 border-t border-night-line pt-6 sm:grid-cols-3 sm:gap-4">
+                  <dl className={`mt-7 grid gap-5 border-t border-night-line pt-6 sm:gap-4 ${s.equipment.length ? "sm:grid-cols-3" : "grid-cols-2"}`}>
                     <div>
                       <dt className="text-[13px] text-paper/60">{t.protocol.duration}</dt>
                       <dd className="mt-1.5 tabular-nums text-[15px]">{s.duration}</dd>
                     </div>
-                    <div>
-                      <dt className="text-[13px] text-paper/60">{t.protocol.equipment}</dt>
-                      <dd className="mt-1.5">
-                        <ul className="space-y-0.5 text-[14px] text-paper/85">
-                          {s.equipment.map((e) => (
-                            <li key={e}>{e}</li>
-                          ))}
-                        </ul>
-                      </dd>
-                    </div>
+                    {s.equipment.length ? (
+                      <div>
+                        <dt className="text-[13px] text-paper/60">{t.protocol.equipment}</dt>
+                        <dd className="mt-1.5">
+                          <ul className="space-y-0.5 text-[14px] text-paper/85">
+                            {s.equipment.map((e) => (
+                              <li key={e}>{e}</li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </div>
+                    ) : null}
                     <div>
                       <dt className="text-[13px] text-paper/60">{t.protocol.comfort}</dt>
                       <dd className="mt-1.5 text-[14px] text-paper/85">{s.comfortText}</dd>

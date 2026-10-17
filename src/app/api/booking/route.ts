@@ -5,7 +5,39 @@ import { doctorPresets } from "@/config/doctorConfig";
  * Set TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID (see .env.example) and every request
  * is delivered to the doctor's Telegram as a formatted message. Without them the
  * request is validated and logged on the server, so the form still works in a demo.
+ *
+ * Spam guards (no third-party captcha): a honeypot field, a minimum fill time, and in-memory
+ * rate limits per IP and overall. Bots get a normal-looking success, so they learn nothing.
+ * The limits live in this server process; behind several instances use a shared store instead.
  */
+
+const WINDOW_MS = 10 * 60_000;
+const PER_IP = 5;
+const OVERALL = 40;
+const MIN_FILL_MS = 1500;
+
+const hits = new Map<string, number[]>();
+let overall: number[] = [];
+
+function allow(ip: string, now: number): boolean {
+  overall = overall.filter((t) => now - t < WINDOW_MS);
+  const mine = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+  if (mine.length >= PER_IP || overall.length >= OVERALL) {
+    hits.set(ip, mine);
+    return false;
+  }
+  mine.push(now);
+  overall.push(now);
+  hits.set(ip, mine);
+  // Keep the map from growing without bound on a long-lived server.
+  if (hits.size > 5000) for (const [k, v] of hits) if (!v.some((t) => now - t < WINDOW_MS)) hits.delete(k);
+  return true;
+}
+
+const clientIp = (request: Request) =>
+  request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
+
+const makeRef = () => `QB-${Date.now().toString(36).slice(-5).toUpperCase()}`;
 
 interface BookingBody {
   name?: unknown;
@@ -16,6 +48,8 @@ interface BookingBody {
   lang?: unknown;
   doctorId?: unknown;
   selection?: unknown;
+  website?: unknown;
+  elapsedMs?: unknown;
 }
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -30,6 +64,16 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
 
+  // Honeypot filled, or the form was submitted faster than a person can type: pretend it worked.
+  const elapsed = typeof body.elapsedMs === "number" ? body.elapsedMs : 0;
+  if (str(body.website, 200) || (elapsed > 0 && elapsed < MIN_FILL_MS)) {
+    return Response.json({ ok: true, ref: makeRef() });
+  }
+
+  if (!allow(clientIp(request), Date.now())) {
+    return Response.json({ ok: false, error: "rate_limited" }, { status: 429 });
+  }
+
   const name = str(body.name, 80);
   const phone = str(body.phone, 20);
   const comment = str(body.comment, 600);
@@ -42,7 +86,7 @@ export async function POST(request: Request) {
   if (!/^\+998\d{9}$/.test(phone)) return Response.json({ ok: false, error: "phone" }, { status: 422 });
 
   const doctor = doctorPresets[doctorId as keyof typeof doctorPresets];
-  const ref = `QB-${Date.now().toString(36).slice(-5).toUpperCase()}`;
+  const ref = makeRef();
 
   const text = [
     `<b>Yangi qabul so‘rovi</b> · ${ref}`,

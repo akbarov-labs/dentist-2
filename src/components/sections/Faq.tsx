@@ -58,7 +58,7 @@ export function Faq() {
                     className={`grid transition-[grid-template-rows] duration-500 ease-[var(--ease-atelier)] ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                   >
                     <div className="overflow-hidden" inert={!isOpen}>
-                      <p className="max-w-[64ch] pb-7 text-[16px] leading-relaxed text-muted">{item.a}</p>
+                      <p className="max-w-[58ch] pb-7 text-[16px] leading-relaxed text-muted">{item.a}</p>
                     </div>
                   </div>
                 </li>

@@ -9,9 +9,10 @@ const uz = {
     approach: "Yondashuv",
     cases: "Natijalar",
     services: "Xizmatlar",
-    calculator: "Kalkulyator",
+    calculator: "Narxlar",
+    faq: "Savollar",
     credentials: "Sertifikatlar",
-    location: "Aloqa",
+    location: "Yozilish",
     menu: "Menyu",
     close: "Yopish",
     skip: "Asosiy kontentga o‘tish",
@@ -27,6 +28,7 @@ const uz = {
     call: "Qo‘ng‘iroq",
     telegram: "Telegram",
     bookShort: "Qabulga yozilish",
+    urgent: "Tishim og‘riyapti",
   },
   hero: {
     tail: "Har bir ishimga o‘z imzoimni qo‘yaman va yozma kafolat beraman.",
@@ -73,6 +75,15 @@ const uz = {
       zoom: "25× mikroskop",
       warranty: "Kafolat pasporti",
       checks: "6 · 12 · 24 oy nazorat",
+      tooth: "Tish",
+      xray: "Rentgen tasvir",
+      lesion: "Karies o‘chog‘i",
+      price: "Yozma narx",
+      gel: "Anestetik gel",
+      numb: "Og‘riqsiz zona",
+      flow: "Kompyuterli sekin oqim",
+      filling: "Plomba",
+      hand: "Qo‘l ko‘tarsangiz, to‘xtayman",
     },
     steps: [
       {
@@ -141,6 +152,7 @@ const uz = {
     title: "To‘rtta yo‘nalish. Yigirmata emas.",
     sub: "Men faqat o‘zim eng yaxshi bajaradigan ishlarni qilaman. Narxlar shaffof va oldindan ma’lum.",
     from: "dan",
+    ctExtra: "+ 3D KT",
     calc: "Narxni hisoblash",
     book: "Qabulga yozilish",
   },
@@ -156,6 +168,9 @@ const uz = {
       multiple: "Bir nechta tishni tiklash",
       fullArch: "To‘liq jag‘ (All-on-4/6)",
       aesthetic: "Tabassum estetikasi (vinir / sirkoniy)",
+      checkup: "Ko‘rik va tish tozalash",
+      treatment: "Tish og‘riyapti / plomba kerak",
+      rootCanal: "Kanal davolash (nerv)",
     },
     materials: {
       premium: "Janubiy Koreya premium (Osstem)",
@@ -191,6 +206,7 @@ const uz = {
     holder: "Egasi",
     program: "Dastur",
     verifiedBy: "Asl nusxasi qabulxonada ko‘rish uchun mavjud",
+    certTitle: "Tugatganlik sertifikati",
   },
   intro: {
     title: "1 daqiqalik tanishuv",
@@ -237,8 +253,10 @@ const uz = {
   booking: {
     title: "Qabulga yozilish",
     sub: "Ish vaqtida 30 daqiqa ichida o‘zim javob beraman.",
+    subClosed: "Hozir qabul yopiq. Ish kuni boshlanishi bilan, {time} da birinchi bo‘lib o‘zim javob beraman.",
+    next: "Keyin nima bo‘ladi: o‘zim qo‘ng‘iroq qilaman yoki Telegramda yozaman va qulay vaqtni kelishamiz. Birinchi ko‘rikda davolash rejasi va yozma narxni olasiz.",
     closeLine: "Birinchi uchrashuvda sizni o‘zim kutib olaman.",
-    selected: "Tanlangan konfiguratsiya",
+    selected: "Siz tanlagan hisob-kitob",
     service: "Tanlangan xizmat",
     remove: "Olib tashlash",
     name: "Ismingiz",
@@ -258,8 +276,10 @@ const uz = {
     errName: "Iltimos, ismingizni kiriting",
     errPhone: "Raqam to‘liq emas: +998 XX XXX XX XX",
     errSubmit: "So‘rov yuborilmadi. Iltimos, qayta urinib ko‘ring yoki Telegramda yozing.",
+    errSubmitTg: "Telegramda yozish",
     successTitle: "Rahmat, so‘rovingiz qabul qilindi",
     successBody: "Ish vaqtida 30 daqiqa ichida o‘zim bog‘lanaman. So‘rov raqami:",
+    successBodyClosed: "Ish kuni boshlanishi bilan, {time} da o‘zim bog‘lanaman. So‘rov raqami:",
     successAgain: "Yangi so‘rov",
     tgTitle: "To‘g‘ridan-to‘g‘ri Telegram orqali yozish",
     tgBody: "Xabar siz tanlagan xizmat bilan tayyor holda ochiladi. Faqat “Yuborish”ni bosing.",
@@ -278,6 +298,7 @@ const uz = {
     price: "Taxminiy narx",
     serviceIntro: "Saytingiz orqali yozyapman. Meni qiziqtirgan xizmat:",
     generic: "Saytingiz orqali yozyapman. Shaxsiy ko‘rikka yozilmoqchi edim.",
+    urgent: "Tishim og‘riyapti. Bugun yoki ertaga qabul qila olasizmi?",
     ask: "Shaxsiy ko‘rikka yozilish uchun qulay vaqtni bilsam bo‘ladimi?",
     thanks: "Rahmat!",
   },
@@ -303,9 +324,10 @@ const ru: Dict = {
     approach: "Подход",
     cases: "Результаты",
     services: "Услуги",
-    calculator: "Калькулятор",
+    calculator: "Цены",
+    faq: "Вопросы",
     credentials: "Сертификаты",
-    location: "Контакты",
+    location: "Запись",
     menu: "Меню",
     close: "Закрыть",
     skip: "Перейти к основному содержанию",
@@ -321,6 +343,7 @@ const ru: Dict = {
     call: "Позвонить",
     telegram: "Telegram",
     bookShort: "Записаться",
+    urgent: "Болит зуб",
   },
   hero: {
     tail: "Под каждой работой стоит моя подпись и письменная гарантия.",
@@ -367,6 +390,15 @@ const ru: Dict = {
       zoom: "Микроскоп 25×",
       warranty: "Паспорт гарантии",
       checks: "Контроль 6 · 12 · 24 мес",
+      tooth: "Зуб",
+      xray: "Рентген-снимок",
+      lesion: "Очаг кариеса",
+      price: "Письменная цена",
+      gel: "Анестезирующий гель",
+      numb: "Зона без боли",
+      flow: "Медленная компьютерная подача",
+      filling: "Пломба",
+      hand: "Поднимете руку, и я остановлюсь",
     },
     steps: [
       {
@@ -435,6 +467,7 @@ const ru: Dict = {
     title: "Четыре направления. Не двадцать.",
     sub: "Я делаю только то, что умею лучше всего. Цены прозрачны и известны заранее.",
     from: "от",
+    ctExtra: "+ 3D КТ",
     calc: "Рассчитать цену",
     book: "Записаться",
   },
@@ -450,6 +483,9 @@ const ru: Dict = {
       multiple: "Восстановить несколько зубов",
       fullArch: "Вся челюсть (All-on-4/6)",
       aesthetic: "Эстетика улыбки (виниры / цирконий)",
+      checkup: "Осмотр и чистка зубов",
+      treatment: "Болит зуб / нужна пломба",
+      rootCanal: "Лечение каналов (нерв)",
     },
     materials: {
       premium: "Южнокорейский премиум (Osstem)",
@@ -485,6 +521,7 @@ const ru: Dict = {
     holder: "Владелец",
     program: "Программа",
     verifiedBy: "Оригинал доступен для просмотра в кабинете",
+    certTitle: "Сертификат о прохождении",
   },
   intro: {
     title: "Знакомство за 1 минуту",
@@ -531,8 +568,10 @@ const ru: Dict = {
   booking: {
     title: "Запись на приём",
     sub: "В рабочее время отвечу вам лично в течение 30 минут.",
+    subClosed: "Сейчас приём закрыт. Отвечу первым делом, как только начнётся рабочий день, в {time}.",
+    next: "Что дальше: я позвоню или напишу в Telegram, и мы согласуем удобное время. На первом приёме вы получите план лечения и письменную цену.",
     closeLine: "На первом приёме вас встречу я сам.",
-    selected: "Выбранная конфигурация",
+    selected: "Ваш расчёт",
     service: "Выбранная услуга",
     remove: "Убрать",
     name: "Ваше имя",
@@ -552,8 +591,10 @@ const ru: Dict = {
     errName: "Пожалуйста, укажите имя",
     errPhone: "Номер неполный: +998 XX XXX XX XX",
     errSubmit: "Заявка не отправилась. Попробуйте ещё раз или напишите в Telegram.",
+    errSubmitTg: "Написать в Telegram",
     successTitle: "Спасибо, заявка принята",
     successBody: "В рабочее время я сам свяжусь с вами в течение 30 минут. Номер заявки:",
+    successBodyClosed: "Свяжусь с вами сам, как только начнётся рабочий день, в {time}. Номер заявки:",
     successAgain: "Новая заявка",
     tgTitle: "Написать напрямую в Telegram",
     tgBody: "Сообщение откроется уже с выбранной услугой. Останется нажать «Отправить».",
@@ -572,6 +613,7 @@ const ru: Dict = {
     price: "Ориентировочная цена",
     serviceIntro: "Пишу с вашего сайта. Меня интересует услуга:",
     generic: "Пишу с вашего сайта. Хотел(а) бы записаться на личный осмотр.",
+    urgent: "У меня болит зуб. Сможете принять сегодня или завтра?",
     ask: "Подскажите, пожалуйста, удобное время для записи на осмотр?",
     thanks: "Спасибо!",
   },
@@ -591,3 +633,21 @@ const ru: Dict = {
 };
 
 export const dictionaries: Record<Lang, Dict> = { uz, ru };
+
+/** Objects merge key by key; arrays and strings replace whole. */
+export type DeepPartial<T> = T extends readonly unknown[] ? T : T extends object ? { [K in keyof T]?: DeepPartial<T[K]> } : T;
+export type CopyOverride = DeepPartial<Dict>;
+
+const isPlainObject = (v: unknown): v is Record<string, unknown> => typeof v === "object" && v !== null && !Array.isArray(v);
+
+function mergeDeep<T>(base: T, patch: unknown): T {
+  if (!isPlainObject(base) || !isPlainObject(patch)) return (patch === undefined ? base : patch) as T;
+  const out: Record<string, unknown> = { ...base };
+  for (const [k, v] of Object.entries(patch)) out[k] = mergeDeep(out[k], v);
+  return out as T;
+}
+
+/** The shared dictionary with a doctor's own copy layered on top. */
+export function withCopy(dict: Dict, override?: CopyOverride): Dict {
+  return override ? mergeDeep(dict, override) : dict;
+}

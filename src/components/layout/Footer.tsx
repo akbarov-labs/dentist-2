@@ -6,12 +6,19 @@ import { useSite } from "@/context/SiteContext";
 import { instagramLink, phoneHref, telegramLink } from "@/lib/format";
 import { useClientValue } from "@/lib/prefs";
 import { Monogram } from "@/components/ui/Monogram";
-import { NAV_IDS } from "@/components/layout/Header";
 
 export function Footer() {
   const { t, doctor, lang, scrollToId } = useSite();
   const year = useClientValue(() => new Date().getFullYear());
-  const labels = [t.nav.approach, t.nav.cases, t.nav.services, t.nav.calculator, t.nav.credentials, t.nav.location];
+  // The footer can afford the full map of the page; the header keeps only four links.
+  const links = [
+    { id: "approach", label: t.nav.approach },
+    { id: "services", label: t.nav.services },
+    { id: "calculator", label: t.nav.calculator },
+    { id: "cases", label: t.nav.cases },
+    { id: "credentials", label: t.nav.credentials },
+    { id: "faq", label: t.nav.faq },
+  ];
 
   return (
     <footer className="border-t border-line pt-16 pb-28 md:pb-12">
@@ -30,10 +37,10 @@ export function Footer() {
 
           <nav aria-label={t.nav.menu} className="lg:col-span-3">
             <ul className="grid grid-cols-2 gap-x-6 lg:grid-cols-1">
-              {NAV_IDS.map((id, i) => (
+              {links.map(({ id, label }) => (
                 <li key={id}>
                   <a href={`#${id}`} onClick={(e) => (e.preventDefault(), scrollToId(id))} className="inline-flex min-h-11 items-center text-[14.5px] text-ink-soft transition hover:text-accent">
-                    {labels[i]}
+                    {label}
                   </a>
                 </li>
               ))}
@@ -56,11 +63,13 @@ export function Footer() {
                 <AtSign size={16} strokeWidth={1.6} className="text-accent" /> @{doctor.contact.instagram}
               </a>
             </li>
-            <li>
-              <a href={`mailto:${doctor.contact.email}`} className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-accent">
-                <Mail size={16} strokeWidth={1.6} className="text-accent" /> {doctor.contact.email}
-              </a>
-            </li>
+            {doctor.contact.email ? (
+              <li>
+                <a href={`mailto:${doctor.contact.email}`} className="inline-flex min-h-11 items-center gap-2.5 text-ink transition hover:text-accent">
+                  <Mail size={16} strokeWidth={1.6} className="text-accent" /> {doctor.contact.email}
+                </a>
+              </li>
+            ) : null}
             <li className="pt-2 text-muted">{doctor.address.full[lang]}</li>
           </ul>
         </div>

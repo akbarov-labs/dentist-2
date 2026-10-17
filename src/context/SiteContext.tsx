@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
+  defaultCalcProblems,
   doctorPresets,
   site,
   type DoctorProfile,
@@ -10,7 +11,7 @@ import {
   type PresetId,
   type ProblemId,
 } from "@/config/doctorConfig";
-import { dictionaries, type Dict } from "@/i18n/dictionary";
+import { dictionaries, withCopy, type Dict } from "@/i18n/dictionary";
 import { setPref, usePref } from "@/lib/prefs";
 
 export interface CalcSelection {
@@ -55,7 +56,11 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   // Language and demo persona survive reloads; `?lang=ru` / `?demo=sardor` let a pitch link open straight into a persona.
   const lang = usePref(LANG_KEY, "lang", site.defaultLang, isLang);
   const presetId = usePref(PRESET_KEY, "demo", site.activePresetId, isPreset);
-  const [calc, setCalcState] = useState<CalcSelection>({ problem: "single", material: "premium", hasCt: false });
+  const [calc, setCalcState] = useState<CalcSelection>(() => ({
+    problem: (doctorPresets[presetId].calcProblems ?? defaultCalcProblems)[0],
+    material: "premium",
+    hasCt: false,
+  }));
   const [prefill, setPrefill] = useState<BookingPrefill>(null);
   const [modal, setModal] = useState<ModalState>(null);
 
@@ -77,22 +82,37 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   const scrollToId = useCallback((id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
+    // A section can name the exact spot to land on (its heading); focus follows, so keyboard and screen-reader users arrive too.
+    const target = el.querySelector<HTMLElement>("[data-scroll-target]") ?? el;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    target.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    if (target.tabIndex >= -1 && target.hasAttribute("tabindex")) target.focus({ preventScroll: true });
     history.replaceState(null, "", `#${id}`);
   }, []);
 
   const doctor = doctorPresets[presetId];
+  const t = useMemo(() => withCopy(dictionaries[lang], doctor.copy?.[lang]), [lang, doctor]);
+
+  // A doctor only offers some calculator answers; fall back to their first one after a preset switch.
+  const problems = doctor.calcProblems ?? defaultCalcProblems;
+  const calcFor = useMemo(
+    () => (problems.includes(calc.problem) ? calc : { ...calc, problem: problems[0] }),
+    [calc, problems],
+  );
+
+  useEffect(() => {
+    document.title = `${doctor.name[lang]} · ${doctor.title[lang]}`;
+  }, [doctor, lang]);
 
   const value = useMemo<SiteState>(
     () => ({
       lang,
       setLang,
-      t: dictionaries[lang],
+      t,
       presetId,
       setPresetId,
       doctor,
-      calc,
+      calc: calcFor,
       setCalc,
       prefill,
       setPrefill,
@@ -100,7 +120,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       setModal,
       scrollToId,
     }),
-    [lang, setLang, presetId, setPresetId, doctor, calc, setCalc, prefill, modal, scrollToId],
+    [lang, setLang, t, presetId, setPresetId, doctor, calcFor, setCalc, prefill, modal, scrollToId],
   );
 
   return <SiteContext.Provider value={value}>{children}</SiteContext.Provider>;

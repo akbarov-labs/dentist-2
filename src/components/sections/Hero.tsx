@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowRight, BadgeCheck, CirclePlay } from "lucide-react";
+import { ArrowRight, BadgeCheck, CirclePlay, Send } from "lucide-react";
 import { useRef, type CSSProperties } from "react";
 import { useSite } from "@/context/SiteContext";
+import { telegramLink } from "@/lib/format";
 import { clamp01, useScrollVar } from "@/lib/useScrollVar";
 import { PortraitArch } from "@/components/ui/PortraitArch";
 import { btnPrimary, btnSecondary } from "@/components/ui/styles";
@@ -49,14 +50,27 @@ export function Hero() {
                 {t.cta.book}
                 <ArrowRight size={17} strokeWidth={1.7} className="transition-transform duration-300 group-hover:translate-x-0.5" />
               </button>
-              <button type="button" onClick={() => setModal({ kind: "intro" })} className={btnSecondary}>
-                {doctor.introVideoUrl ? (
-                  <CirclePlay size={17} strokeWidth={1.6} className="text-accent" />
-                ) : (
-                  <BadgeCheck size={17} strokeWidth={1.6} className="text-accent" />
-                )}
-                {t.cta.intro}
-              </button>
+              {doctor.urgentCta ? (
+                // The visitor in pain skips the whole story: one tap opens Telegram with the request already written.
+                <a
+                  href={telegramLink(doctor.contact.telegram, `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.urgent}`)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={btnSecondary}
+                >
+                  <Send size={17} strokeWidth={1.6} className="text-accent" />
+                  {t.cta.urgent}
+                </a>
+              ) : (
+                <button type="button" onClick={() => setModal({ kind: "intro" })} className={btnSecondary}>
+                  {doctor.introVideoUrl ? (
+                    <CirclePlay size={17} strokeWidth={1.6} className="text-accent" />
+                  ) : (
+                    <BadgeCheck size={17} strokeWidth={1.6} className="text-accent" />
+                  )}
+                  {t.cta.intro}
+                </button>
+              )}
             </div>
           </div>
 

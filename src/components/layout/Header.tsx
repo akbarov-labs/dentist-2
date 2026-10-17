@@ -1,29 +1,34 @@
 "use client";
 
 import { Menu, Phone, Send, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSite } from "@/context/SiteContext";
-import { isOpenNow, phoneHref, telegramLink } from "@/lib/format";
+import { phoneHref, telegramLink } from "@/lib/format";
+import { useOpenNow } from "@/lib/useOpenNow";
 import { Monogram } from "@/components/ui/Monogram";
 import { LangToggle } from "@/components/ui/LangToggle";
 import { btnPrimary, btnSmall } from "@/components/ui/styles";
 
-export const NAV_IDS = ["approach", "cases", "services", "calculator", "credentials", "booking"] as const;
+// Four destinations; booking has its own button, so it is not repeated as a link.
+export const NAV_IDS = ["services", "calculator", "cases", "faq"] as const;
+// Sections without a nav link are observed too, so the highlight clears instead of sticking to the last link passed.
+const OBSERVED_IDS = ["top", "approach", "protocol", "cases", "services", "calculator", "credentials", "reviews", "faq", "booking"];
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export function Header() {
-  const { t, doctor, lang, scrollToId } = useSite();
+  const { t, doctor, lang, setLang, scrollToId } = useSite();
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState<string>("");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [open, setOpen] = useState<boolean | null>(null);
+  const open = useOpenNow(doctor);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   const labels: Record<(typeof NAV_IDS)[number], string> = {
-    approach: t.nav.approach,
-    cases: t.nav.cases,
     services: t.nav.services,
     calculator: t.nav.calculator,
-    credentials: t.nav.credentials,
-    booking: t.nav.location,
+    cases: t.nav.cases,
+    faq: t.nav.faq,
   };
 
   // Header gets its hairline once the hero top leaves the viewport (sentinel, no scroll listener).
@@ -37,7 +42,7 @@ export function Header() {
 
   // Highlight the section currently in the middle band of the viewport.
   useEffect(() => {
-    const sections = NAV_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    const sections = OBSERVED_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -50,22 +55,32 @@ export function Header() {
     return () => io.disconnect();
   }, []);
 
-  // Live "open now" state in Tashkent time, refreshed every minute.
-  useEffect(() => {
-    const tick = () => setOpen(isOpenNow(doctor));
-    tick();
-    const id = window.setInterval(tick, 60_000);
-    return () => window.clearInterval(id);
-  }, [doctor]);
-
   useEffect(() => {
     if (!menuOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    const menuButton = menuButtonRef.current;
+    // Esc closes; Tab cycles inside the open menu instead of escaping to the page behind it.
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") return setMenuOpen(false);
+      const panel = panelRef.current;
+      if (e.key !== "Tab" || !panel) return;
+      const items = Array.from(panel.querySelectorAll<HTMLElement>(FOCUSABLE));
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
+      menuButton?.focus({ preventScroll: true });
     };
   }, [menuOpen]);
 
@@ -75,7 +90,7 @@ export function Header() {
   };
 
   const status = (compact: boolean) => (
-    <span title={`${doctor.hours.days[lang]}, ${doctor.hours.time}`} className="inline-flex items-center gap-2 text-[13px] whitespace-nowrap text-ink-soft">
+    <span title={`${doctor.hours.days[lang]}, ${doctor.hours.time}`} className={`inline-flex items-center gap-2 text-[13px] text-ink-soft ${compact ? "whitespace-nowrap" : ""}`}>
       <span
         className={`h-2 w-2 rounded-full ${open === false ? "bg-ink/30" : "bg-accent"}`}
         aria-hidden
@@ -106,11 +121,11 @@ export function Header() {
           scrolled ? "border-b border-line/80 bg-paper/85 backdrop-blur-xl" : "border-b border-transparent bg-paper"
         }`}
       >
-        <div className="shell flex h-[68px] items-center gap-4 lg:h-[76px]">
+        <div className="shell flex h-[68px] items-center gap-3 sm:gap-4 lg:h-[76px]">
           <a href="#top" onClick={(e) => (e.preventDefault(), go("top"))} className="flex min-w-0 items-center gap-3 xl:shrink-0">
             <Monogram letters={doctor.monogram} className="h-10 w-10 shrink-0 lg:h-11 lg:w-11" />
             <span className="min-w-0 leading-tight">
-              <span className="block truncate font-display text-[17px] font-medium tracking-[-0.01em] text-ink lg:text-[18px] xl:overflow-visible">
+              <span className="block truncate font-display text-[16px] font-medium sm:text-[17px] tracking-[-0.01em] text-ink lg:text-[18px] xl:overflow-visible">
                 {doctor.name[lang]}
               </span>
               <span className="hidden truncate text-[12px] text-muted sm:block xl:hidden">{doctor.practice[lang]}</span>
@@ -141,11 +156,21 @@ export function Header() {
             </ul>
           </nav>
 
-          <div className="ml-auto flex items-center gap-3 xl:ml-0">
-            <div className="hidden min-[1440px]:block">{status(true)}</div>
+          <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 xl:ml-0">
+            <div className="hidden min-[1280px]:block">{status(true)}</div>
             <div className="hidden sm:block">
               <LangToggle />
             </div>
+            {/* Phones: one tap to the other language, kept outside the menu so it is found without searching */}
+            <button
+              type="button"
+              lang={lang === "uz" ? "ru" : "uz"}
+              onClick={() => setLang(lang === "uz" ? "ru" : "uz")}
+              aria-label={lang === "uz" ? "Русский" : "O‘zbekcha"}
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-card tabular-nums text-[12px] tracking-[0.06em] text-ink-soft transition-colors hover:text-ink sm:hidden"
+            >
+              {lang === "uz" ? "РУ" : "O‘Z"}
+            </button>
             <div className="hidden md:block">
               <button type="button" onClick={() => go("booking")} className={`${btnPrimary} h-11`}>
                 <span className="xl:hidden">{t.cta.book}</span>
@@ -154,6 +179,7 @@ export function Header() {
             </div>
             <button
               type="button"
+              ref={menuButtonRef}
               onClick={() => setMenuOpen(true)}
               aria-label={t.nav.menu}
               aria-expanded={menuOpen}
@@ -175,7 +201,7 @@ export function Header() {
             className="absolute inset-0 bg-night/40 backdrop-blur-sm"
             onClick={() => setMenuOpen(false)}
           />
-          <div className="enter absolute inset-y-0 right-0 flex w-full max-w-[400px] flex-col bg-paper px-6 pt-5 pb-8 shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.4s" }}>
+          <div ref={panelRef} className="enter absolute inset-y-0 right-0 flex w-full max-w-[400px] flex-col bg-paper px-6 pt-5 pb-8 shadow-[var(--shadow-lift)]" style={{ animationDuration: "0.4s" }}>
             <div className="flex items-center justify-between">
               <LangToggle />
               <button

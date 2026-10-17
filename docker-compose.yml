@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    image: dentist-2
+    ports:
+      - "${HOST_PORT:-3030}:3000"
+    env_file:
+      - path: .env
+        required: false
+    restart: unless-stopped

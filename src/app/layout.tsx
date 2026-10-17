@@ -16,6 +16,8 @@ const signature = Mrs_Saint_Delafield({
   weight: "400",
   subsets: ["latin"],
   display: "swap",
+  // Only the handwritten signatures below the fold use it; no need to compete with the hero's fonts.
+  preload: false,
 });
 
 const d = defaultDoctor;

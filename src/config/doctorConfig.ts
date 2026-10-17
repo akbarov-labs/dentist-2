@@ -12,10 +12,12 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+import type { CopyOverride } from "@/i18n/dictionary";
+
 export type Lang = "uz" | "ru";
 export type Localized<T = string> = Record<Lang, T>;
 
-export type ProblemId = "single" | "multiple" | "fullArch" | "aesthetic";
+export type ProblemId = "single" | "multiple" | "fullArch" | "aesthetic" | "checkup" | "treatment" | "rootCanal";
 export type MaterialId = "premium" | "swiss";
 export type CaseCategory = "implant" | "veneers" | "allOn6";
 
@@ -33,6 +35,10 @@ export interface ProblemPricing {
   visits: Localized;
   surgeryTime: Localized;
   bonuses: Localized[];
+  /** false: no 3D CT is involved, so the calculator skips the CT question and adds no scan cost. */
+  needsCt?: boolean;
+  /** false: the 0% instalment line is hidden (small one-visit treatments). */
+  installment?: boolean;
 }
 
 export interface ServiceItem {
@@ -97,7 +103,7 @@ export interface DoctorProfile {
     phone: string;
     telegram: string;
     instagram: string;
-    email: string;
+    email?: string;
   };
   address: {
     full: Localized;
@@ -126,7 +132,17 @@ export interface DoctorProfile {
   cases: ClinicalCase[];
   /** Optional MP4 / YouTube-embed URL for the 1-minute intro. */
   introVideoUrl?: string;
+  /** Which scroll-built drawing tells the protocol story: an implant (default) or a painless general visit. */
+  protocolDrawing?: "implant" | "visit";
+  /** Hero's second action becomes "my tooth hurts" (Telegram with a prefilled urgent message) instead of the intro. */
+  urgentCta?: boolean;
+  /** Calculator answers for "what bothers you", in display order (2 or 4 read best). Defaults to the implant set. */
+  calcProblems?: ProblemId[];
+  /** Per-doctor overrides of the shared UI copy, merged over the dictionary (arrays replace, objects merge). */
+  copy?: Partial<Record<Lang, CopyOverride>>;
 }
+
+export const defaultCalcProblems: ProblemId[] = ["single", "multiple", "fullArch", "aesthetic"];
 
 /* ───────────────────────────── Shared data ───────────────────────────── */
 
@@ -176,6 +192,47 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
       { uz: "Bepul raqamli tabassum dizayni", ru: "Бесплатный цифровой дизайн улыбки" },
       { uz: "Og‘izda sinov modeli (mock-up)", ru: "Примерка во рту (mock-up)" },
       { uz: "Oqartirish sovg‘a sifatida", ru: "Отбеливание в подарок" },
+    ],
+  },
+  checkup: {
+    premium: { min: 350_000, max: 500_000 },
+    swiss: { min: 550_000, max: 750_000 },
+    visits: { uz: "1 tashrif", ru: "1 визит" },
+    surgeryTime: { uz: "45–60 daqiqa", ru: "45–60 минут" },
+    needsCt: false,
+    installment: false,
+    bonuses: [
+      { uz: "Davolash rejasi va yozma narx", ru: "План лечения и письменная цена" },
+      { uz: "Air-Flow va ultratovush bilan tozalash", ru: "Чистка Air-Flow и ультразвуком" },
+      { uz: "Uy gigienasi bo‘yicha shaxsiy maslahat", ru: "Личные рекомендации по гигиене" },
+    ],
+  },
+  treatment: {
+    premium: { min: 450_000, max: 700_000 },
+    swiss: { min: 750_000, max: 1_100_000 },
+    unitNote: { uz: "1 tish uchun", ru: "за 1 зуб" },
+    visits: { uz: "1 tashrif", ru: "1 визит" },
+    surgeryTime: { uz: "40–60 daqiqa", ru: "40–60 минут" },
+    needsCt: false,
+    installment: false,
+    bonuses: [
+      { uz: "Og‘riqsiz kompyuterli anesteziya", ru: "Безболезненная компьютерная анестезия" },
+      { uz: "Rentgen tasvir narxga kiritilgan", ru: "Рентген-снимок включён в цену" },
+      { uz: "Plombaga 2 yillik yozma kafolat", ru: "Письменная гарантия на пломбу 2 года" },
+    ],
+  },
+  rootCanal: {
+    premium: { min: 1_200_000, max: 1_800_000 },
+    swiss: { min: 1_900_000, max: 2_800_000 },
+    unitNote: { uz: "1 tish uchun", ru: "за 1 зуб" },
+    visits: { uz: "1–2 tashrif", ru: "1–2 визита" },
+    surgeryTime: { uz: "60–90 daqiqa", ru: "60–90 минут" },
+    needsCt: false,
+    installment: false,
+    bonuses: [
+      { uz: "Mikroskop ostida kanal davolash", ru: "Лечение каналов под микроскопом" },
+      { uz: "Nazorat rentgeni narxga kiritilgan", ru: "Контрольный снимок включён в цену" },
+      { uz: "Vaqtinchalik plomba bepul", ru: "Временная пломба бесплатно" },
     ],
   },
 };
@@ -582,13 +639,320 @@ const sardor: DoctorProfile = {
   cases: [sharedCases[1], sharedCases[0], sharedCases[2]],
 };
 
-export const doctorPresets = { jamshid, sardor } satisfies Record<string, DoctorProfile>;
+const iqboljon: DoctorProfile = {
+  ...jamshid,
+  id: "iqboljon",
+  presetLabel: { uz: "Stomatolog · Toshkent", ru: "Стоматолог · Ташкент" },
+  name: { uz: "Dr. Iqboljon Jo‘raev", ru: "Д-р Икболжон Жураев" },
+  signature: "Iqboljon Joraev",
+  firstName: { uz: "Iqboljon", ru: "Икболжон" },
+  monogram: "IJ",
+  title: {
+    uz: "Stomatolog · og‘riqsiz, sifatli va ishonchli davolash",
+    ru: "Стоматолог · безболезненное, качественное и надёжное лечение",
+  },
+  heroLead: { uz: "Og‘riqsiz. Shoshilmasdan.", ru: "Без боли. Без спешки." },
+  heroSub: {
+    uz: "Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman. Ko‘rikdan yakuniy natijagacha har bir bosqichni o‘zim bajaraman: 10 yillik tajriba, 10 000 dan ortiq bemor.",
+    ru: "Лечу зубы безболезненно, качественно и надёжно. Каждый этап от осмотра до результата провожу сам: 10 лет практики, более 10 000 пациентов.",
+  },
+  manifesto: {
+    uz: [
+      "Men 10 yil oldin o‘zimga bitta qoida qo‘ydim: bemorni hech qachon boshqa birovning qo‘liga topshirmayman. Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman.",
+      "Har bir plomba, har bir toj mening ismim bilan chiqadi. Agar natijaga o‘zim ishonmasam, bu ishni qilmayman.",
+    ],
+    ru: [
+      "10 лет назад я поставил себе одно правило: никогда не передавать пациента в чужие руки. Лечу зубы безболезненно, качественно и надёжно.",
+      "Каждая пломба и каждая коронка выходят под моим именем. Если я сам не уверен в результате, я не возьмусь за работу.",
+    ],
+  },
+  portrait: {
+    src: "/images/portrait-iqboljon.jpg",
+    cutout: "/images/cutout-iqboljon.webp",
+    alt: {
+      uz: "Dr. Iqboljon Jo‘raev oq xalatda, qo‘llarini qovushtirgan holda",
+      ru: "Д-р Икболжон Жураев в белом халате, руки скрещены",
+    },
+    position: "50% 22%",
+  },
+  stats: [
+    { value: { uz: "10+ yil", ru: "10+ лет" }, label: { uz: "Stomatologik amaliyot tajribasi", ru: "Стоматологической практики" } },
+    { value: { uz: "10,000+", ru: "10 000+" }, label: { uz: "Muvaffaqiyatli davolangan bemorlar", ru: "Успешно пролеченных пациентов" } },
+    jamshid.stats[2],
+  ],
+  contact: {
+    phone: "+998 90 990 39 94",
+    telegram: "Doctor_Iqboljon",
+    instagram: "iqbol_joraev",
+  },
+  calcProblems: ["treatment", "checkup", "rootCanal", "single"],
+  protocolDrawing: "visit",
+  urgentCta: true,
+  services: [
+    {
+      id: "painless-treatment",
+      title: { uz: "Og‘riqsiz tish davolash va plomba", ru: "Безболезненное лечение и пломбы" },
+      lead: {
+        uz: "Karies va og‘riyotgan tishni kompyuterli anesteziya bilan, shoshilmasdan davolayman.",
+        ru: "Лечу кариес и больные зубы под компьютерной анестезией, без спешки.",
+      },
+      specs: [
+        { uz: "Kompyuterli anesteziya", ru: "Компьютерная анестезия" },
+        { uz: "1 tashrif · 40–60 daqiqa", ru: "1 визит · 40–60 минут" },
+        { uz: "Kafolat: 2 yil yozma", ru: "Гарантия: 2 года письменно" },
+      ],
+      image: "/images/xray-review.jpg",
+      calcProblem: "treatment",
+      priceFrom: 450_000,
+    },
+    {
+      id: "checkup-hygiene",
+      title: { uz: "Ko‘rik va professional tozalash", ru: "Осмотр и профессиональная чистка" },
+      lead: {
+        uz: "Tosh va dog‘larni Air-Flow bilan tozalayman, muammoni boshlanishidayoq topamiz.",
+        ru: "Удаляю камень и налёт Air-Flow, находим проблему на самой ранней стадии.",
+      },
+      specs: [{ uz: "Har 6 oyda tavsiya etiladi", ru: "Рекомендуется каждые 6 месяцев" }],
+      calcProblem: "checkup",
+      priceFrom: 350_000,
+    },
+    {
+      id: "implant",
+      title: { uz: "Implantatsiya", ru: "Имплантация" },
+      lead: {
+        uz: "Yo‘qolgan tishni og‘riqsiz tiklash: Osstem yoki Straumann implanti.",
+        ru: "Безболезненное восстановление зуба: имплант Osstem или Straumann.",
+      },
+      specs: [{ uz: "Osstem / Straumann", ru: "Osstem / Straumann" }],
+      image: "/images/implant-model.jpg",
+      calcProblem: "single",
+      priceFrom: 7_900_000,
+    },
+    {
+      id: "root-canal",
+      title: { uz: "Kanal davolash: tishni saqlab qolish", ru: "Лечение каналов: сохраняем зуб" },
+      lead: {
+        uz: "Boshqalar “olib tashlash kerak” degan tishlarni mikroskop ostida saqlab qolaman.",
+        ru: "Сохраняю под микроскопом зубы, которые другие советуют удалить.",
+      },
+      specs: [{ uz: "Mikroskop ostida", ru: "Под микроскопом" }],
+      calcProblem: "rootCanal",
+      priceFrom: 1_200_000,
+    },
+  ],
+  copy: {
+    uz: {
+      approach: {
+        points: [
+          { k: "Bitta mas’ul shifokor", v: "Ko‘rikdan oxirgi plombagacha sizni faqat men davolayman." },
+          { k: "Og‘riqsiz protokol", v: "Avval anestetik gel, keyin kompyuterli anesteziya: ukol deyarli sezilmaydi." },
+          { k: "Shaxsiy Telegram aloqa", v: "Davolashdan keyin savollaringizga ma’mur emas, o‘zim javob beraman." },
+          { k: "Yozma kafolat", v: "Har bir plomba, toj va implantga yozma kafolat beriladi." },
+        ],
+      },
+      protocol: {
+        title: "Og‘riqsiz qabul qanday o‘tadi",
+        sub: "Bitta tishni davolash misolida. Pastga aylantiring: chizma har bir bosqich bilan quriladi.",
+        drawingLabel: "Og‘riqsiz davolash chizmasi, bosqichma-bosqich",
+        callouts: { plan: "Davolash rejasi" },
+        steps: [
+          {
+            title: "Ko‘rik va rentgen",
+            short: "Muammoni aniq ko‘ramiz",
+            body: "Tishlarni tekshiraman va rentgen olaman. Karies qayerda va qanchalik chuqur ekanini birga ekranda ko‘ramiz.",
+            duration: "15–20 daqiqa",
+            equipment: [],
+            comfortText: "Og‘riqsiz, hech qanday muolaja yo‘q",
+          },
+          {
+            title: "Reja va yozma narx",
+            short: "Boshlashdan oldin hammasini bilasiz",
+            body: "Nima qilinishini va qancha turishini yozma aytaman. Rozilik bermaguningizcha hech narsa boshlanmaydi.",
+            duration: "Shu tashrifda",
+            equipment: [],
+            comfortText: "Faqat suhbat",
+          },
+          {
+            title: "Avval gel, keyin anesteziya",
+            short: "Ukol deyarli sezilmaydi",
+            body: "Milkka anestetik gel surtaman, so‘ng kompyuterli anesteziya dorini sekin va bir tekisda yuboradi. Bosim ham, achishish ham bo‘lmaydi.",
+            duration: "3–5 daqiqa",
+            equipment: [],
+            comfortText: "Ukol deyarli sezilmaydi",
+          },
+          {
+            title: "Qo‘l ko‘tarsangiz, to‘xtayman",
+            short: "Nazorat sizning qo‘lingizda",
+            body: "Kariesni tozalab, tish rangiga mos plomba qo‘yaman. Dam olish yoki savol berish uchun qo‘lingizni ko‘tarsangiz kifoya, darhol to‘xtayman.",
+            duration: "30–40 daqiqa",
+            equipment: [],
+            comfortText: "Anesteziya ostida, og‘riqsiz",
+          },
+          {
+            title: "Kuzatuv va kafolat",
+            short: "Davolashdan keyin ham yoningizdaman",
+            body: "Savollaringizga Telegramda o‘zim javob beraman. Plombaga 2 yillik yozma kafolat, har 6 oyda nazorat ko‘rigi.",
+            duration: "Har 6 oyda · 30 daqiqa",
+            equipment: [],
+            comfortText: "To‘liq qulay",
+          },
+        ],
+      },
+      services: {
+        title: "Tish og‘rig‘idan implantgacha.",
+        sub: "Ko‘rik, davolash, kanal va implant: hammasini bitta shifokor, og‘riqsiz bajaradi. Narxlar oldindan ma’lum.",
+      },
+      calc: {
+        sub: "Bir necha savolga javob bering va taxminiy narxni hoziroq ko‘ring.",
+        problems: { single: "Tish yo‘q (implant)" },
+        materials: { premium: "Optimal", swiss: "Premium" },
+        materialNotes: {
+          premium: "Sifatli Koreya va Yevropa materiallari",
+          swiss: "Shveysariya va Germaniya premium materiallari",
+        },
+        surgery: "Muolaja vaqti",
+        fixed: "Yakuniy narx ko‘rikdan keyin yozma belgilanadi va o‘zgarmaydi.",
+      },
+      faq: {
+        items: [
+          {
+            q: "Birinchi tashrifda nima bo‘ladi?",
+            a: "30–40 daqiqalik ko‘rik: tishlarni tekshiraman, kerak bo‘lsa rentgen olaman, so‘ng davolash rejasi va yozma narxni beraman. Ko‘rik hech narsaga majburlamaydi.",
+          },
+          {
+            q: "Davolash og‘riqlimi? Ukoldan qo‘rqaman.",
+            a: "Yo‘q. Avval milkka anestetik gel surtaman, keyin kompyuterli anesteziya ukolni deyarli sezdirmaydi. Qo‘lingizni ko‘tarsangiz, darhol to‘xtayman.",
+          },
+          {
+            q: "Tishim hozir og‘riyapti. Tezroq qabul qilasizmi?",
+            a: "Telegramda yozing yoki qo‘ng‘iroq qiling. O‘tkir og‘riq bilan murojaat qilgan bemorlarni o‘sha kuni yoki ertasiga qabul qilishga harakat qilaman.",
+          },
+          {
+            q: "Kafolat qanday rasmiylashtiriladi?",
+            a: "Har bir ish uchun yozma kafolat beriladi: plombaga 2 yil, tojga 5 yil, implantga 10 yil.",
+          },
+          {
+            q: "Bo‘lib to‘lash mumkinmi?",
+            a: "Implant va protezlash uchun 6 oygacha 0% muddatli to‘lov bor. Uzcard, Humo, Visa va naqd pul qabul qilinadi.",
+          },
+          {
+            q: "Davolash qancha vaqt oladi?",
+            a: "Plomba yoki tozalash: 1 tashrif. Kanal davolash: 1–2 tashrif. Bitta implant: 2–3 tashrif. Aniq jadvalni ko‘rikdan keyin beraman.",
+          },
+        ],
+      },
+    },
+    ru: {
+      approach: {
+        points: [
+          { k: "Один ответственный врач", v: "От осмотра до последней пломбы вас лечу только я." },
+          { k: "Безболезненный протокол", v: "Сначала анестезирующий гель, затем компьютерная анестезия: укол почти не чувствуется." },
+          { k: "Личная связь в Telegram", v: "После лечения на ваши вопросы отвечаю я сам, а не администратор." },
+          { k: "Письменная гарантия", v: "На каждую пломбу, коронку и имплант выдаётся письменная гарантия." },
+        ],
+      },
+      protocol: {
+        title: "Как проходит приём без боли",
+        sub: "На примере лечения одного зуба. Прокрутите вниз: чертёж строится с каждым этапом.",
+        drawingLabel: "Чертёж безболезненного лечения по этапам",
+        callouts: { plan: "План лечения" },
+        steps: [
+          {
+            title: "Осмотр и снимок",
+            short: "Видим проблему точно",
+            body: "Осматриваю зубы и делаю снимок. Вместе смотрим на экране, где кариес и насколько он глубокий.",
+            duration: "15–20 минут",
+            equipment: [],
+            comfortText: "Безболезненно, без процедур",
+          },
+          {
+            title: "План и письменная цена",
+            short: "Всё знаете до начала",
+            body: "Пишу, что будем делать и сколько это стоит. Пока вы не согласитесь, ничего не начинаем.",
+            duration: "В тот же визит",
+            equipment: [],
+            comfortText: "Только беседа",
+          },
+          {
+            title: "Сначала гель, потом анестезия",
+            short: "Укол почти не чувствуется",
+            body: "Наношу на десну анестезирующий гель, затем компьютерная анестезия вводит препарат медленно и равномерно. Ни давления, ни жжения.",
+            duration: "3–5 минут",
+            equipment: [],
+            comfortText: "Укол почти не чувствуется",
+          },
+          {
+            title: "Поднимете руку, и я остановлюсь",
+            short: "Контроль в ваших руках",
+            body: "Убираю кариес и ставлю пломбу в цвет зуба. Чтобы отдохнуть или спросить, достаточно поднять руку: я сразу остановлюсь.",
+            duration: "30–40 минут",
+            equipment: [],
+            comfortText: "Под анестезией, без боли",
+          },
+          {
+            title: "Наблюдение и гарантия",
+            short: "Я рядом и после лечения",
+            body: "На вопросы в Telegram отвечаю сам. Письменная гарантия на пломбу 2 года, контрольный осмотр каждые 6 месяцев.",
+            duration: "Каждые 6 месяцев · 30 минут",
+            equipment: [],
+            comfortText: "Полностью комфортно",
+          },
+        ],
+      },
+      services: {
+        title: "От зубной боли до имплантов.",
+        sub: "Осмотр, лечение, каналы и импланты: всё делает один врач и без боли. Цены известны заранее.",
+      },
+      calc: {
+        sub: "Ответьте на несколько вопросов и сразу увидите ориентировочную цену.",
+        problems: { single: "Нет зуба (имплант)" },
+        materials: { premium: "Оптимальный", swiss: "Премиум" },
+        materialNotes: {
+          premium: "Качественные корейские и европейские материалы",
+          swiss: "Премиальные материалы из Швейцарии и Германии",
+        },
+        surgery: "Время процедуры",
+        fixed: "Итоговая цена фиксируется письменно после осмотра и не меняется.",
+      },
+      faq: {
+        items: [
+          {
+            q: "Что будет на первом приёме?",
+            a: "Осмотр 30–40 минут: проверяю зубы, при необходимости делаю снимок, затем даю план лечения и письменную цену. Осмотр ни к чему не обязывает.",
+          },
+          {
+            q: "Лечение болезненное? Я боюсь уколов.",
+            a: "Нет. Сначала наношу на десну анестезирующий гель, затем компьютерная анестезия делает укол почти незаметным. Поднимете руку, и я сразу остановлюсь.",
+          },
+          {
+            q: "У меня болит зуб прямо сейчас. Примете быстрее?",
+            a: "Напишите в Telegram или позвоните. Пациентов с острой болью стараюсь принять в тот же день или на следующий.",
+          },
+          {
+            q: "Как оформляется гарантия?",
+            a: "На каждую работу выдаётся письменная гарантия: на пломбу 2 года, на коронку 5 лет, на имплант 10 лет.",
+          },
+          {
+            q: "Можно ли платить частями?",
+            a: "На импланты и протезирование есть рассрочка 0% до 6 месяцев. Принимаем Uzcard, Humo, Visa и наличные.",
+          },
+          {
+            q: "Сколько длится лечение?",
+            a: "Пломба или чистка: 1 визит. Лечение каналов: 1–2 визита. Один имплант: 2–3 визита. Точный график дам после осмотра.",
+          },
+        ],
+      },
+    },
+  },
+};
+
+export const doctorPresets = { iqboljon, jamshid, sardor } satisfies Record<string, DoctorProfile>;
 export type PresetId = keyof typeof doctorPresets;
 
 /* ───────────────────────────── Site settings ───────────────────────────── */
 
 export const site = {
-  activePresetId: "jamshid" as PresetId,
+  activePresetId: "iqboljon" as PresetId,
   defaultLang: "uz" as Lang,
   /** Floating "Demo Rejimi" pill. Turn off for a real client launch. */
   showDemoSwitcher: true,

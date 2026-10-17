@@ -7,6 +7,10 @@ export interface Estimate {
   min: number;
   max: number;
   ctCost: number;
+  /** false when this treatment involves no 3D CT at all. */
+  needsCt: boolean;
+  /** Whether the 0% instalment plan applies. */
+  installment: boolean;
   unitNote?: string;
   visits: string;
   surgeryTime: string;
@@ -16,11 +20,14 @@ export interface Estimate {
 export function computeEstimate(doctor: DoctorProfile, sel: CalcSelection, lang: Lang): Estimate {
   const p = doctor.pricing[sel.problem];
   const tier = p[sel.material];
-  const ctCost = sel.hasCt ? 0 : doctor.ctScanPrice;
+  const needsCt = p.needsCt !== false;
+  const ctCost = !needsCt || sel.hasCt ? 0 : doctor.ctScanPrice;
   return {
     min: tier.min + ctCost,
     max: tier.max + ctCost,
     ctCost,
+    needsCt,
+    installment: p.installment !== false,
     unitNote: p.unitNote?.[lang],
     visits: p.visits[lang],
     surgeryTime: p.surgeryTime[lang],
@@ -52,7 +59,7 @@ export function buildTelegramText(doctor: DoctorProfile, lang: Lang, t: Dict, pr
       t.tg.calcIntro,
       `• ${t.tg.problem}: ${lines.problem}`,
       `• ${t.tg.material}: ${lines.material}`,
-      `• ${t.tg.ct}: ${lines.ct}`,
+      ...(est.needsCt ? [`• ${t.tg.ct}: ${lines.ct}`] : []),
       `• ${t.tg.price}: ${priceRange(est, t)}${est.unitNote ? ` (${est.unitNote})` : ""}`,
       "",
       t.tg.ask,

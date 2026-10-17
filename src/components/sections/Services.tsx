@@ -23,9 +23,13 @@ export function Services() {
     }
   };
   const actionLabel = (s: ServiceItem) => (s.calcProblem ? t.services.calc : t.services.book);
+  // A treatment that needs a 3D scan says so next to its price, so the card and the calculator total agree.
+  const ctNote = (s: ServiceItem) =>
+    s.calcProblem && doctor.pricing[s.calcProblem].needsCt !== false && doctor.ctScanPrice ? ` ${t.services.ctExtra}` : "";
   const from = (s: ServiceItem) => (
     <span className="text-[15px] font-medium whitespace-nowrap tabular-nums">
       {lang === "ru" ? `${t.services.from} ${formatMillions(s.priceFrom, lang)} ${t.calc.currency}` : `${formatMillions(s.priceFrom, lang)} ${t.calc.currency}${t.services.from}`}
+      {ctNote(s)}
     </span>
   );
 

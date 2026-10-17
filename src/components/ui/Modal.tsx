@@ -58,7 +58,8 @@ export function Modal({ open, onClose, labelledBy, closeLabel, children, classNa
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
-      previous?.focus();
+      // preventScroll: a dialog that hands off to another section must not be yanked back to its trigger.
+      previous?.focus({ preventScroll: true });
     };
   }, [open]);
 

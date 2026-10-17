@@ -7,8 +7,12 @@ export function formatUZS(value: number): string {
     .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
-/** 7900000 -> "7.9 mln" / "7,9 млн" for compact display. */
+/** 7900000 -> "7.9 mln" / "7,9 млн", 450000 -> "450 ming" / "450 тыс" for compact display. */
 export function formatMillions(value: number, lang: Lang): string {
+  if (value < 1_000_000) {
+    const k = Math.round(value / 1000);
+    return lang === "ru" ? `${k} тыс` : `${k} ming`;
+  }
   const m = value / 1_000_000;
   const n = Number.isInteger(m) ? m.toString() : m.toFixed(1);
   return lang === "ru" ? `${n.replace(".", ",")} млн` : `${n} mln`;

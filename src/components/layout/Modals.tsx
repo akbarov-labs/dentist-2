@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowUpRight, BadgeCheck, Clock3 } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, Clock3 } from "lucide-react";
 import { useSite } from "@/context/SiteContext";
 import { Modal } from "@/components/ui/Modal";
 import { Monogram } from "@/components/ui/Monogram";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { Signature } from "@/components/ui/Signature";
+import { btnPrimary } from "@/components/ui/styles";
 
 function isEmbed(url: string) {
   return /youtube\.com|youtu\.be|vimeo\.com/.test(url);
@@ -13,8 +14,13 @@ function isEmbed(url: string) {
 
 /** Renders whichever dialog is open: the 1-minute intro or a single certificate. */
 export function Modals() {
-  const { t, doctor, lang, modal, setModal } = useSite();
+  const { t, doctor, lang, modal, setModal, scrollToId } = useSite();
   const close = () => setModal(null);
+  // The intro ends where the visitor's next step is: the booking form (after the dialog has released focus).
+  const bookFromIntro = () => {
+    close();
+    window.setTimeout(() => scrollToId("booking"), 60);
+  };
   const credential = modal?.kind === "credential" ? doctor.credentials.find((c) => c.id === modal.id) : undefined;
 
   return (
@@ -71,6 +77,11 @@ export function Modals() {
                 </li>
               ))}
             </ul>
+
+            <button type="button" onClick={bookFromIntro} className={`${btnPrimary} group mt-7 w-full sm:w-auto`}>
+              {t.cta.book}
+              <ArrowRight size={17} strokeWidth={1.7} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
           </div>
         </div>
       </Modal>
@@ -81,7 +92,7 @@ export function Modals() {
             <div className="relative rounded-[12px] border border-accent/50 bg-card p-2">
               <div className="rounded-[8px] border border-accent/30 px-6 py-10 text-center sm:px-12 sm:py-12">
                 <Monogram letters={doctor.monogram} className="mx-auto h-14 w-14" />
-                <p className="mt-6 tabular-nums text-[12px] tracking-[0.14em] text-accent uppercase">Certificate of Completion</p>
+                <p className="mt-6 tabular-nums text-[12px] tracking-[0.14em] text-accent uppercase">{t.credentials.certTitle}</p>
                 <h2 id="cert-title" className="mt-4 font-display text-[28px] leading-tight text-ink sm:text-[34px]">
                   {credential.program[lang]}
                 </h2>
