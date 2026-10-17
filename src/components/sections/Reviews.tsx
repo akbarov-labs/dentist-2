@@ -89,8 +89,9 @@ function ReviewCard({ r }: { r: Review }) {
 export function Reviews() {
   const { t, lang, doctor } = useSite();
   // The lead quote is attributed with the Google badge and stars, so it must be a Google review.
-  const lead = reviews.find((r) => r.source === "google");
-  const rest = reviews.filter((r) => r !== lead);
+  const list = doctor.reviews ?? reviews;
+  const lead = list.find((r) => r.source === "google");
+  const rest = list.filter((r) => r !== lead);
   const strip = useRef<HTMLUListElement>(null);
   const nudge = (dir: number) => {
     const el = strip.current;

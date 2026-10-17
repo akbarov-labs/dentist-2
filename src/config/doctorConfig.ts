@@ -13,6 +13,7 @@
  */
 
 import type { CopyOverride } from "@/i18n/dictionary";
+import { reviews as sharedReviews, type Review } from "@/config/reviews";
 
 export type Lang = "uz" | "ru";
 export type Localized<T = string> = Record<Lang, T>;
@@ -144,6 +145,8 @@ export interface DoctorProfile {
   calcProblems?: ProblemId[];
   /** Per-doctor overrides of the shared UI copy, merged over the dictionary (arrays replace, objects merge). */
   copy?: Partial<Record<Lang, CopyOverride>>;
+  /** This doctor's own reviews; falls back to the shared example set. */
+  reviews?: Review[];
 }
 
 export const defaultCalcProblems: ProblemId[] = ["single", "multiple", "fullArch", "aesthetic"];
@@ -686,7 +689,7 @@ const iqboljon: DoctorProfile = {
   stats: [
     { value: { uz: "10+ yil", ru: "10+ лет" }, label: { uz: "Stomatologik amaliyot tajribasi", ru: "Стоматологической практики" } },
     { value: { uz: "10,000+", ru: "10 000+" }, label: { uz: "Muvaffaqiyatli davolangan bemorlar", ru: "Успешно пролеченных пациентов" } },
-    jamshid.stats[2],
+    { value: { uz: "Sirkon · E-max", ru: "Цирконий · E-max" }, label: { uz: "Asosiy keramik qoplamalar", ru: "Основные керамические коронки" } },
   ],
   contact: {
     phone: "+998 90 990 39 94",
@@ -694,6 +697,70 @@ const iqboljon: DoctorProfile = {
     instagram: "iqbol_joraev",
   },
   calcProblems: ["treatment", "aesthetic", "rootCanal", "single"],
+  // His own inclusions: no free whitening or microscope claims, and the implant plan no longer says "free 3D" next to a CT fee.
+  pricing: {
+    ...sharedPricing,
+    aesthetic: {
+      ...sharedPricing.aesthetic,
+      bonuses: [
+        { uz: "Rang va shaklni oldindan birga tanlaymiz", ru: "Цвет и форму подбираем вместе заранее" },
+        { uz: "Vaqtinchalik qoplamalar narxga kiritilgan", ru: "Временные коронки включены в цену" },
+        { uz: "5 yillik yozma kafolat", ru: "Письменная гарантия 5 лет" },
+      ],
+    },
+    single: {
+      ...sharedPricing.single,
+      bonuses: [
+        { uz: "Shaxsiy davolash rejasi va yozma narx", ru: "Личный план лечения и письменная цена" },
+        { uz: "Vaqtinchalik estetik toj", ru: "Временная эстетическая коронка" },
+        { uz: "Implantga 10 yillik yozma kafolat", ru: "Письменная гарантия на имплант 10 лет" },
+      ],
+    },
+    rootCanal: {
+      ...sharedPricing.rootCanal,
+      bonuses: [
+        { uz: "Og‘riqsiz kompyuterli anesteziya", ru: "Безболезненная компьютерная анестезия" },
+        { uz: "Nazorat rentgeni narxga kiritilgan", ru: "Контрольный снимок включён в цену" },
+        { uz: "Vaqtinchalik plomba bepul", ru: "Временная пломба бесплатно" },
+      ],
+    },
+  },
+  reviews: [
+    {
+      id: "iq1",
+      source: "google",
+      author: "Dilnoza Karimova",
+      ago: 1,
+      text: {
+        uz: "Ukoldan juda qo‘rqardim. {doctor} avval gel surtdi, keyin ukolni umuman sezmadim. Old tishimdagi kariesni davoladi, plombani tishdan ajratib bo‘lmaydi.",
+        ru: "Очень боялась уколов. {doctor} сначала нанёс гель, а сам укол я даже не почувствовала. Вылечил кариес на переднем зубе, пломбу не отличить от зуба.",
+      },
+    },
+    sharedReviews[1],
+    sharedReviews[2],
+    sharedReviews[3],
+    {
+      id: "iq5",
+      source: "telegram",
+      author: "Aziza R.",
+      ago: 1,
+      time: "10:12",
+      text: {
+        uz: "Onamning tishlari umuman yo‘q edi. Implantlar va qoplamalardan keyin yana bemalol ovqatlanyapti va kulyapti. Rahmat, doktor!",
+        ru: "У мамы совсем не было зубов. После имплантов и коронок она снова спокойно ест и улыбается. Спасибо, доктор!",
+      },
+    },
+    {
+      id: "iq6",
+      source: "yandex",
+      author: "Тимур Ахмедов",
+      ago: 0,
+      text: {
+        uz: "Eski sarg‘aygan koronkalarimni sirkonga almashtirdi. Rangi tabiiy, hech kim sun’iy ekanini sezmaydi. Halol va xotirjam muloqot.",
+        ru: "Заменил мои старые пожелтевшие коронки на цирконий. Цвет естественный, никто не догадывается, что это коронки. Честное и спокойное общение.",
+      },
+    },
+  ],
   protocolDrawing: "visit",
   urgentCta: true,
   services: [
@@ -905,6 +972,10 @@ const iqboljon: DoctorProfile = {
             a: "Telegramda yozing yoki qo‘ng‘iroq qiling. O‘tkir og‘riq bilan murojaat qilgan bemorlarni o‘sha kuni yoki ertasiga qabul qilishga harakat qilaman.",
           },
           {
+            q: "Sirkon va E-max qoplamalarning farqi nima?",
+            a: "Ikkalasi ham metallsiz, tabiiy ko‘rinishdagi keramika. E-max yorug‘likni tabiiy tish kabi o‘tkazadi, shuning uchun oldingi tishlarga juda mos. Sirkon esa juda mustahkam: chaynov tishlari va ko‘p birlikli ishlar uchun. Qaysi biri sizga mosligini ko‘rikda birga tanlaymiz.",
+          },
+          {
             q: "Kafolat qanday rasmiylashtiriladi?",
             a: "Har bir ish uchun yozma kafolat beriladi: plombaga 2 yil, tojga 5 yil, implantga 10 yil.",
           },
@@ -1005,6 +1076,10 @@ const iqboljon: DoctorProfile = {
           {
             q: "У меня болит зуб прямо сейчас. Примете быстрее?",
             a: "Напишите в Telegram или позвоните. Пациентов с острой болью стараюсь принять в тот же день или на следующий.",
+          },
+          {
+            q: "Чем отличаются коронки из циркония и E-max?",
+            a: "Обе безметалловые и выглядят естественно. E-max пропускает свет как живой зуб, поэтому особенно хороша для передних зубов. Цирконий очень прочный: для жевательных зубов и работ из нескольких единиц. Какая подойдёт вам, выберем вместе на осмотре.",
           },
           {
             q: "Как оформляется гарантия?",
