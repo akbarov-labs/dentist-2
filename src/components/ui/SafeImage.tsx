@@ -20,7 +20,7 @@ export function SafeImage({ fallbackLabel, className = "", alt, ...props }: Safe
       <div
         role="img"
         aria-label={alt}
-        className={`absolute inset-0 flex items-end bg-[radial-gradient(120%_90%_at_20%_10%,#eceeea_0%,#c9d8d1_45%,#355e54_100%)] p-5 ${className}`}
+        className={`absolute inset-0 flex items-end bg-[radial-gradient(120%_90%_at_20%_10%,var(--color-stone)_0%,var(--color-accent-soft)_45%,var(--color-accent)_100%)] p-5 ${className}`}
       >
         {fallbackLabel ? (
           <span className="tabular-nums text-[12px] tracking-[0.14em] text-paper/90 uppercase">{fallbackLabel}</span>

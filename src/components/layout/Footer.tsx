@@ -18,7 +18,9 @@ export function Footer() {
     { id: "cases", label: t.nav.cases },
     { id: "credentials", label: t.nav.credentials },
     { id: "faq", label: t.nav.faq },
-  ].filter((l) => l.id !== "credentials" || doctor.credentials.length);
+  ]
+    .filter((l) => l.id !== "credentials" || doctor.credentials.length)
+    .filter((l) => l.id !== "calculator" || !doctor.priceList?.length);
 
   return (
     <footer className="border-t border-line pt-16 pb-28 md:pb-12">
@@ -76,7 +78,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col gap-3 border-t border-line pt-6 text-[12.5px] text-muted md:flex-row md:items-center md:justify-between">
           <p>
-            © {year ? `${year} ` : ""}{doctor.name[lang]}. {t.footer.rights}
+            © {year ? `${year} ` : ""}{doctor.name[lang]}{t.footer.rights ? `. ${t.footer.rights}` : ""}
           </p>
           {doctor.idCard.licenseId ? (
             <p className="tabular-nums">

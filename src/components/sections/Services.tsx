@@ -5,11 +5,17 @@ import type { ServiceItem } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
 import { formatMillions } from "@/lib/format";
 import { noBreakHyphens } from "@/lib/text";
+import { ServicePriceList } from "@/components/sections/ServicePriceList";
 import { Reveal } from "@/components/ui/Reveal";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { btnPrimary } from "@/components/ui/styles";
 
 export function Services() {
+  const { doctor } = useSite();
+  return doctor.priceList?.length ? <ServicePriceList /> : <ServiceGrid />;
+}
+
+function ServiceGrid() {
   const { t, doctor, lang, setCalc, setPrefill, scrollToId } = useSite();
   const [featured, second, third, fourth] = doctor.services;
 

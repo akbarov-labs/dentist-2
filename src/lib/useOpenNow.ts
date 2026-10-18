@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import type { DoctorProfile } from "@/config/doctorConfig";
 import { isOpenNow } from "@/lib/format";
 
-/** Live "open now" state in Tashkent time, refreshed every minute. `null` until mounted (server render). */
+/** Live "open now" state in Tashkent time, refreshed every minute. `null` until mounted, and always `null` while the hours are unconfirmed. */
 export function useOpenNow(doctor: DoctorProfile): boolean | null {
   const [open, setOpen] = useState<boolean | null>(null);
   useEffect(() => {
-    const tick = () => setOpen(isOpenNow(doctor));
+    const tick = () => setOpen(doctor.hoursConfirmed === false ? null : isOpenNow(doctor));
     tick();
     const id = window.setInterval(tick, 60_000);
     return () => window.clearInterval(id);

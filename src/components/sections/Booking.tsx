@@ -36,7 +36,7 @@ function Segmented<T extends string>({
         {options.map((o) => (
           <label
             key={o.id}
-            className={`flex h-10 cursor-pointer items-center justify-center rounded-full text-[14px] transition has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent ${
+            className={`flex h-11 cursor-pointer items-center justify-center rounded-full text-[14px] transition has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-accent ${
               value === o.id ? "bg-accent text-paper shadow-sm" : "text-ink-soft hover:text-ink"
             }`}
           >
@@ -82,6 +82,8 @@ export function Booking() {
   const links = address ? mapLinks(address, lang) : null;
   // A doctor shown in his own photo doesn't get the arch repeated at the close; the form takes the room.
   const closePortrait = doctor.portrait.style !== "photo";
+  // With neither a real address nor confirmed hours there is nothing true to put beside the Telegram card.
+  const sideCard = Boolean(address) || doctor.hoursConfirmed !== false;
   const tgText = buildTelegramText(doctor, lang, t, prefill);
   const service = prefill?.kind === "service" ? doctor.services.find((s) => s.id === prefill.serviceId) : undefined;
 
@@ -152,7 +154,7 @@ export function Booking() {
 
   const inputCls = (err?: string) =>
     `mt-2 h-12 w-full rounded-[12px] border bg-paper px-4 text-[16px] text-ink placeholder:text-muted transition focus:border-accent focus:bg-card focus:outline-none focus:ring-4 focus:ring-accent/10 ${
-      err ? "border-[#b4432f]" : "border-line"
+      err ? "border-danger-line" : "border-line"
     }`;
 
   return (
@@ -272,7 +274,7 @@ export function Booking() {
                           className={inputCls(errors.name)}
                         />
                         {errors.name ? (
-                          <p id="bk-name-err" className="mt-2 text-[13px] text-[#9e3a28]">
+                          <p id="bk-name-err" className="mt-2 text-[13px] text-danger">
                             {errors.name}
                           </p>
                         ) : null}
@@ -298,7 +300,7 @@ export function Booking() {
                           />
                         </div>
                         {errors.phone ? (
-                          <p id="bk-phone-err" className="mt-2 text-[13px] text-[#9e3a28]">
+                          <p id="bk-phone-err" className="mt-2 text-[13px] text-danger">
                             {errors.phone}
                           </p>
                         ) : null}
@@ -349,7 +351,7 @@ export function Booking() {
                     </p>
   
                     {status === "error" ? (
-                      <p role="alert" className="rounded-[12px] border border-[#b4432f]/30 bg-[#fbeeea] px-4 py-3 text-[14px] text-[#8a3324]">
+                      <p role="alert" className="rounded-[12px] border border-danger-line/30 bg-danger-soft px-4 py-3 text-[14px] text-danger-ink">
                         {t.booking.errSubmit}{" "}
                         <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className="font-medium underline">
                           {t.booking.errSubmitTg}
@@ -380,7 +382,7 @@ export function Booking() {
 
         {/* Concierge + map */}
         <div className="mt-16 grid gap-6 lg:grid-cols-12 lg:gap-8">
-            <Reveal delay={100} className="lg:col-span-5">
+            <Reveal delay={100} className={sideCard ? "lg:col-span-5" : "lg:col-span-8 lg:col-start-3"}>
               <div className="relative h-full overflow-hidden rounded-[16px] bg-accent p-6 text-paper sm:p-8">
                 <h3 className="font-display text-[22px] leading-tight">{t.booking.tgTitle}</h3>
                 <p className="mt-2 text-[14.5px] leading-relaxed text-paper/75">{t.booking.tgBody}</p>
@@ -395,6 +397,12 @@ export function Booking() {
                 >
                   <Send size={16} strokeWidth={1.7} className="shrink-0" /> {t.booking.tgTitle}
                 </a>
+                {sideCard ? null : (
+                  <a href={phoneHref(doctor.contact.phone)} className="mt-4 flex min-h-11 items-center justify-center gap-2 tabular-nums text-[15px] text-paper/90 transition hover:text-paper">
+                    <Phone size={16} strokeWidth={1.6} className="shrink-0" />
+                    {t.booking.call}: {doctor.contact.phone}
+                  </a>
+                )}
               </div>
             </Reveal>
 
@@ -419,7 +427,9 @@ export function Booking() {
                     <p className="mt-1 pl-[26px] text-[13.5px] text-muted">{address.landmark[lang]}</p>
                     <p className="mt-3 flex items-center gap-2 pl-0.5 text-[14px] text-ink-soft">
                       <Clock3 size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
-                      {doctor.hours.days[lang]} · <span className="tabular-nums">{doctor.hours.time}</span>
+                      <span>
+                    {doctor.hours.days[lang]} · <span className="tabular-nums whitespace-nowrap">{doctor.hours.time}</span>
+                  </span>
                     </p>
                     <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-1 flex min-h-11 items-center gap-2 pl-0.5 tabular-nums text-[15px] text-ink transition hover:text-accent">
                       <Phone size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
@@ -448,13 +458,15 @@ export function Booking() {
                   </div>
                 </div>
               </Reveal>
-            ) : (
+            ) : sideCard ? (
             <Reveal delay={160} className="lg:col-span-7">
               <div className="h-full rounded-[16px] border border-line bg-card p-6 sm:p-8">
                 <h3 className="font-display text-[22px] leading-tight text-ink">{t.booking.hours}</h3>
                 <p className="mt-3 flex items-center gap-2 text-[16px] text-ink-soft">
                   <Clock3 size={17} strokeWidth={1.6} className="shrink-0 text-accent" />
-                  {doctor.hours.days[lang]} · <span className="tabular-nums">{doctor.hours.time}</span>
+                  <span>
+                    {doctor.hours.days[lang]} · <span className="tabular-nums whitespace-nowrap">{doctor.hours.time}</span>
+                  </span>
                 </p>
                 <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-2 flex min-h-11 items-center gap-2 tabular-nums text-[17px] text-ink transition hover:text-accent">
                   <Phone size={17} strokeWidth={1.6} className="shrink-0 text-accent" />
@@ -462,7 +474,7 @@ export function Booking() {
                 </a>
               </div>
             </Reveal>
-            )}
+            ) : null}
         </div>
       </div>
     </section>

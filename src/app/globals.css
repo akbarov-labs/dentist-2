@@ -21,6 +21,11 @@
   --color-accent: #355e54;
   --color-accent-2: #2b4e46;
   --color-accent-soft: #e3ebe7;
+  /* Form errors */
+  --color-danger: #9e3a28;
+  --color-danger-line: #b4432f;
+  --color-danger-soft: #fbeeea;
+  --color-danger-ink: #8a3324;
   /* The accent as it reads on the night section */
   --color-accent-light: #a9c5bb;
 

@@ -34,7 +34,9 @@ const useIsLg = () =>
 export function Protocol() {
   const { t, doctor, lang, scrollToId } = useSite();
   const steps = t.protocol.steps;
-  const { callouts, Drawing } = DRAWINGS[doctor.protocolDrawing ?? "implant"];
+  const drawingKind = doctor.protocolDrawing ?? "implant";
+  // The graph-paper grid belongs to the implant plan (a measuring surface); a filling visit doesn't need the costume.
+  const { callouts, Drawing } = DRAWINGS[drawingKind];
   const [active, setActive] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
@@ -105,7 +107,7 @@ export function Protocol() {
         <div className="mt-10 grid lg:mt-14 lg:grid-cols-12 lg:gap-10">
           {/* Sticky blueprint stage */}
           <div className="sticky top-[68px] z-[3] -mx-4 min-w-0 bg-night px-4 pt-2 pb-3 lg:top-24 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mx-0 lg:h-[calc(100dvh-8rem)] lg:self-start lg:p-0">
-            <div ref={stageRef} className="blueprint flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-night-line lg:h-full">
+            <div ref={stageRef} className={`${drawingKind === "implant" ? "blueprint " : ""}flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-night-line lg:h-full`}>
               <div className="flex items-center justify-between gap-3 border-b border-night-line px-4 py-2.5 sm:px-5">
                 <p className="min-w-0 truncate text-[13px] text-paper/80">{step.title}</p>
                 <div className="flex shrink-0 gap-1" role="group" aria-label={t.protocol.title}>
@@ -116,7 +118,7 @@ export function Protocol() {
                       onClick={() => goTo(i)}
                       aria-label={`${pad(i + 1)}. ${s.title}`}
                       aria-current={i === active ? "step" : undefined}
-                      className={`grid h-9 w-9 place-items-center rounded-full tabular-nums text-[12px] transition-colors lg:h-10 lg:w-10 ${
+                      className={`grid h-11 w-11 place-items-center rounded-full tabular-nums text-[12px] transition-colors ${
                         i === active ? "bg-accent-light text-night" : i < active ? "text-accent-light hover:bg-night-line" : "text-paper/60 hover:bg-night-line"
                       }`}
                     >
@@ -161,7 +163,7 @@ export function Protocol() {
                   key={s.title}
                   id={`protocol-step-${i}`}
                   data-step={i}
-                  className={`flex min-h-[50vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[58vh] ${isActive ? "opacity-100" : "opacity-80"}`}
+                  className={`flex min-h-[40vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[46vh] ${isActive ? "opacity-100" : "opacity-80"}`}
                 >
                   <h3 className="font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
                   <p className="mt-2 text-[15px] text-accent-light/90">{s.short}</p>
@@ -184,10 +186,12 @@ export function Protocol() {
                         </dd>
                       </div>
                     ) : null}
-                    <div>
-                      <dt className="text-[13px] text-paper/60">{t.protocol.comfort}</dt>
-                      <dd className="mt-1.5 text-[14px] text-paper/85">{s.comfortText}</dd>
-                    </div>
+                    {s.comfortText ? (
+                      <div>
+                        <dt className="text-[13px] text-paper/60">{t.protocol.comfort}</dt>
+                        <dd className="mt-1.5 text-[14px] text-paper/85">{s.comfortText}</dd>
+                      </div>
+                    ) : null}
                   </dl>
                 </li>
               );

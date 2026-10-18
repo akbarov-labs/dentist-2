@@ -26,8 +26,9 @@ export const VISIT_CALLOUTS: Callout[] = [
 ];
 
 const INK = "rgb(247 245 240 / 0.78)";
-const SAGE = "#a9c5bb";
-const GROUND = "#1f2925";
+// Palette tokens, so the drawing follows the doctor's own colours on the night section.
+const SAGE = "var(--color-accent-light)";
+const GROUND = "var(--color-night-2)";
 const GUM = "rgb(214 150 140 / 0.75)";
 const LESION = "rgb(196 150 108 / 0.6)";
 

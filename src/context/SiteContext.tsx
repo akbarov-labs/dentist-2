@@ -12,6 +12,7 @@ import {
   type ProblemId,
 } from "@/config/doctorConfig";
 import { dictionaries, withCopy, type Dict } from "@/i18n/dictionary";
+import { themeStyle } from "@/lib/theme";
 import { setPref, usePref } from "@/lib/prefs";
 
 export interface CalcSelection {
@@ -103,6 +104,13 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.title = `${doctor.name[lang]} · ${doctor.title[lang]}`;
   }, [doctor, lang]);
+
+  // Switching presets (demo mode) swaps the palette too: clear every doctor's tokens, then apply this one's.
+  useEffect(() => {
+    const root = document.documentElement.style;
+    Object.values(doctorPresets).forEach((p) => Object.keys(p.theme ?? {}).forEach((k) => root.removeProperty(`--color-${k}`)));
+    Object.entries(themeStyle(doctor.theme)).forEach(([k, v]) => root.setProperty(k, String(v)));
+  }, [doctor]);
 
   const value = useMemo<SiteState>(
     () => ({

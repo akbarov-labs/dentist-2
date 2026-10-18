@@ -24,6 +24,8 @@ export function Header() {
   const panelRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
+  // A doctor whose prices sit in the services list has no separate prices section to link to.
+  const navIds = NAV_IDS.filter((id) => id !== "calculator" || !doctor.priceList?.length);
   const labels: Record<(typeof NAV_IDS)[number], string> = {
     services: t.nav.services,
     calculator: t.nav.calculator,
@@ -122,7 +124,7 @@ export function Header() {
         }`}
       >
         <div className="shell flex h-[68px] items-center gap-3 sm:gap-4 lg:h-[76px]">
-          <a href="#top" onClick={(e) => (e.preventDefault(), go("top"))} className="flex min-w-0 items-center gap-3 xl:shrink-0">
+          <a href="#top" onClick={(e) => (e.preventDefault(), go("top"))} className="flex min-h-11 min-w-0 items-center gap-3 xl:shrink-0">
             <Monogram letters={doctor.monogram} className="h-10 w-10 shrink-0 lg:h-11 lg:w-11" />
             <span className="min-w-0 leading-tight">
               <span className="block truncate font-display text-[16px] font-medium sm:text-[17px] tracking-[-0.01em] text-ink lg:text-[18px] xl:overflow-visible">
@@ -134,7 +136,7 @@ export function Header() {
 
           <nav aria-label={t.nav.menu} className="mx-auto hidden xl:block">
             <ul className="flex items-center gap-0.5">
-              {NAV_IDS.map((id) => (
+              {navIds.map((id) => (
                 <li key={id}>
                   <a
                     href={`#${id}`}
@@ -157,7 +159,7 @@ export function Header() {
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 xl:ml-0">
-            <div className="hidden min-[1280px]:block">{status(true)}</div>
+            {doctor.hoursConfirmed === false ? null : <div className="hidden min-[1280px]:block">{status(true)}</div>}
             <div className="hidden sm:block">
               <LangToggle />
             </div>
@@ -215,7 +217,7 @@ export function Header() {
               </button>
             </div>
             <ul className="mt-10 space-y-1">
-              {NAV_IDS.map((id) => (
+              {navIds.map((id) => (
                 <li key={id}>
                   <a
                     href={`#${id}`}
@@ -228,7 +230,7 @@ export function Header() {
               ))}
             </ul>
             <div className="mt-auto space-y-4">
-              {status(false)}
+              {doctor.hoursConfirmed === false ? null : status(false)}
               <div className="grid grid-cols-2 gap-3">
                 <a href={phoneHref(doctor.contact.phone)} className={`${btnSmall} border border-line bg-card text-ink`}>
                   <Phone size={16} strokeWidth={1.6} /> {t.cta.call}

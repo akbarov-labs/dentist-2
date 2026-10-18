@@ -35,12 +35,17 @@ function StructuredData() {
       addressCountry: "UZ",
     },
     ...(d.address ? { geo: { "@type": "GeoCoordinates", latitude: d.address.lat, longitude: d.address.lng } } : {}),
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      opens: `${String(d.hours.openHour).padStart(2, "0")}:00`,
-      closes: `${String(d.hours.closeHour).padStart(2, "0")}:00`,
-    },
+    // Hours go to search engines only once the doctor has confirmed them.
+    ...(d.hoursConfirmed === false
+      ? {}
+      : {
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            opens: `${String(d.hours.openHour).padStart(2, "0")}:00`,
+            closes: `${String(d.hours.closeHour).padStart(2, "0")}:00`,
+          },
+        }),
     sameAs: [`https://t.me/${d.contact.telegram}`, `https://instagram.com/${d.contact.instagram}`],
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
