@@ -712,7 +712,15 @@ const iqboljon: DoctorProfile = {
       bonuses: [
         { uz: "Rang va shaklni oldindan birga tanlaymiz", ru: "Цвет и форму подбираем вместе заранее" },
         { uz: "Vaqtinchalik qoplamalar narxga kiritilgan", ru: "Временные коронки включены в цену" },
-        { uz: "5 yillik yozma kafolat", ru: "Письменная гарантия 5 лет" },
+        { uz: "Ishga kafolat", ru: "Гарантия на работу" },
+      ],
+    },
+    treatment: {
+      ...sharedPricing.treatment,
+      bonuses: [
+        { uz: "Og‘riqsiz kompyuterli anesteziya", ru: "Безболезненная компьютерная анестезия" },
+        { uz: "Rentgen tasvir narxga kiritilgan", ru: "Рентген-снимок включён в цену" },
+        { uz: "Plombaga kafolat", ru: "Гарантия на пломбу" },
       ],
     },
     rootCanal: {
@@ -737,7 +745,13 @@ const iqboljon: DoctorProfile = {
     },
     sharedReviews[1],
     sharedReviews[2],
-    sharedReviews[3],
+    {
+      ...sharedReviews[3],
+      text: {
+        uz: "Har safar faqat bitta shifokor bilan ishladim, assistentga topshirib yuborishmadi. Hammasini oldindan tushuntirib berishdi.",
+        ru: "Каждый раз работал только с одним врачом, меня не передавали ассистентам. Всё заранее объяснили.",
+      },
+    },
     {
       id: "iq5",
       source: "telegram",
@@ -773,7 +787,7 @@ const iqboljon: DoctorProfile = {
       specs: [
         { uz: "Sirkon yoki E-max", ru: "Цирконий или E-max" },
         { uz: "2 tashrif", ru: "2 визита" },
-        { uz: "Kafolat: 5 yil yozma", ru: "Гарантия: 5 лет письменно" },
+        { uz: "Kafolat beriladi", ru: "С гарантией" },
       ],
       image: "/images/cases/zirconia-renew-after.jpg",
       calcProblem: "aesthetic",
@@ -889,19 +903,20 @@ const iqboljon: DoctorProfile = {
   ],
   copy: {
     uz: {
+      hero: { tail: "Har bir ishimga o‘zim javob beraman va kafolat beraman." },
       approach: {
         points: [
           { k: "Bitta mas’ul shifokor", v: "Ko‘rikdan oxirgi plombagacha sizni faqat men davolayman." },
           { k: "Og‘riqsiz protokol", v: "Avval anestetik gel, keyin kompyuterli anesteziya: ukol deyarli sezilmaydi." },
           { k: "Shaxsiy Telegram aloqa", v: "Davolashdan keyin savollaringizga ma’mur emas, o‘zim javob beraman." },
-          { k: "Yozma kafolat", v: "Har bir plomba va qoplamaga yozma kafolat beriladi." },
+          { k: "Kafolat", v: "Har bir plomba va qoplamaga kafolat beraman." },
         ],
       },
       protocol: {
         title: "Og‘riqsiz qabul qanday o‘tadi",
         sub: "Bitta tishni davolash misolida. Pastga aylantiring: chizma har bir bosqich bilan quriladi.",
         drawingLabel: "Og‘riqsiz davolash chizmasi, bosqichma-bosqich",
-        callouts: { plan: "Davolash rejasi" },
+        callouts: { plan: "Davolash rejasi", warranty: "Kafolat" },
         steps: [
           {
             title: "Ko‘rik va rentgen",
@@ -938,7 +953,7 @@ const iqboljon: DoctorProfile = {
           {
             title: "Kuzatuv va kafolat",
             short: "Davolashdan keyin ham yoningizdaman",
-            body: "Savollaringizga Telegramda o‘zim javob beraman. Plombaga 2 yillik yozma kafolat, har 6 oyda nazorat ko‘rigi.",
+            body: "Savollaringizga Telegramda o‘zim javob beraman. Ishlarimga kafolat beraman, har 6 oyda nazorat ko‘rigi.",
             duration: "Har 6 oyda · 30 daqiqa",
             equipment: [],
             comfortText: "To‘liq qulay",
@@ -980,8 +995,8 @@ const iqboljon: DoctorProfile = {
             a: "Ikkalasi ham metallsiz, tabiiy ko‘rinishdagi keramika. E-max yorug‘likni tabiiy tish kabi o‘tkazadi, shuning uchun oldingi tishlarga juda mos. Sirkon esa juda mustahkam: chaynov tishlari va ko‘p birlikli ishlar uchun. Qaysi biri sizga mosligini ko‘rikda birga tanlaymiz.",
           },
           {
-            q: "Kafolat qanday rasmiylashtiriladi?",
-            a: "Har bir ish uchun yozma kafolat beriladi: plombaga 2 yil, keramik qoplamaga 5 yil.",
+            q: "Kafolat bormi?",
+            a: "Ha, qilgan ishlarimga kafolat beraman.",
           },
           {
             q: "Bo‘lib to‘lash mumkinmi?",
@@ -995,19 +1010,20 @@ const iqboljon: DoctorProfile = {
       },
     },
     ru: {
+      hero: { tail: "За каждую работу отвечаю лично и даю гарантию." },
       approach: {
         points: [
           { k: "Один ответственный врач", v: "От осмотра до последней пломбы вас лечу только я." },
           { k: "Безболезненный протокол", v: "Сначала анестезирующий гель, затем компьютерная анестезия: укол почти не чувствуется." },
           { k: "Личная связь в Telegram", v: "После лечения на ваши вопросы отвечаю я сам, а не администратор." },
-          { k: "Письменная гарантия", v: "На каждую пломбу и коронку выдаётся письменная гарантия." },
+          { k: "Гарантия", v: "На каждую пломбу и коронку даю гарантию." },
         ],
       },
       protocol: {
         title: "Как проходит приём без боли",
         sub: "На примере лечения одного зуба. Прокрутите вниз: чертёж строится с каждым этапом.",
         drawingLabel: "Чертёж безболезненного лечения по этапам",
-        callouts: { plan: "План лечения" },
+        callouts: { plan: "План лечения", warranty: "Гарантия" },
         steps: [
           {
             title: "Осмотр и снимок",
@@ -1044,7 +1060,7 @@ const iqboljon: DoctorProfile = {
           {
             title: "Наблюдение и гарантия",
             short: "Я рядом и после лечения",
-            body: "На вопросы в Telegram отвечаю сам. Письменная гарантия на пломбу 2 года, контрольный осмотр каждые 6 месяцев.",
+            body: "На вопросы в Telegram отвечаю сам. Даю гарантию на свои работы, контрольный осмотр каждые 6 месяцев.",
             duration: "Каждые 6 месяцев · 30 минут",
             equipment: [],
             comfortText: "Полностью комфортно",
@@ -1086,8 +1102,8 @@ const iqboljon: DoctorProfile = {
             a: "Обе безметалловые и выглядят естественно. E-max пропускает свет как живой зуб, поэтому особенно хороша для передних зубов. Цирконий очень прочный: для жевательных зубов и работ из нескольких единиц. Какая подойдёт вам, выберем вместе на осмотре.",
           },
           {
-            q: "Как оформляется гарантия?",
-            a: "На каждую работу выдаётся письменная гарантия: на пломбу 2 года, на керамическую коронку 5 лет.",
+            q: "Есть ли гарантия?",
+            a: "Да, на свои работы я даю гарантию.",
           },
           {
             q: "Можно ли платить частями?",
