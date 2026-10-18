@@ -8,8 +8,8 @@ import { phoneHref, telegramLink } from "@/lib/format";
 /** Fixed thumb-reach action bar for phones (< 768px). */
 export function MobileBar() {
   const { t, doctor, lang, scrollToId } = useSite();
-  // For a practice that offers the urgent path, the thumb-reach Telegram button is that path.
-  const tgText = doctor.urgentCta ? `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.urgent}` : undefined;
+  // A neutral greeting: not everyone tapping Telegram is in pain (the hero has its own urgent button).
+  const tgText = `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.generic}`;
   const [hidden, setHidden] = useState(false);
 
   // Step aside while the booking form itself is on screen, so the bar never covers its fields.

@@ -36,8 +36,8 @@ export function instagramLink(username: string): string {
   return `https://instagram.com/${username.replace(/^@/, "")}`;
 }
 
-export function mapLinks(doctor: DoctorProfile, lang: Lang) {
-  const { lat, lng } = doctor.address;
+export function mapLinks(address: NonNullable<DoctorProfile["address"]>, lang: Lang) {
+  const { lat, lng } = address;
   return {
     yandex: `https://yandex.uz/maps/?pt=${lng},${lat}&z=17&l=map`,
     gis: `https://2gis.uz/tashkent/geo/${lng},${lat}`,

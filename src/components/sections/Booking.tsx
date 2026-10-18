@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Calculator, Car, CheckCircle2, Clock3, Loader2, Map as MapIcon, MapPin, Navigation, Phone, Send, Sparkles, X } from "lucide-react";
+import { ArrowRight, Calculator, Car, CheckCircle2, ClipboardList, Clock3, Loader2, Map as MapIcon, MapPin, Navigation, Phone, Send, X } from "lucide-react";
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useSite } from "@/context/SiteContext";
 import { buildTelegramText, computeEstimate, priceRange, selectionLines } from "@/lib/estimate";
@@ -77,7 +77,11 @@ export function Booking() {
   const ctSelection = prefill?.kind === "calculator" ? prefill.selection : calc;
   const askCt = computeEstimate(doctor, ctSelection, lang).needsCt;
 
-  const links = mapLinks(doctor, lang);
+  // No real address yet: no map, no directions (a pin on someone else's street sends patients to the wrong place).
+  const address = doctor.address;
+  const links = address ? mapLinks(address, lang) : null;
+  // A doctor shown in his own photo doesn't get the arch repeated at the close; the form takes the room.
+  const closePortrait = doctor.portrait.style !== "photo";
   const tgText = buildTelegramText(doctor, lang, t, prefill);
   const service = prefill?.kind === "service" ? doctor.services.find((s) => s.id === prefill.serviceId) : undefined;
 
@@ -157,21 +161,24 @@ export function Booking() {
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-12">
           {/* The close: the hero's arch returns, now signed */}
           {/* Phones: the form comes first, so every "book" button lands on it; the signed portrait follows. */}
-          <Reveal className="order-last mx-auto w-full max-w-[360px] lg:order-none lg:col-span-5 lg:max-w-none">
-            <figure className="lg:sticky lg:top-24">
-              <PortraitArch doctor={doctor} lang={lang} sizes="(min-width: 1024px) 34vw, 80vw" />
-              <figcaption className="relative z-[2] -mt-4 text-center">
-                {/* A doctor can leave the closing quote empty: the signed portrait still closes the page */}
-                {t.booking.closeLine ? (
-                  <p className="font-display text-[24px] leading-snug text-ink italic text-balance sm:text-[28px]">“{t.booking.closeLine}”</p>
+          {closePortrait ? (
+            // overflow-x-clip: the cut-out is drawn wider than the arch and must not widen the page on phones
+            <Reveal className="order-last mx-auto w-full max-w-[360px] overflow-x-clip lg:order-none lg:col-span-5 lg:max-w-none">
+              <figure className="lg:sticky lg:top-24">
+                <PortraitArch doctor={doctor} lang={lang} sizes="(min-width: 1024px) 34vw, 80vw" />
+                <figcaption className="relative z-[2] -mt-4 text-center">
+                  {/* A doctor can leave the closing quote empty: the signed portrait still closes the page */}
+                  {t.booking.closeLine ? (
+                    <p className="font-display text-[24px] leading-snug text-ink italic text-balance sm:text-[28px]">“{t.booking.closeLine}”</p>
                 ) : null}
                 <Signature name={doctor.signature} className="mx-auto mt-1 h-14 w-auto" />
                 <p className="text-[13px] text-muted">{doctor.name[lang]}</p>
               </figcaption>
             </figure>
           </Reveal>
+          ) : null}
 
-          <div className="lg:col-span-7">
+          <div className={closePortrait ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}>
             <Reveal>
               <h2 id="booking-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[46px]">
                 {t.booking.title}
@@ -210,157 +217,157 @@ export function Booking() {
                   </div>
                 </div>
               ) : (
-                <form
-                  onSubmit={submit}
-                  onFocus={() => {
-                    if (!shownAt.current) shownAt.current = Date.now();
-                  }}
-                  noValidate
-                  className="relative space-y-6"
-                >
-                  {/* Honeypot: hidden from people and assistive tech, filled in by bots */}
-                  <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
-                    <label>
-                      Website
-                      <input type="text" name="website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
-                    </label>
-                  </div>
-                  {summary ? (
-                    <div className="hud-in flex items-start justify-between gap-4 rounded-[16px] border border-accent/20 bg-accent-soft/70 p-4">
-                      <div className="flex items-start gap-3">
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-paper">
-                          {prefill?.kind === "calculator" ? <Calculator size={16} strokeWidth={1.7} /> : <Sparkles size={16} strokeWidth={1.7} />}
-                        </span>
-                        <div>
-                          <p className="text-[12.5px] font-medium text-accent">
-                            {prefill?.kind === "calculator" ? t.booking.selected : t.booking.service}
-                          </p>
-                          <p className="mt-1 text-[14.5px] leading-snug text-ink">{summary.lines.join(" · ")}</p>
-                          {summary.price ? <p className="mt-1 tabular-nums text-[13px] text-accent">{summary.price}</p> : null}
+                  <form
+                    onSubmit={submit}
+                    onFocus={() => {
+                      if (!shownAt.current) shownAt.current = Date.now();
+                    }}
+                    noValidate
+                    className="relative space-y-6"
+                  >
+                    {/* Honeypot: hidden from people and assistive tech, filled in by bots */}
+                    <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
+                      <label>
+                        Website
+                        <input type="text" name="website" tabIndex={-1} autoComplete="off" value={trap} onChange={(e) => setTrap(e.target.value)} />
+                      </label>
+                    </div>
+                    {summary ? (
+                      <div className="hud-in flex items-start justify-between gap-4 rounded-[16px] border border-accent/20 bg-accent-soft/70 p-4">
+                        <div className="flex items-start gap-3">
+                          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-paper">
+                            {prefill?.kind === "calculator" ? <Calculator size={16} strokeWidth={1.7} /> : <ClipboardList size={16} strokeWidth={1.7} />}
+                          </span>
+                          <div>
+                            <p className="text-[12.5px] font-medium text-accent">
+                              {prefill?.kind === "calculator" ? t.booking.selected : t.booking.service}
+                            </p>
+                            <p className="mt-1 text-[14.5px] leading-snug text-ink">{summary.lines.join(" · ")}</p>
+                            {summary.price ? <p className="mt-1 tabular-nums text-[13px] text-accent">{summary.price}</p> : null}
+                          </div>
                         </div>
+                        <button type="button" onClick={() => setPrefill(null)} aria-label={t.booking.remove} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-soft transition hover:bg-card">
+                          <X size={16} strokeWidth={1.7} />
+                        </button>
                       </div>
-                      <button type="button" onClick={() => setPrefill(null)} aria-label={t.booking.remove} className="grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink-soft transition hover:bg-card">
-                        <X size={16} strokeWidth={1.7} />
-                      </button>
-                    </div>
-                  ) : null}
-
-                  <div className="grid gap-6 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="bk-name" className="text-[14px] font-medium text-ink">
-                        {t.booking.name}
-                      </label>
-                      <input
-                        id="bk-name"
-                        name="name"
-                        autoComplete="given-name"
-                        value={name}
-                        onChange={(e) => {
-                          setName(e.target.value);
-                          if (errors.name) setErrors((er) => ({ ...er, name: undefined }));
-                        }}
-                        placeholder={t.booking.namePh}
-                        aria-invalid={!!errors.name}
-                        aria-describedby={errors.name ? "bk-name-err" : undefined}
-                        className={inputCls(errors.name)}
-                      />
-                      {errors.name ? (
-                        <p id="bk-name-err" className="mt-2 text-[13px] text-[#9e3a28]">
-                          {errors.name}
-                        </p>
-                      ) : null}
-                    </div>
-                    <div>
-                      <label htmlFor="bk-phone" className="text-[14px] font-medium text-ink">
-                        {t.booking.phone}
-                      </label>
-                      <div className="relative">
-                        <span className="pointer-events-none absolute top-1/2 left-4 mt-1 -translate-y-1/2 tabular-nums text-[15px] text-ink-soft">+998</span>
+                    ) : null}
+  
+                    <div className="grid gap-6 sm:grid-cols-2">
+                      <div>
+                        <label htmlFor="bk-name" className="text-[14px] font-medium text-ink">
+                          {t.booking.name}
+                        </label>
                         <input
-                          id="bk-phone"
-                          name="phone"
-                          type="tel"
-                          inputMode="tel"
-                          autoComplete="tel-national"
-                          value={formatUzPhone(digits)}
-                          onChange={(e) => onPhone(e.target.value)}
-                          placeholder="90 123 45 67"
-                          aria-invalid={!!errors.phone}
-                          aria-describedby={errors.phone ? "bk-phone-err" : undefined}
-                          className={`${inputCls(errors.phone)} pl-[4.25rem] tabular-nums`}
+                          id="bk-name"
+                          name="name"
+                          autoComplete="given-name"
+                          value={name}
+                          onChange={(e) => {
+                            setName(e.target.value);
+                            if (errors.name) setErrors((er) => ({ ...er, name: undefined }));
+                          }}
+                          placeholder={t.booking.namePh}
+                          aria-invalid={!!errors.name}
+                          aria-describedby={errors.name ? "bk-name-err" : undefined}
+                          className={inputCls(errors.name)}
                         />
+                        {errors.name ? (
+                          <p id="bk-name-err" className="mt-2 text-[13px] text-[#9e3a28]">
+                            {errors.name}
+                          </p>
+                        ) : null}
                       </div>
-                      {errors.phone ? (
-                        <p id="bk-phone-err" className="mt-2 text-[13px] text-[#9e3a28]">
-                          {errors.phone}
-                        </p>
-                      ) : null}
+                      <div>
+                        <label htmlFor="bk-phone" className="text-[14px] font-medium text-ink">
+                          {t.booking.phone}
+                        </label>
+                        <div className="relative">
+                          <span className="pointer-events-none absolute top-1/2 left-4 mt-1 -translate-y-1/2 tabular-nums text-[15px] text-ink-soft">+998</span>
+                          <input
+                            id="bk-phone"
+                            name="phone"
+                            type="tel"
+                            inputMode="tel"
+                            autoComplete="tel-national"
+                            value={formatUzPhone(digits)}
+                            onChange={(e) => onPhone(e.target.value)}
+                            placeholder="90 123 45 67"
+                            aria-invalid={!!errors.phone}
+                            aria-describedby={errors.phone ? "bk-phone-err" : undefined}
+                            className={`${inputCls(errors.phone)} pl-[4.25rem] tabular-nums`}
+                          />
+                        </div>
+                        {errors.phone ? (
+                          <p id="bk-phone-err" className="mt-2 text-[13px] text-[#9e3a28]">
+                            {errors.phone}
+                          </p>
+                        ) : null}
+                      </div>
                     </div>
-                  </div>
-
-                  <div className={`grid gap-6 ${askCt ? "sm:grid-cols-2" : ""}`}>
-                    <Segmented
-                      label={t.booking.contact}
-                      value={method}
-                      onChange={setMethod}
-                      options={[
-                        { id: "call", label: t.booking.contactCall },
-                        { id: "telegram", label: t.booking.contactTg },
-                      ]}
-                    />
-                    {askCt ? (
+  
+                    <div className={`grid gap-6 ${askCt ? "sm:grid-cols-2" : ""}`}>
                       <Segmented
-                        label={t.booking.ct}
-                        value={hasCt}
-                        onChange={setHasCt}
+                        label={t.booking.contact}
+                        value={method}
+                        onChange={setMethod}
                         options={[
-                          { id: "yes", label: t.booking.ctYes },
-                          { id: "no", label: t.booking.ctNo },
+                          { id: "call", label: t.booking.contactCall },
+                          { id: "telegram", label: t.booking.contactTg },
                         ]}
                       />
-                    ) : null}
-                  </div>
-
-                  <div>
-                    <label htmlFor="bk-comment" className="text-[14px] font-medium text-ink">
-                      {t.booking.comment}
-                    </label>
-                    <textarea
-                      id="bk-comment"
-                      name="comment"
-                      rows={3}
-                      value={comment}
-                      onChange={(e) => setComment(e.target.value)}
-                      placeholder={t.booking.commentPh}
-                      className="mt-2 w-full resize-none rounded-[12px] border border-line bg-paper px-4 py-3 text-[16px] text-ink placeholder:text-muted transition focus:border-accent focus:bg-card focus:ring-4 focus:ring-accent/10 focus:outline-none"
-                    />
-                  </div>
-
-                  <p className="flex items-start gap-2.5 rounded-[12px] bg-paper px-4 py-3 text-[14px] leading-relaxed text-ink-soft">
-                    <Clock3 size={17} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
-                    {t.booking.next}
-                  </p>
-
-                  {status === "error" ? (
-                    <p role="alert" className="rounded-[12px] border border-[#b4432f]/30 bg-[#fbeeea] px-4 py-3 text-[14px] text-[#8a3324]">
-                      {t.booking.errSubmit}{" "}
-                      <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className="font-medium underline">
-                        {t.booking.errSubmitTg}
-                      </a>
+                      {askCt ? (
+                        <Segmented
+                          label={t.booking.ct}
+                          value={hasCt}
+                          onChange={setHasCt}
+                          options={[
+                            { id: "yes", label: t.booking.ctYes },
+                            { id: "no", label: t.booking.ctNo },
+                          ]}
+                        />
+                      ) : null}
+                    </div>
+  
+                    <div>
+                      <label htmlFor="bk-comment" className="text-[14px] font-medium text-ink">
+                        {t.booking.comment}
+                      </label>
+                      <textarea
+                        id="bk-comment"
+                        name="comment"
+                        rows={3}
+                        value={comment}
+                        onChange={(e) => setComment(e.target.value)}
+                        placeholder={t.booking.commentPh}
+                        className="mt-2 w-full resize-none rounded-[12px] border border-line bg-paper px-4 py-3 text-[16px] text-ink placeholder:text-muted transition focus:border-accent focus:bg-card focus:ring-4 focus:ring-accent/10 focus:outline-none"
+                      />
+                    </div>
+  
+                    <p className="flex items-start gap-2.5 rounded-[12px] bg-paper px-4 py-3 text-[14px] leading-relaxed text-ink-soft">
+                      <Clock3 size={17} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                      {t.booking.next}
                     </p>
-                  ) : null}
-
-                  <div className="flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="max-w-[36ch] text-[13px] leading-relaxed text-muted">{t.booking.privacy}</p>
-                    <button type="submit" disabled={status === "sending"} className={`${btnPrimary} sm:min-w-[220px]`}>
-                      {status === "sending" ? (
-                        <>
-                          <Loader2 size={17} strokeWidth={1.8} className="animate-spin" /> {t.booking.sending}
-                        </>
-                      ) : (
-                        <>
-                          {t.booking.submit} <ArrowRight size={17} strokeWidth={1.7} />
-                        </>
+  
+                    {status === "error" ? (
+                      <p role="alert" className="rounded-[12px] border border-[#b4432f]/30 bg-[#fbeeea] px-4 py-3 text-[14px] text-[#8a3324]">
+                        {t.booking.errSubmit}{" "}
+                        <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className="font-medium underline">
+                          {t.booking.errSubmitTg}
+                        </a>
+                      </p>
+                    ) : null}
+  
+                    <div className="flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+                      <p className="max-w-[36ch] text-[13px] leading-relaxed text-muted">{t.booking.privacy}</p>
+                      <button type="submit" disabled={status === "sending"} className={`${btnPrimary} sm:min-w-[220px]`}>
+                        {status === "sending" ? (
+                          <>
+                            <Loader2 size={17} strokeWidth={1.8} className="animate-spin" /> {t.booking.sending}
+                          </>
+                        ) : (
+                          <>
+                            {t.booking.submit} <ArrowRight size={17} strokeWidth={1.7} />
+                          </>
                       )}
                     </button>
                   </div>
@@ -391,55 +398,71 @@ export function Booking() {
               </div>
             </Reveal>
 
-            <Reveal delay={160} className="lg:col-span-7">
-              <div className="grid h-full overflow-hidden rounded-[16px] border border-line bg-card md:grid-cols-2">
-                <div className="relative aspect-[16/10] bg-stone md:aspect-auto md:min-h-[360px]">
-                  <iframe
-                    key={`${doctor.id}-${lang}`}
-                    src={links.embed}
-                    title={t.booking.mapLabel}
-                    loading="lazy"
-                    className="absolute inset-0 h-full w-full grayscale-[60%] sepia-[12%]"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="font-display text-[20px] leading-tight text-ink">{t.booking.mapTitle}</h3>
-                  <p className="mt-2 flex items-start gap-2 text-[16px] leading-snug text-ink">
-                    <MapPin size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
-                    {doctor.address.full[lang]}
-                  </p>
-                  <p className="mt-1 pl-[26px] text-[13.5px] text-muted">{doctor.address.landmark[lang]}</p>
-                  <p className="mt-3 flex items-center gap-2 pl-0.5 text-[14px] text-ink-soft">
-                    <Clock3 size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
-                    {doctor.hours.days[lang]} · <span className="tabular-nums">{doctor.hours.time}</span>
-                  </p>
-                  <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-1 flex min-h-11 items-center gap-2 pl-0.5 tabular-nums text-[15px] text-ink transition hover:text-accent">
-                    <Phone size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
-                    {doctor.contact.phone}
-                  </a>
-
-                  <div className="mt-5 grid grid-cols-2 gap-2 md:grid-cols-1 xl:grid-cols-2">
-                    {[
-                      { href: links.yandex, label: t.booking.maps.yandex, Icon: MapIcon },
-                      { href: links.gis, label: t.booking.maps.gis, Icon: Navigation },
-                      { href: links.taxi, label: t.booking.maps.taxi, Icon: Car },
-                      { href: links.google, label: t.booking.maps.google, Icon: MapPin },
-                    ].map(({ href, label, Icon }) => (
-                      <a
-                        key={label}
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-paper px-4 py-2 text-[13.5px] leading-tight text-ink transition hover:border-accent hover:text-accent"
-                      >
-                        <Icon size={15} strokeWidth={1.6} className="shrink-0" />
-                        {label}
-                      </a>
-                    ))}
+            {address && links ? (
+              <Reveal delay={160} className="lg:col-span-7">
+                <div className="grid h-full overflow-hidden rounded-[16px] border border-line bg-card md:grid-cols-2">
+                  <div className="relative aspect-[16/10] bg-stone md:aspect-auto md:min-h-[360px]">
+                    <iframe
+                      key={`${doctor.id}-${lang}`}
+                      src={links.embed}
+                      title={t.booking.mapLabel}
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full grayscale-[60%] sepia-[12%]"
+                    />
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-display text-[20px] leading-tight text-ink">{t.booking.mapTitle}</h3>
+                    <p className="mt-2 flex items-start gap-2 text-[16px] leading-snug text-ink">
+                      <MapPin size={18} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
+                      {address.full[lang]}
+                    </p>
+                    <p className="mt-1 pl-[26px] text-[13.5px] text-muted">{address.landmark[lang]}</p>
+                    <p className="mt-3 flex items-center gap-2 pl-0.5 text-[14px] text-ink-soft">
+                      <Clock3 size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
+                      {doctor.hours.days[lang]} · <span className="tabular-nums">{doctor.hours.time}</span>
+                    </p>
+                    <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-1 flex min-h-11 items-center gap-2 pl-0.5 tabular-nums text-[15px] text-ink transition hover:text-accent">
+                      <Phone size={16} strokeWidth={1.6} className="shrink-0 text-accent" />
+                      {doctor.contact.phone}
+                    </a>
+  
+                    <div className="mt-5 grid grid-cols-2 gap-2 md:grid-cols-1 xl:grid-cols-2">
+                      {[
+                        { href: links.yandex, label: t.booking.maps.yandex, Icon: MapIcon },
+                        { href: links.gis, label: t.booking.maps.gis, Icon: Navigation },
+                        { href: links.taxi, label: t.booking.maps.taxi, Icon: Car },
+                        { href: links.google, label: t.booking.maps.google, Icon: MapPin },
+                      ].map(({ href, label, Icon }) => (
+                        <a
+                          key={label}
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line bg-paper px-4 py-2 text-[13.5px] leading-tight text-ink transition hover:border-accent hover:text-accent"
+                        >
+                          <Icon size={15} strokeWidth={1.6} className="shrink-0" />
+                          {label}
+                        </a>
+                      ))}
+                    </div>
                   </div>
                 </div>
+              </Reveal>
+            ) : (
+            <Reveal delay={160} className="lg:col-span-7">
+              <div className="h-full rounded-[16px] border border-line bg-card p-6 sm:p-8">
+                <h3 className="font-display text-[22px] leading-tight text-ink">{t.booking.hours}</h3>
+                <p className="mt-3 flex items-center gap-2 text-[16px] text-ink-soft">
+                  <Clock3 size={17} strokeWidth={1.6} className="shrink-0 text-accent" />
+                  {doctor.hours.days[lang]} · <span className="tabular-nums">{doctor.hours.time}</span>
+                </p>
+                <a href={phoneHref(doctor.contact.phone)} aria-label={`${t.booking.call}: ${doctor.contact.phone}`} className="mt-2 flex min-h-11 items-center gap-2 tabular-nums text-[17px] text-ink transition hover:text-accent">
+                  <Phone size={17} strokeWidth={1.6} className="shrink-0 text-accent" />
+                  {doctor.contact.phone}
+                </a>
               </div>
             </Reveal>
+            )}
         </div>
       </div>
     </section>

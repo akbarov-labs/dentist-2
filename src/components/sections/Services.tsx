@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, ArrowUpRight, Microscope } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Hand, Microscope } from "lucide-react";
 import type { ServiceItem } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
 import { formatMillions } from "@/lib/format";
@@ -107,7 +107,12 @@ export function Services() {
 
           {/* Fourth: stone with microscope motif */}
           <Reveal delay={200} className="relative flex min-h-[300px] flex-col overflow-hidden rounded-[16px] bg-stone p-6">
-            <Microscope size={26} strokeWidth={1.4} className="text-accent" />
+            {fourth.icon === "hand" ? (
+              // The raised hand: "lift your hand and I stop", his promise for painless treatment
+              <Hand size={26} strokeWidth={1.4} className="text-accent" />
+            ) : (
+              <Microscope size={26} strokeWidth={1.4} className="text-accent" />
+            )}
             <h3 className="mt-6 font-display text-[21px] leading-tight text-ink">{noBreakHyphens(fourth.title[lang])}</h3>
             <p className="mt-2 text-[14px] leading-relaxed text-muted">{fourth.lead[lang]}</p>
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">

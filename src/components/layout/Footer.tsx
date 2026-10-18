@@ -70,7 +70,7 @@ export function Footer() {
                 </a>
               </li>
             ) : null}
-            <li className="pt-2 text-muted">{doctor.address.full[lang]}</li>
+            {doctor.address ? <li className="pt-2 text-muted">{doctor.address.full[lang]}</li> : null}
           </ul>
         </div>
 
@@ -78,9 +78,11 @@ export function Footer() {
           <p>
             © {year ? `${year} ` : ""}{doctor.name[lang]}. {t.footer.rights}
           </p>
-          <p className="tabular-nums">
-            {t.footer.license}: {doctor.idCard.licenseId}
-          </p>
+          {doctor.idCard.licenseId ? (
+            <p className="tabular-nums">
+              {t.footer.license}: {doctor.idCard.licenseId}
+            </p>
+          ) : null}
         </div>
         {site.isDemo ? <p className="mt-3 text-[12.5px] text-muted">{t.footer.demo}</p> : null}
       </div>

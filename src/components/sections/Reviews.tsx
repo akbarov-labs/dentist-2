@@ -131,6 +131,9 @@ export function Reviews() {
   };
   const leadText = lead?.text[lang].replaceAll("{doctor}", doctor.firstName[lang]);
 
+  // No real reviews yet: show nothing rather than examples about a real doctor.
+  if (!list.length) return null;
+
   return (
     <section id="reviews" aria-labelledby="reviews-title" className="py-20 md:py-28">
       <div className="shell">

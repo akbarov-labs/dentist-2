@@ -6,6 +6,7 @@ import { useSite } from "@/context/SiteContext";
 import { telegramLink } from "@/lib/format";
 import { clamp01, useScrollVar } from "@/lib/useScrollVar";
 import { PortraitArch } from "@/components/ui/PortraitArch";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { btnPrimary, btnSecondary } from "@/components/ui/styles";
 
 const delay = (ms: number) => ({ "--enter-delay": `${ms}ms` }) as CSSProperties;
@@ -74,27 +75,46 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Layered portrait */}
-          {/* Desktop: as large as the column allows, but never taller than the screen below the header */}
-          <div className="relative order-first mx-auto w-full max-w-[290px] sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">
-            <div className="enter" style={delay(120)}>
-              <PortraitArch doctor={doctor} lang={lang} preload sizes="(min-width: 1024px) 40vw, 92vw" />
+          {/* Portrait. Desktop: as large as the column allows, but never taller than the screen below the header */}
+          {doctor.portrait.style === "photo" ? (
+            // The real photo in his own surgery, as taken: no cut-out, no borrowed room. Wider and shorter on phones so the buttons stay near the fold.
+            <div className="relative order-first mx-auto w-full sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">
+              <div className="enter relative aspect-[4/3] overflow-hidden rounded-[20px] bg-stone shadow-[var(--shadow-lift)] sm:aspect-[4/5]" style={delay(120)}>
+                <SafeImage
+                  src={doctor.portrait.src}
+                  alt={doctor.portrait.alt[lang]}
+                  fill
+                  preload
+                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  className="object-cover"
+                  style={{ objectPosition: doctor.portrait.position }}
+                  fallbackLabel={doctor.name[lang]}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="relative order-first mx-auto w-full max-w-[290px] sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">
+              <div className="enter" style={delay(120)}>
+                <PortraitArch doctor={doctor} lang={lang} preload sizes="(min-width: 1024px) 40vw, 92vw" />
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Key facts sit under the hero, not inside it */}
-      <section aria-label={t.intro.facts} className="border-t border-line">
-        <dl className="shell grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          {doctor.stats.map((s) => (
-            <div key={s.label.uz} className="flex flex-col-reverse py-6 sm:px-8 sm:py-10 sm:first:pl-0">
-              <dt className="mt-1 text-[14px] leading-snug text-muted">{s.label[lang]}</dt>
-              <dd className="text-[30px] leading-none font-medium tracking-[-0.03em] text-ink tabular-nums sm:text-[36px]">{s.value[lang]}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      {/* Key facts sit under the hero, not inside it (only for a doctor who has figures beyond the hero sentence) */}
+      {doctor.stats.length ? (
+        <section aria-label={t.intro.facts} className="border-t border-line">
+          <dl className="shell grid grid-cols-1 divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            {doctor.stats.map((s) => (
+              <div key={s.label.uz} className="flex flex-col-reverse py-6 sm:px-8 sm:py-10 sm:first:pl-0">
+                <dt className="mt-1 text-[14px] leading-snug text-muted">{s.label[lang]}</dt>
+                <dd className="text-[30px] leading-none font-medium tracking-[-0.03em] text-ink tabular-nums sm:text-[36px]">{s.value[lang]}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ) : null}
     </>
   );
 }

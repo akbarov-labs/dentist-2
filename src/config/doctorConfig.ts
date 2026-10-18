@@ -13,7 +13,7 @@
  */
 
 import type { CopyOverride } from "@/i18n/dictionary";
-import { reviews as sharedReviews, type Review } from "@/config/reviews";
+import type { Review } from "@/config/reviews";
 
 export type Lang = "uz" | "ru";
 export type Localized<T = string> = Record<Lang, T>;
@@ -53,6 +53,8 @@ export interface ServiceItem {
   /** Calculator problem this service maps to (for "Narxni hisoblash"). */
   calcProblem?: ProblemId;
   priceFrom: number;
+  /** Icon for the plain (fourth) service card. */
+  icon?: "microscope" | "hand";
 }
 
 export interface Credential {
@@ -97,17 +99,27 @@ export interface DoctorProfile {
   /** Shown in the Demo switcher only. */
   presetLabel: Localized;
   name: Localized;
-  /** Latin name used in the handwritten signature. */
+  /** Latin name for the handwritten signature; empty when the doctor has no real one to show. */
   signature: string;
   firstName: Localized;
+  /** Initials for the round mark; empty to show the name alone. */
   monogram: string;
   title: Localized;
   practice: Localized;
   heroLead: Localized;
   heroSub: Localized;
   manifesto: Localized<string[]>;
-  portrait: { src: string; alt: Localized; position: string; /** Transparent cut-out (WebP with alpha) for the layered hero and the close. */ cutout: string };
+  portrait: {
+    src: string;
+    alt: Localized;
+    position: string;
+    /** Transparent cut-out (WebP with alpha) for the layered arch hero and the close. */
+    cutout: string;
+    /** "photo": the real photo, in its own room, in a plain frame (no cut-out, no stock room, no closing repeat). */
+    style?: "arch" | "photo";
+  };
   stats: { value: Localized; label: Localized }[];
+  /** licenseId is shown in the footer; empty until the real number is known. */
   idCard: { licenseId: string; lines: Localized[] };
   contact: {
     phone: string;
@@ -115,7 +127,8 @@ export interface DoctorProfile {
     instagram: string;
     email?: string;
   };
-  address: {
+  /** Omitted until the real address is known: the map, directions and address lines are then hidden. */
+  address?: {
     full: Localized;
     short: Localized;
     landmark: Localized;
@@ -131,7 +144,7 @@ export interface DoctorProfile {
     openHour: number;
     closeHour: number;
   };
-  dailyPatients: number;
+  dailyPatients?: number;
   services: ServiceItem[];
   pricing: Record<ProblemId, ProblemPricing>;
   /** Cost of a CBCT scan done at the first visit, in UZS. */
@@ -150,8 +163,12 @@ export interface DoctorProfile {
   calcProblems?: ProblemId[];
   /** Per-doctor overrides of the shared UI copy, merged over the dictionary (arrays replace, objects merge). */
   copy?: Partial<Record<Lang, CopyOverride>>;
-  /** This doctor's own reviews; falls back to the shared example set. */
+  /** This doctor's own reviews; falls back to the shared example set. An empty list hides the section. */
   reviews?: Review[];
+  /** false hides the "big clinic or private doctor" comparison (it rests on claims about other clinics). */
+  compareClinics?: boolean;
+  /** A plain price list replaces the calculator: one row per treatment, "from" price or a note. */
+  priceList?: { label: Localized; from?: number; note?: Localized }[];
 }
 
 export const defaultCalcProblems: ProblemId[] = ["single", "multiple", "fullArch", "aesthetic"];
@@ -656,30 +673,32 @@ const sardor: DoctorProfile = {
 };
 
 const iqboljon: DoctorProfile = {
-  ...jamshid,
   id: "iqboljon",
   presetLabel: { uz: "Stomatolog · Toshkent", ru: "Стоматолог · Ташкент" },
   name: { uz: "Dr. Iqboljon Jo‘raev", ru: "Д-р Икболжон Жураев" },
-  signature: "Iqboljon Joraev",
+  // No scanned signature: a script font posing as one would be a costume.
+  signature: "",
   firstName: { uz: "Iqboljon", ru: "Икболжон" },
-  monogram: "IJ",
+  monogram: "",
   title: {
     uz: "Stomatolog · og‘riqsiz, sifatli va ishonchli davolash",
     ru: "Стоматолог · безболезненное, качественное и надёжное лечение",
   },
+  practice: { uz: "Stomatolog · Toshkent", ru: "Стоматолог · Ташкент" },
   heroLead: { uz: "Og‘riqsiz. Shoshilmasdan.", ru: "Без боли. Без спешки." },
   heroSub: {
     uz: "Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman. Ko‘rikdan yakuniy natijagacha har bir bosqichni o‘zim bajaraman: 10 yillik tajriba, 10 000 dan ortiq bemor.",
     ru: "Лечу зубы безболезненно, качественно и надёжно. Каждый этап от осмотра до результата провожу сам: 10 лет практики, более 10 000 пациентов.",
   },
+  // His own words, from his Instagram captions.
   manifesto: {
     uz: [
-      "Men 10 yil oldin o‘zimga bitta qoida qo‘ydim: bemorni hech qachon boshqa birovning qo‘liga topshirmayman. Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman.",
-      "Har bir plomba, har bir toj mening ismim bilan chiqadi. Agar natijaga o‘zim ishonmasam, bu ishni qilmayman.",
+      "Zamonaviy stomatologiyada maksimal tabiiylikni saqlab qolish va sog‘lom tishlarga zarar yetkazmaslik: har kungi kun tartibimiz.",
+      "Go‘zal tabassum ishonch manbai. Shuning uchun tishlarning rangi va shaklini tabiiy ko‘rinishda tiklayman.",
     ],
     ru: [
-      "10 лет назад я поставил себе одно правило: никогда не передавать пациента в чужие руки. Лечу зубы безболезненно, качественно и надёжно.",
-      "Каждая пломба и каждая коронка выходят под моим именем. Если я сам не уверен в результате, я не возьмусь за работу.",
+      "В современной стоматологии сохранить максимальную естественность и не навредить здоровым зубам: это моя ежедневная задача.",
+      "Красивая улыбка даёт уверенность. Поэтому цвет и форму зубов я восстанавливаю так, чтобы они выглядели естественно.",
     ],
   },
   portrait: {
@@ -689,18 +708,36 @@ const iqboljon: DoctorProfile = {
       uz: "Dr. Iqboljon Jo‘raev oq xalatda, qo‘llarini qovushtirgan holda",
       ru: "Д-р Икболжон Жураев в белом халате, руки скрещены",
     },
-    position: "50% 22%",
+    position: "50% 30%",
+    style: "photo",
   },
-  stats: [
-    { value: { uz: "10+ yil", ru: "10+ лет" }, label: { uz: "Stomatologik amaliyot tajribasi", ru: "Стоматологической практики" } },
-    { value: { uz: "10,000+", ru: "10 000+" }, label: { uz: "Muvaffaqiyatli davolangan bemorlar", ru: "Успешно пролеченных пациентов" } },
-    { value: { uz: "Sirkon · E-max", ru: "Цирконий · E-max" }, label: { uz: "Asosiy keramik qoplamalar", ru: "Основные керамические коронки" } },
-  ],
+  // 10 years and 10,000+ patients are already in the hero sentence; no big-number strip.
+  stats: [],
+  idCard: { licenseId: "", lines: [] },
   contact: {
     phone: "+998 90 990 39 94",
     telegram: "Doctor_Iqboljon",
     instagram: "iqbol_joraev",
   },
+  // To confirm with him; drives the open/closed status and the reply-time copy.
+  hours: {
+    days: { uz: "Dushanba – Shanba", ru: "Понедельник – Суббота" },
+    daysShort: { uz: "Du – Sha", ru: "Пн – Сб" },
+    time: "09:00 – 19:00",
+    openDays: [1, 2, 3, 4, 5, 6],
+    openHour: 9,
+    closeHour: 19,
+  },
+  ctScanPrice: 450_000,
+  installmentMonths: 6,
+  compareClinics: false,
+  priceList: [
+    { label: { uz: "Ko‘rik va professional tozalash", ru: "Осмотр и профессиональная чистка" }, from: 350_000 },
+    { label: { uz: "Plomba (kompozit restavratsiya)", ru: "Пломба (композитная реставрация)" }, from: 450_000 },
+    { label: { uz: "Kanal davolash", ru: "Лечение каналов" }, from: 1_200_000 },
+    { label: { uz: "Keramik qoplama yoki vinir, 1 birlik", ru: "Керамическая коронка или винир, 1 единица" }, from: 3_600_000 },
+    { label: { uz: "Tishlarni to‘liq tiklash", ru: "Полное восстановление зубов" }, note: { uz: "ko‘rikdan keyin", ru: "после осмотра" } },
+  ],
   calcProblems: ["treatment", "aesthetic", "rootCanal", "checkup"],
   // Hidden until his real certificates are added (the inherited ones belonged to the template doctor).
   credentials: [],
@@ -740,48 +777,8 @@ const iqboljon: DoctorProfile = {
       ],
     },
   },
-  reviews: [
-    {
-      id: "iq1",
-      source: "google",
-      author: "Dilnoza Karimova",
-      ago: 1,
-      text: {
-        uz: "Ukoldan juda qo‘rqardim. {doctor} avval gel surtdi, keyin ukolni umuman sezmadim. Old tishimdagi kariesni davoladi, plombani tishdan ajratib bo‘lmaydi.",
-        ru: "Очень боялась уколов. {doctor} сначала нанёс гель, а сам укол я даже не почувствовала. Вылечил кариес на переднем зубе, пломбу не отличить от зуба.",
-      },
-    },
-    sharedReviews[1],
-    sharedReviews[2],
-    {
-      ...sharedReviews[3],
-      text: {
-        uz: "Har safar faqat bitta shifokor bilan ishladim, assistentga topshirib yuborishmadi. Hammasini oldindan tushuntirib berishdi.",
-        ru: "Каждый раз работал только с одним врачом, меня не передавали ассистентам. Всё заранее объяснили.",
-      },
-    },
-    {
-      id: "iq5",
-      source: "telegram",
-      author: "Aziza R.",
-      ago: 1,
-      time: "10:12",
-      text: {
-        uz: "Onamning tishlari deyarli qolmagan edi. To‘liq tiklashdan keyin yana bemalol ovqatlanyapti va kulyapti. Rahmat, doktor!",
-        ru: "У мамы почти не осталось зубов. После полного восстановления она снова спокойно ест и улыбается. Спасибо, доктор!",
-      },
-    },
-    {
-      id: "iq6",
-      source: "yandex",
-      author: "Тимур Ахмедов",
-      ago: 0,
-      text: {
-        uz: "Eski sarg‘aygan koronkalarimni sirkonga almashtirdi. Rangi tabiiy, hech kim sun’iy ekanini sezmaydi. Halol va xotirjam muloqot.",
-        ru: "Заменил мои старые пожелтевшие коронки на цирконий. Цвет естественный, никто не догадывается, что это коронки. Честное и спокойное общение.",
-      },
-    },
-  ],
+  // Example reviews are not shown for a real doctor; add his real ones here.
+  reviews: [],
   protocolDrawing: "visit",
   urgentCta: true,
   services: [
@@ -833,6 +830,7 @@ const iqboljon: DoctorProfile = {
       specs: [{ uz: "Kompyuterli anesteziya", ru: "Компьютерная анестезия" }],
       calcProblem: "rootCanal",
       priceFrom: 1_200_000,
+      icon: "hand",
     },
   ],
   cases: [
@@ -912,11 +910,14 @@ const iqboljon: DoctorProfile = {
   copy: {
     uz: {
       hero: { tail: "Har bir ishimga o‘zim javob beraman va kafolat beraman." },
+      cases: { title: "Mening ishlarim", system: "Qanday davolandi" },
+      footer: { demo: "Narxlar va ish vaqti taxminiy: aniqlashtirish uchun Telegramda yozing." },
       booking: {
         closeLine: "",
         next: "Keyin nima bo‘ladi: o‘zim qo‘ng‘iroq qilaman yoki Telegramda yozaman va qulay vaqtni kelishamiz. Birinchi ko‘rikda davolash rejasi va narxini aytaman.",
       },
       approach: {
+        title: "Qanday ishlayman",
         points: [
           { k: "Bitta mas’ul shifokor", v: "Ko‘rikdan oxirgi plombagacha sizni faqat men davolayman." },
           { k: "Og‘riqsiz protokol", v: "Avval anestetik gel, keyin kompyuterli anesteziya: ukol deyarli sezilmaydi." },
@@ -928,7 +929,7 @@ const iqboljon: DoctorProfile = {
         title: "Og‘riqsiz qabul qanday o‘tadi",
         sub: "Bitta tishni davolash misolida. Pastga aylantiring: chizma har bir bosqich bilan quriladi.",
         drawingLabel: "Og‘riqsiz davolash chizmasi, bosqichma-bosqich",
-        callouts: { plan: "Davolash rejasi", price: "Narx oldindan", warranty: "Kafolat" },
+        callouts: { plan: "Davolash rejasi", price: "Narx oldindan", warranty: "Kafolat", checks: "Har 6 oyda nazorat" },
         steps: [
           {
             title: "Ko‘rik va rentgen",
@@ -975,8 +976,10 @@ const iqboljon: DoctorProfile = {
       services: {
         title: "Plombadan to‘liq tiklashgacha.",
         sub: "Kompozit, keramik qoplamalar, kanallar va to‘liq tiklash: hammasini bitta shifokor, og‘riqsiz bajaradi. Narxlar oldindan ma’lum.",
+        calc: "Narxlarni ko‘rish",
       },
       calc: {
+        title: "Narxlar",
         sub: "Bir necha savolga javob bering va taxminiy narxni hoziroq ko‘ring.",
         problems: { aesthetic: "Qoplama yoki vinir (sirkon, E-max)" },
         materials: { premium: "Optimal", swiss: "Premium" },
@@ -987,8 +990,8 @@ const iqboljon: DoctorProfile = {
         surgery: "Muolaja vaqti",
         fixed: "Yakuniy narxni ko‘rikdan keyin, davolash boshlanishidan oldin aytaman.",
       },
-      cases: { system: "Qanday davolandi" },
       faq: {
+        title: "Bemorlar ko‘p so‘raydi",
         items: [
           {
             q: "Birinchi tashrifda nima bo‘ladi?",
@@ -1007,10 +1010,6 @@ const iqboljon: DoctorProfile = {
             a: "Ikkalasi ham metallsiz, tabiiy ko‘rinishdagi keramika. E-max yorug‘likni tabiiy tish kabi o‘tkazadi, shuning uchun oldingi tishlarga juda mos. Sirkon esa juda mustahkam: chaynov tishlari va ko‘p birlikli ishlar uchun. Qaysi biri sizga mosligini ko‘rikda birga tanlaymiz.",
           },
           {
-            q: "Kafolat bormi?",
-            a: "Ha, qilgan ishlarimga kafolat beraman.",
-          },
-          {
             q: "Bo‘lib to‘lash mumkinmi?",
             a: "Qoplamalar va to‘liq tiklash uchun 6 oygacha 0% muddatli to‘lov bor. Uzcard, Humo, Visa va naqd pul qabul qilinadi.",
           },
@@ -1023,11 +1022,14 @@ const iqboljon: DoctorProfile = {
     },
     ru: {
       hero: { tail: "За каждую работу отвечаю лично и даю гарантию." },
+      cases: { title: "Мои работы", system: "Как лечили" },
+      footer: { demo: "Цены и часы работы ориентировочные: уточните в Telegram." },
       booking: {
         closeLine: "",
         next: "Что дальше: я позвоню или напишу в Telegram, и мы согласуем удобное время. На первом приёме расскажу план лечения и назову цену.",
       },
       approach: {
+        title: "Как я работаю",
         points: [
           { k: "Один ответственный врач", v: "От осмотра до последней пломбы вас лечу только я." },
           { k: "Безболезненный протокол", v: "Сначала анестезирующий гель, затем компьютерная анестезия: укол почти не чувствуется." },
@@ -1039,7 +1041,7 @@ const iqboljon: DoctorProfile = {
         title: "Как проходит приём без боли",
         sub: "На примере лечения одного зуба. Прокрутите вниз: чертёж строится с каждым этапом.",
         drawingLabel: "Чертёж безболезненного лечения по этапам",
-        callouts: { plan: "План лечения", price: "Цена заранее", warranty: "Гарантия" },
+        callouts: { plan: "План лечения", price: "Цена заранее", warranty: "Гарантия", checks: "Контроль каждые 6 месяцев" },
         steps: [
           {
             title: "Осмотр и снимок",
@@ -1086,8 +1088,10 @@ const iqboljon: DoctorProfile = {
       services: {
         title: "От пломбы до полного восстановления.",
         sub: "Композит, керамические коронки, каналы и полное восстановление: всё делает один врач и без боли. Цены известны заранее.",
+        calc: "Смотреть цены",
       },
       calc: {
+        title: "Цены",
         sub: "Ответьте на несколько вопросов и сразу увидите ориентировочную цену.",
         problems: { aesthetic: "Коронка или винир (цирконий, E-max)" },
         materials: { premium: "Оптимальный", swiss: "Премиум" },
@@ -1098,8 +1102,8 @@ const iqboljon: DoctorProfile = {
         surgery: "Время процедуры",
         fixed: "Итоговую цену называю после осмотра, до начала лечения.",
       },
-      cases: { system: "Как лечили" },
       faq: {
+        title: "Пациенты часто спрашивают",
         items: [
           {
             q: "Что будет на первом приёме?",
@@ -1116,10 +1120,6 @@ const iqboljon: DoctorProfile = {
           {
             q: "Чем отличаются коронки из циркония и E-max?",
             a: "Обе безметалловые и выглядят естественно. E-max пропускает свет как живой зуб, поэтому особенно хороша для передних зубов. Цирконий очень прочный: для жевательных зубов и работ из нескольких единиц. Какая подойдёт вам, выберем вместе на осмотре.",
-          },
-          {
-            q: "Есть ли гарантия?",
-            a: "Да, на свои работы я даю гарантию.",
           },
           {
             q: "Можно ли платить частями?",

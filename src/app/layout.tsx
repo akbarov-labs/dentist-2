@@ -1,13 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Mrs_Saint_Delafield } from "next/font/google";
+import { Mrs_Saint_Delafield, Onest, Source_Serif_4 } from "next/font/google";
 import { defaultDoctor, site } from "@/config/doctorConfig";
 import "./globals.css";
 
-// One family for headings, body and numbers; Latin-ext covers Uzbek, Cyrillic covers Russian.
-const geist = Geist({
-  variable: "--font-geist",
+// Headings in a warm text serif with optical sizes; body and numbers in Onest, drawn for Cyrillic and Latin alike.
+// Latin-ext covers Uzbek (o‘, g‘), Cyrillic covers Russian.
+const serif = Source_Serif_4({
+  variable: "--font-serif",
   subsets: ["latin", "latin-ext", "cyrillic"],
   style: ["normal", "italic"],
+  axes: ["opsz"],
+  display: "swap",
+});
+
+const sans = Onest({
+  variable: "--font-body",
+  subsets: ["latin", "latin-ext", "cyrillic"],
   display: "swap",
 });
 
@@ -47,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={site.defaultLang}
-      className={`${geist.variable} ${signature.variable} antialiased`}
+      className={`${serif.variable} ${sans.variable} ${signature.variable} antialiased`}
     >
       <body className="min-h-dvh">{children}</body>
     </html>

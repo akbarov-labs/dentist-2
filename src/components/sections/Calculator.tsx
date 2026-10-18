@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowDown, Check, Send, ShieldCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Send, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import type { MaterialId, ProblemId } from "@/config/doctorConfig";
 import { defaultCalcProblems, site } from "@/config/doctorConfig";
@@ -9,6 +9,7 @@ import { buildTelegramText, computeEstimate } from "@/lib/estimate";
 import { formatMillions, formatUSD, formatUZS, telegramLink } from "@/lib/format";
 import { noBreakHyphens } from "@/lib/text";
 import { Reveal } from "@/components/ui/Reveal";
+import { btnPrimary, btnSecondary } from "@/components/ui/styles";
 
 const MATERIALS: MaterialId[] = ["premium", "swiss"];
 
@@ -60,7 +61,56 @@ function Option({
   );
 }
 
+/** A plain price list: one row per treatment, "from" price or a note, and two ways to ask. */
+function PriceList() {
+  const { t, doctor, lang, scrollToId } = useSite();
+  const rows = doctor.priceList ?? [];
+  const from = (v: number) =>
+    lang === "ru" ? `${t.services.from} ${formatMillions(v, lang)} ${t.calc.currency}` : `${formatMillions(v, lang)} ${t.calc.currency}${t.services.from}`;
+  const tgText = `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.calc.askTgText}`;
+
+  return (
+    <section id="calculator" aria-labelledby="calc-title" className="py-20 md:py-28">
+      <div className="shell grid gap-10 lg:grid-cols-12 lg:gap-12">
+        <div className="lg:col-span-5">
+          <h2 id="calc-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[46px]">
+            {t.calc.title}
+          </h2>
+          <p className="mt-4 max-w-[40ch] text-[16px] leading-relaxed text-muted">{t.calc.fixed}</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+            <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className={btnPrimary}>
+              <Send size={16} strokeWidth={1.7} className="shrink-0" />
+              {t.calc.askTg}
+            </a>
+            <button type="button" onClick={() => scrollToId("booking")} className={`${btnSecondary} group`}>
+              {t.cta.book}
+              <ArrowRight size={17} strokeWidth={1.7} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
+          </div>
+        </div>
+
+        <dl className="border-b border-line lg:col-span-7">
+          {rows.map((r) => (
+            <div key={r.label.uz} className="flex items-baseline justify-between gap-6 border-t border-line py-5">
+              <dt className="text-[17px] leading-snug text-ink">{r.label[lang]}</dt>
+              <dd className="shrink-0 text-right tabular-nums text-[16px] whitespace-nowrap text-ink-soft">
+                {r.from !== undefined ? from(r.from) : r.note?.[lang]}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
 export function Calculator() {
+  const { doctor } = useSite();
+  // A general dentist's prices read better as a list than as a configurator.
+  return doctor.priceList?.length ? <PriceList /> : <PriceCalculator />;
+}
+
+function PriceCalculator() {
   const { t, doctor, lang, calc, setCalc, setPrefill, scrollToId } = useSite();
   const problems = doctor.calcProblems ?? defaultCalcProblems;
   const est = computeEstimate(doctor, calc, lang);

@@ -7,6 +7,7 @@ interface MonogramProps {
 
 /** Personal mark: one thin ring around the initials. */
 export function Monogram({ letters, className = "h-11 w-11", tone = "light" }: MonogramProps) {
+  if (!letters) return null;
   const ink = tone === "light" ? "var(--color-accent)" : "var(--color-paper)";
   const ring = tone === "light" ? "var(--color-line)" : "var(--color-night-line)";
   return (

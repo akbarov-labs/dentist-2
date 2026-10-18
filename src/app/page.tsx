@@ -27,13 +27,14 @@ function StructuredData() {
     image: `${site.url}${d.portrait.src}`,
     telephone: d.contact.phone.replace(/\s/g, ""),
     email: d.contact.email,
+    // Street and pin only once the real address is known; the city is true either way.
     address: {
       "@type": "PostalAddress",
-      streetAddress: d.address.short.uz,
+      ...(d.address ? { streetAddress: d.address.short.uz } : {}),
       addressLocality: "Toshkent",
       addressCountry: "UZ",
     },
-    geo: { "@type": "GeoCoordinates", latitude: d.address.lat, longitude: d.address.lng },
+    ...(d.address ? { geo: { "@type": "GeoCoordinates", latitude: d.address.lat, longitude: d.address.lng } } : {}),
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],

@@ -197,6 +197,8 @@ const uz = {
     included: "Narxga kiritilgan",
     bookWith: "Ushbu hisob-kitob bilan qabulga yozilish",
     sendTg: "Hisob-kitobni shifokor Telegramiga yuborish",
+    askTg: "Narxni Telegramda so‘rash",
+    askTgText: "Saytingiz orqali yozyapman. Davolash narxini bilmoqchi edim.",
   },
   credentials: {
     title: "Xalqaro tayyorgarlik",
@@ -514,6 +516,8 @@ const ru: Dict = {
     included: "Включено в цену",
     bookWith: "Записаться с этим расчётом",
     sendTg: "Отправить расчёт врачу в Telegram",
+    askTg: "Спросить цену в Telegram",
+    askTgText: "Пишу с вашего сайта. Хотел(а) бы узнать стоимость лечения.",
   },
   credentials: {
     title: "Международная подготовка",
