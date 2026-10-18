@@ -715,6 +715,14 @@ const iqboljon: DoctorProfile = {
         { uz: "Ishga kafolat", ru: "Гарантия на работу" },
       ],
     },
+    checkup: {
+      ...sharedPricing.checkup,
+      bonuses: [
+        { uz: "Davolash rejasi va narx oldindan", ru: "План лечения и цена заранее" },
+        { uz: "Air-Flow va ultratovush bilan tozalash", ru: "Чистка Air-Flow и ультразвуком" },
+        { uz: "Uy gigienasi bo‘yicha shaxsiy maslahat", ru: "Личные рекомендации по гигиене" },
+      ],
+    },
     treatment: {
       ...sharedPricing.treatment,
       bonuses: [
@@ -904,7 +912,10 @@ const iqboljon: DoctorProfile = {
   copy: {
     uz: {
       hero: { tail: "Har bir ishimga o‘zim javob beraman va kafolat beraman." },
-      booking: { closeLine: "" },
+      booking: {
+        closeLine: "",
+        next: "Keyin nima bo‘ladi: o‘zim qo‘ng‘iroq qilaman yoki Telegramda yozaman va qulay vaqtni kelishamiz. Birinchi ko‘rikda davolash rejasi va narxini aytaman.",
+      },
       approach: {
         points: [
           { k: "Bitta mas’ul shifokor", v: "Ko‘rikdan oxirgi plombagacha sizni faqat men davolayman." },
@@ -917,7 +928,7 @@ const iqboljon: DoctorProfile = {
         title: "Og‘riqsiz qabul qanday o‘tadi",
         sub: "Bitta tishni davolash misolida. Pastga aylantiring: chizma har bir bosqich bilan quriladi.",
         drawingLabel: "Og‘riqsiz davolash chizmasi, bosqichma-bosqich",
-        callouts: { plan: "Davolash rejasi", warranty: "Kafolat" },
+        callouts: { plan: "Davolash rejasi", price: "Narx oldindan", warranty: "Kafolat" },
         steps: [
           {
             title: "Ko‘rik va rentgen",
@@ -928,9 +939,9 @@ const iqboljon: DoctorProfile = {
             comfortText: "Og‘riqsiz, hech qanday muolaja yo‘q",
           },
           {
-            title: "Reja va yozma narx",
+            title: "Reja va narx oldindan",
             short: "Boshlashdan oldin hammasini bilasiz",
-            body: "Nima qilinishini va qancha turishini yozma aytaman. Rozilik bermaguningizcha hech narsa boshlanmaydi.",
+            body: "Nima qilinishini va qancha turishini davolash boshlanishidan oldin aytaman. Rozilik bermaguningizcha hech narsa boshlanmaydi.",
             duration: "Shu tashrifda",
             equipment: [],
             comfortText: "Faqat suhbat",
@@ -974,14 +985,14 @@ const iqboljon: DoctorProfile = {
           swiss: "Shveysariya va Germaniya premium materiallari",
         },
         surgery: "Muolaja vaqti",
-        fixed: "Yakuniy narx ko‘rikdan keyin yozma belgilanadi va o‘zgarmaydi.",
+        fixed: "Yakuniy narxni ko‘rikdan keyin, davolash boshlanishidan oldin aytaman.",
       },
       cases: { system: "Qanday davolandi" },
       faq: {
         items: [
           {
             q: "Birinchi tashrifda nima bo‘ladi?",
-            a: "30–40 daqiqalik ko‘rik: tishlarni tekshiraman, kerak bo‘lsa rentgen olaman, so‘ng davolash rejasi va yozma narxni beraman. Ko‘rik hech narsaga majburlamaydi.",
+            a: "30–40 daqiqalik ko‘rik: tishlarni tekshiraman, kerak bo‘lsa rentgen olaman, so‘ng davolash rejasi va narxini aytaman. Ko‘rik hech narsaga majburlamaydi.",
           },
           {
             q: "Davolash og‘riqlimi? Ukoldan qo‘rqaman.",
@@ -1012,7 +1023,10 @@ const iqboljon: DoctorProfile = {
     },
     ru: {
       hero: { tail: "За каждую работу отвечаю лично и даю гарантию." },
-      booking: { closeLine: "" },
+      booking: {
+        closeLine: "",
+        next: "Что дальше: я позвоню или напишу в Telegram, и мы согласуем удобное время. На первом приёме расскажу план лечения и назову цену.",
+      },
       approach: {
         points: [
           { k: "Один ответственный врач", v: "От осмотра до последней пломбы вас лечу только я." },
@@ -1025,7 +1039,7 @@ const iqboljon: DoctorProfile = {
         title: "Как проходит приём без боли",
         sub: "На примере лечения одного зуба. Прокрутите вниз: чертёж строится с каждым этапом.",
         drawingLabel: "Чертёж безболезненного лечения по этапам",
-        callouts: { plan: "План лечения", warranty: "Гарантия" },
+        callouts: { plan: "План лечения", price: "Цена заранее", warranty: "Гарантия" },
         steps: [
           {
             title: "Осмотр и снимок",
@@ -1036,9 +1050,9 @@ const iqboljon: DoctorProfile = {
             comfortText: "Безболезненно, без процедур",
           },
           {
-            title: "План и письменная цена",
+            title: "План и цена заранее",
             short: "Всё знаете до начала",
-            body: "Пишу, что будем делать и сколько это стоит. Пока вы не согласитесь, ничего не начинаем.",
+            body: "До начала лечения говорю, что будем делать и сколько это стоит. Пока вы не согласитесь, ничего не начинаем.",
             duration: "В тот же визит",
             equipment: [],
             comfortText: "Только беседа",
@@ -1082,14 +1096,14 @@ const iqboljon: DoctorProfile = {
           swiss: "Премиальные материалы из Швейцарии и Германии",
         },
         surgery: "Время процедуры",
-        fixed: "Итоговая цена фиксируется письменно после осмотра и не меняется.",
+        fixed: "Итоговую цену называю после осмотра, до начала лечения.",
       },
       cases: { system: "Как лечили" },
       faq: {
         items: [
           {
             q: "Что будет на первом приёме?",
-            a: "Осмотр 30–40 минут: проверяю зубы, при необходимости делаю снимок, затем даю план лечения и письменную цену. Осмотр ни к чему не обязывает.",
+            a: "Осмотр 30–40 минут: проверяю зубы, при необходимости делаю снимок, затем рассказываю план лечения и называю цену. Осмотр ни к чему не обязывает.",
           },
           {
             q: "Лечение болезненное? Я боюсь уколов.",
