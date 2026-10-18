@@ -1,4 +1,4 @@
-import { doctorPresets } from "@/config/doctorConfig";
+import { doctorPresets, site } from "@/config/doctorConfig";
 
 /**
  * Booking requests.
@@ -85,13 +85,19 @@ export async function POST(request: Request) {
   const doctor = doctorPresets[doctorId as keyof typeof doctorPresets];
   const ref = makeRef();
 
+  // Written for the doctor reading it on his phone: only what he needs to reply.
+  // Telegram turns the +998 number into a tap-to-call link by itself; t.me/+number opens a chat with the patient.
   const text = [
     `<b>Yangi qabul so‘rovi</b> · ${ref}`,
-    doctor ? `Shifokor: ${escapeHtml(doctor.name.uz)}` : "",
+    // Only a demo with several doctors needs to say which one was chosen.
+    doctor && site.showDemoSwitcher ? `Shifokor: ${escapeHtml(doctor.name.uz)}` : "",
     `Ism: ${escapeHtml(name)}`,
     `Telefon: ${phone}`,
-    `Aloqa: ${contactMethod === "call" ? "Qo‘ng‘iroq" : "Telegram"}`,
-    `3D KT: ${hasCt ? "bor" : "yo‘q"}`,
+    contactMethod === "call"
+      ? "Aloqa: qo‘ng‘iroq qilishni so‘radi"
+      : `Aloqa: Telegram · <a href="https://t.me/${phone}">Telegramda yozish</a>`,
+    // The form only asks about a 3D scan for treatments that need one.
+    hasCt ? "3D KT: bor" : "",
     selection ? `Tanlov: ${escapeHtml(selection)}` : "",
     comment ? `Izoh: ${escapeHtml(comment)}` : "",
   ]
@@ -106,9 +112,10 @@ export async function POST(request: Request) {
       const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML" }),
+        body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML", link_preview_options: { is_disabled: true } }),
       });
-      if (!res.ok) throw new Error(`telegram ${res.status}`);
+      // Telegram explains a refusal (wrong chat id, bot never started...): keep its words in the server log.
+      if (!res.ok) throw new Error(`telegram ${res.status}: ${await res.text().catch(() => "")}`);
     } catch (err) {
       console.error("[booking] Telegram delivery failed", err);
       return Response.json({ ok: false, error: "delivery" }, { status: 502 });
