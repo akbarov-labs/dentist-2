@@ -20,6 +20,7 @@ export function Footer() {
     { id: "faq", label: t.nav.faq },
   ]
     .filter((l) => l.id !== "credentials" || doctor.credentials.length)
+    .filter((l) => l.id !== "approach" || doctor.compareClinics !== false)
     .filter((l) => l.id !== "calculator" || !doctor.priceList?.length);
 
   return (

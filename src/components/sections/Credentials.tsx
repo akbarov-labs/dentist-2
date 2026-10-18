@@ -14,7 +14,7 @@ export function Credentials() {
     <section id="credentials" aria-labelledby="cred-title" className="border-t border-line bg-stone/60 py-20 md:py-28">
       <div className="shell">
         <Reveal className="max-w-[680px]">
-          <h2 id="cred-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="cred-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
             {t.credentials.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.credentials.sub}</p>

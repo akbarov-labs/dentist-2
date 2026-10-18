@@ -38,7 +38,7 @@ export function Cases() {
     return (
       <section id="cases" aria-labelledby="cases-title" className="py-20 md:py-28">
         <div className="shell">
-          <h2 id="cases-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="cases-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
             {t.cases.title}
           </h2>
           <p className="mt-10 rounded-[16px] border border-dashed border-line p-10 text-center text-muted">{t.cases.empty}</p>
@@ -53,7 +53,7 @@ export function Cases() {
     <section id="cases" aria-labelledby="cases-title" className="py-20 md:py-28">
       <div className="shell">
         <Reveal>
-          <h2 id="cases-title" className="max-w-[20ch] font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="cases-title" className="max-w-[20ch] font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
             {t.cases.title}
           </h2>
         </Reveal>

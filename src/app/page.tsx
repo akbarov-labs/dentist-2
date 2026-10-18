@@ -63,6 +63,7 @@ export default function Home() {
         {/* Patients' own words right after the painless-visit story: the proof the anxious visitor looks for first */}
         <Reviews />
         <Cases />
+        <Approach slot="late" />
         <Services />
         <Calculator />
         <Credentials />

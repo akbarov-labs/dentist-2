@@ -178,7 +178,7 @@ export function Booking() {
 
           <div className={closePortrait ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}>
             <Reveal>
-              <h2 id="booking-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[46px]">
+              <h2 id="booking-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[40px]">
                 {t.booking.title}
               </h2>
               <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">
@@ -350,7 +350,7 @@ export function Booking() {
                       />
                     </div>
   
-                    <p className="flex items-start gap-2.5 rounded-[12px] bg-paper px-4 py-3 text-[14px] leading-relaxed text-ink-soft">
+                    <p className="flex max-w-[72ch] items-start gap-2.5 rounded-[12px] bg-paper px-4 py-3 text-[14px] leading-relaxed text-ink-soft">
                       <Clock3 size={17} strokeWidth={1.6} className="mt-0.5 shrink-0 text-accent" />
                       {t.booking.next}
                     </p>
@@ -385,9 +385,29 @@ export function Booking() {
           </div>
         </div>
 
+        {/* Without a map or hours beside it, a whole Telegram card under the form is a third path saying the same thing: one plain line instead */}
+        {sideCard ? null : (
+          <p className="mx-auto mt-10 flex max-w-[860px] flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[15px] text-muted">
+            {t.booking.orDirect}
+            <a
+              href={telegramLink(doctor.contact.telegram, tgText)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-11 items-center gap-1.5 px-1 font-medium text-accent underline-offset-4 hover:underline"
+            >
+              <Send size={15} strokeWidth={1.7} /> Telegram @{doctor.contact.telegram}
+            </a>
+            <span aria-hidden>·</span>
+            <a href={phoneHref(doctor.contact.phone)} className="inline-flex min-h-11 items-center gap-1.5 px-1 tabular-nums font-medium text-ink underline-offset-4 hover:underline">
+              <Phone size={15} strokeWidth={1.6} className="text-accent" /> {doctor.contact.phone}
+            </a>
+          </p>
+        )}
+
         {/* Concierge + map */}
+        {sideCard ? (
         <div className="mt-16 grid gap-6 lg:grid-cols-12 lg:gap-8">
-            <Reveal delay={100} className={sideCard ? "lg:col-span-5" : "lg:col-span-8 lg:col-start-3"}>
+            <Reveal delay={100} className="lg:col-span-5">
               <div className="relative h-full overflow-hidden rounded-[16px] bg-accent p-6 text-paper sm:p-8">
                 <h3 className="font-display text-[22px] leading-tight">{t.booking.tgTitle}</h3>
                 <p className="mt-2 text-[14.5px] leading-relaxed text-paper/75">{t.booking.tgBody}</p>
@@ -402,12 +422,6 @@ export function Booking() {
                 >
                   <Send size={16} strokeWidth={1.7} className="shrink-0" /> {t.booking.tgTitle}
                 </a>
-                {sideCard ? null : (
-                  <a href={phoneHref(doctor.contact.phone)} className="mt-4 flex min-h-11 items-center justify-center gap-2 tabular-nums text-[15px] text-paper/90 transition hover:text-paper">
-                    <Phone size={16} strokeWidth={1.6} className="shrink-0" />
-                    {t.booking.call}: {doctor.contact.phone}
-                  </a>
-                )}
               </div>
             </Reveal>
 
@@ -481,6 +495,7 @@ export function Booking() {
             </Reveal>
             ) : null}
         </div>
+        ) : null}
       </div>
     </section>
   );

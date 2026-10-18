@@ -33,7 +33,7 @@ export function Hero() {
               <span
                 className={`enter block font-display font-medium text-ink ${
                   long
-                    ? "text-[34px] leading-[1.12] tracking-[-0.02em] sm:text-[44px] xl:text-[52px]"
+                    ? "text-[36px] leading-[1.08] tracking-[-0.025em] sm:text-[50px] xl:text-[62px]"
                     : "text-[40px] leading-[1.05] tracking-[-0.035em] sm:text-[54px] xl:text-[64px]"
                 }`}
                 style={delay(80)}
@@ -54,7 +54,7 @@ export function Hero() {
               {doctor.heroSub[lang]}
             </p>
 
-            <div className="enter mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap" style={delay(320)}>
+            <div data-hero-actions className="enter mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap" style={delay(320)}>
               <button type="button" onClick={() => scrollToId("booking")} className={`${btnPrimary} group`}>
                 {t.cta.book}
                 <ArrowRight size={17} strokeWidth={1.7} className="transition-transform duration-300 group-hover:translate-x-0.5" />
@@ -87,13 +87,13 @@ export function Hero() {
           {doctor.portrait.style === "photo" ? (
             // The real photo in his own surgery, as taken: no cut-out, no borrowed room. Wider and shorter on phones so the buttons stay near the fold.
             <div className="relative order-first mx-auto w-full sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">
-              <div className="enter relative aspect-[4/3] overflow-hidden rounded-[20px] bg-stone shadow-[var(--shadow-lift)] sm:aspect-[4/5]" style={delay(120)}>
+              <div className="enter relative aspect-[4/3] overflow-hidden rounded-[20px] bg-stone sm:aspect-[4/5]" style={delay(120)}>
                 <SafeImage
                   src={doctor.portrait.src}
                   alt={doctor.portrait.alt[lang]}
                   fill
                   preload
-                  sizes="(min-width: 1024px) 40vw, 100vw"
+                  sizes="(min-width: 1024px) 600px, 100vw"
                   className="object-cover"
                   style={{ objectPosition: doctor.portrait.position }}
                   fallbackLabel={doctor.name[lang]}

@@ -138,7 +138,7 @@ export function Reviews() {
     <section id="reviews" aria-labelledby="reviews-title" className="py-20 md:py-28">
       <div className="shell">
         <Reveal className="max-w-[680px]">
-          <h2 id="reviews-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="reviews-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
             {t.reviews.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.reviews.sub}</p>

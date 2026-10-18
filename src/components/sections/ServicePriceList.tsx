@@ -20,7 +20,7 @@ export function ServicePriceList() {
     <section id="services" aria-labelledby="services-title" className="border-t border-line bg-stone/60 py-20 md:py-28">
       <div className="shell grid gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="lg:col-span-4">
-          <h2 id="services-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[46px]">
+          <h2 id="services-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[40px]">
             {t.services.title}
           </h2>
           <p className="mt-4 max-w-[40ch] text-[16px] leading-relaxed text-muted">{t.services.sub}</p>

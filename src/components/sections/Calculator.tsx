@@ -90,7 +90,7 @@ function PriceCalculator() {
     <section id="calculator" aria-labelledby="calc-title" className="py-20 md:py-28">
       <div className="shell">
         <Reveal className="max-w-[680px]">
-          <h2 id="calc-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[46px]">
+          <h2 id="calc-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[40px]">
             {t.calc.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.calc.sub}</p>

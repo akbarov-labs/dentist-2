@@ -689,8 +689,8 @@ const iqboljon: DoctorProfile = {
   // His Instagram bio, word for word.
   heroLead: { uz: "Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman.", ru: "Лечу зубы безболезненно, качественно и надёжно." },
   heroSub: {
-    uz: "Ko‘rikdan yakuniy natijagacha har bir bosqichni o‘zim bajaraman. 10 yillik tajriba, 10 000 dan ortiq bemor.",
-    ru: "Каждый этап от осмотра до результата провожу сам. 10 лет практики, более 10 000 пациентов.",
+    uz: "Ko‘rikdan yakuniy natijagacha har bir bosqichni o‘zim bajaraman. 10 yillik tajriba, 10 000 dan ortiq bemor.",
+    ru: "Каждый этап от осмотра до результата провожу сам. 10 лет практики, более 10 000 пациентов.",
   },
   // His own words, from his Instagram captions.
   manifesto: {

@@ -159,7 +159,15 @@ export function Header() {
           </nav>
 
           <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3 xl:ml-0">
-            {doctor.hoursConfirmed === false ? null : <div className="hidden min-[1280px]:block">{status(true)}</div>}
+            {doctor.hoursConfirmed === false ? (
+              // No confirmed hours to show live, so the slot carries the number instead: desktop visitors shouldn't have to reach the footer for it.
+              <a href={phoneHref(doctor.contact.phone)} className="hidden min-h-11 items-center gap-2 tabular-nums text-[14px] whitespace-nowrap text-ink-soft transition-colors hover:text-ink min-[1280px]:inline-flex">
+                <Phone size={15} strokeWidth={1.6} className="text-accent" />
+                {doctor.contact.phone}
+              </a>
+            ) : (
+              <div className="hidden min-[1280px]:block">{status(true)}</div>
+            )}
             <div className="hidden sm:block">
               <LangToggle />
             </div>

@@ -5,24 +5,33 @@ import { useSite } from "@/context/SiteContext";
 import { Reveal } from "@/components/ui/Reveal";
 import { Signature } from "@/components/ui/Signature";
 
-export function Approach() {
+/**
+ * Rendered twice on the page: "early" (after the hero) and "late" (after the cases); only one slot shows.
+ * With the clinic comparison it argues the case up front. Without it, it is just his words about results,
+ * so it waits until the cases have shown them: a patient who came for "painless" reads the visit story first.
+ */
+export function Approach({ slot = "early" }: { slot?: "early" | "late" }) {
   const { t, doctor, lang } = useSite();
   const [first, ...rest] = doctor.manifesto[lang];
-  // Without the clinic comparison the manifesto stands alone: the protocol right below already shows how he works.
   const standalone = doctor.compareClinics === false;
+  if ((standalone ? "late" : "early") !== slot) return null;
 
   return (
     <section
       id="approach"
       {...(standalone ? { "aria-label": doctor.name[lang] } : { "aria-labelledby": "approach-title" })}
-      className="border-t border-line bg-stone/60 py-20 md:py-28"
+      className={`border-t border-line py-20 md:py-28 ${standalone ? "" : "bg-stone/60"}`}
     >
       <div className="shell">
         {/* Personal manifesto */}
         <Reveal className="grid gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-9 lg:col-start-4">
             <blockquote>
-              <p className="font-display text-[26px] leading-[1.32] tracking-[-0.012em] text-ink text-pretty sm:text-[32px] lg:text-[36px]">
+              <p
+                className={`font-display leading-[1.32] tracking-[-0.012em] text-ink text-pretty ${
+                  standalone ? "text-[23px] sm:text-[27px] lg:text-[30px]" : "text-[26px] sm:text-[32px] lg:text-[36px]"
+                }`}
+              >
                 {first}
               </p>
               {rest.map((p) => (
@@ -45,7 +54,7 @@ export function Approach() {
           <>
             {/* Clinic chain vs. private practice (only where the doctor stands behind those claims) */}
             <Reveal className="mt-24 md:mt-32">
-              <h2 id="approach-title" className="max-w-[18ch] font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+              <h2 id="approach-title" className="max-w-[18ch] font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
                 {t.approach.title}
               </h2>
             </Reveal>

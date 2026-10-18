@@ -16,7 +16,7 @@ export function Faq() {
       <div className="shell grid gap-10 lg:grid-cols-12 lg:gap-10">
         <Reveal className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">
-            <h2 id="faq-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+            <h2 id="faq-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
               {t.faq.title}
             </h2>
             <p className="mt-4 max-w-[34ch] text-[16px] leading-relaxed text-muted">{t.faq.sub}</p>

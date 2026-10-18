@@ -98,7 +98,7 @@ export function Protocol() {
     <section id="protocol" aria-labelledby="protocol-title" className="relative bg-night py-20 text-paper md:py-28">
       <div className="shell">
         <div className="max-w-[640px]">
-          <h2 id="protocol-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] sm:text-[46px]">
+          <h2 id="protocol-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] sm:text-[40px]">
             {t.protocol.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-paper/70">{t.protocol.sub}</p>
