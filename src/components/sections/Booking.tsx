@@ -1,20 +1,18 @@
 "use client";
 
 import { ArrowRight, Calculator, Car, CheckCircle2, ClipboardList, Clock3, Loader2, Map as MapIcon, MapPin, Navigation, Phone, Send, X } from "lucide-react";
-import { useId, useRef, useState, type FormEvent } from "react";
+import { useId, useState, type FormEvent } from "react";
 import { useSite } from "@/context/SiteContext";
 import { buildTelegramText, computeEstimate, priceRange, selectionLines } from "@/lib/estimate";
 import { formatUzPhone, mapLinks, phoneHref, telegramLink } from "@/lib/format";
 import { openTime, useOpenNow } from "@/lib/useOpenNow";
 import { PortraitArch } from "@/components/ui/PortraitArch";
+import { SafeImage } from "@/components/ui/SafeImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { Signature } from "@/components/ui/Signature";
 import { btnPrimary } from "@/components/ui/styles";
 
 type Status = "idle" | "sending" | "success" | "error";
-
-/** Milliseconds since `start` (0 when the form was never focused). */
-const msSince = (start: number) => (start ? Date.now() - start : 0);
 type ContactMethod = "call" | "telegram";
 
 function Segmented<T extends string>({
@@ -59,9 +57,8 @@ export function Booking() {
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
   const [status, setStatus] = useState<Status>("idle");
   const [refNo, setRefNo] = useState("");
-  // Spam guards: a field people never see, and the moment the form was first shown.
+  // Spam guard: a field people never see.
   const [trap, setTrap] = useState("");
-  const shownAt = useRef(0);
   const open = useOpenNow(doctor);
   const closed = open === false;
   const time = openTime(doctor);
@@ -132,7 +129,6 @@ export function Booking() {
           doctorId: doctor.id,
           selection: summary ? [...summary.lines, summary.price].filter(Boolean).join(" · ") : "",
           website: trap,
-          elapsedMs: msSince(shownAt.current),
         }),
       });
       const data = (await res.json()) as { ok: boolean; ref?: string };
@@ -188,6 +184,18 @@ export function Booking() {
               <p className="mt-4 max-w-[52ch] text-[16px] leading-relaxed text-muted">
                 {closed ? t.booking.subClosed.replace("{time}", time) : t.booking.sub}
               </p>
+              {/* No arch at the close: his face still sits beside the form, so the page ends on him, not on a form */}
+              {closePortrait ? null : (
+                <div className="mt-6 flex items-center gap-4">
+                  <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-stone">
+                    <SafeImage src={doctor.portrait.src} alt="" fill sizes="56px" className="object-cover" style={{ objectPosition: "50% 22%" }} />
+                  </span>
+                  <span className="leading-snug">
+                    <span className="block text-[15px] font-medium text-ink">{doctor.name[lang]}</span>
+                    <span className="block text-[13.5px] text-muted">{doctor.title[lang]}</span>
+                  </span>
+                </div>
+              )}
             </Reveal>
 
           {/* Form */}
@@ -221,9 +229,6 @@ export function Booking() {
               ) : (
                   <form
                     onSubmit={submit}
-                    onFocus={() => {
-                      if (!shownAt.current) shownAt.current = Date.now();
-                    }}
                     noValidate
                     className="relative space-y-6"
                   >

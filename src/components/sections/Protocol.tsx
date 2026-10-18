@@ -109,7 +109,7 @@ export function Protocol() {
           <div className="sticky top-[68px] z-[3] -mx-4 min-w-0 bg-night px-4 pt-2 pb-3 lg:top-24 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mx-0 lg:h-[calc(100dvh-8rem)] lg:self-start lg:p-0">
             <div ref={stageRef} className={`${drawingKind === "implant" ? "blueprint " : ""}flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-night-line lg:h-full`}>
               <div className="flex items-center justify-between gap-3 border-b border-night-line px-4 py-2.5 sm:px-5">
-                <p className="min-w-0 truncate text-[13px] text-paper/80">{step.title}</p>
+                <p className="min-w-0 line-clamp-2 text-[13px] leading-snug text-paper/80">{step.title}</p>
                 <div className="flex shrink-0 gap-1" role="group" aria-label={t.protocol.title}>
                   {steps.map((s, i) => (
                     <button
@@ -133,7 +133,7 @@ export function Protocol() {
               </div>
 
               {/* Desktop legend: a record that fills in as the drawing does */}
-              <ol className="hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-night-line px-6 py-4 lg:grid xl:grid-cols-3">
+              <ol className={`hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-night-line px-6 py-4 xl:grid-cols-3 ${drawingKind === "implant" ? "lg:grid" : ""}`}>
                 {callouts.map((c) => (
                   <li
                     key={c.n}
@@ -149,7 +149,7 @@ export function Protocol() {
               </ol>
 
               {/* Phone caption: just this step's parts */}
-              <p className="border-t border-night-line px-4 py-2 text-[12.5px] leading-snug text-paper/75 lg:hidden">{activeCallouts.join(" · ")}</p>
+              <p className={`border-t border-night-line px-4 py-2 text-[12.5px] leading-snug text-paper/75 lg:px-6 lg:py-4 lg:text-[13.5px] ${drawingKind === "implant" ? "lg:hidden" : ""}`}>{activeCallouts.join(" · ")}</p>
             </div>
             <div aria-hidden className="pointer-events-none absolute inset-x-0 top-full h-8 bg-gradient-to-b from-night to-transparent lg:hidden" />
           </div>
@@ -163,7 +163,7 @@ export function Protocol() {
                   key={s.title}
                   id={`protocol-step-${i}`}
                   data-step={i}
-                  className={`flex min-h-[40vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[46vh] ${isActive ? "opacity-100" : "opacity-80"}`}
+                  className={`flex min-h-[34vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[40vh] ${isActive ? "opacity-100" : "opacity-80"}`}
                 >
                   <h3 className="font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
                   <p className="mt-2 text-[15px] text-accent-light/90">{s.short}</p>

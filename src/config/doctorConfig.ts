@@ -686,15 +686,16 @@ const iqboljon: DoctorProfile = {
   monogram: "",
   title: { uz: "Og‘riqsiz davolaydigan stomatolog", ru: "Стоматолог, который лечит без боли" },
   practice: { uz: "Stomatolog · Toshkent", ru: "Стоматолог · Ташкент" },
-  heroLead: { uz: "Og‘riqsiz. Shoshilmasdan.", ru: "Без боли. Без спешки." },
+  // His Instagram bio, word for word.
+  heroLead: { uz: "Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman.", ru: "Лечу зубы безболезненно, качественно и надёжно." },
   heroSub: {
-    uz: "Tishlaringizni og‘riqsiz, sifatli va ishonchli davolayman. Ko‘rikdan yakuniy natijagacha har bir bosqichni o‘zim bajaraman: 10 yillik tajriba, 10 000 dan ortiq bemor.",
-    ru: "Лечу зубы безболезненно, качественно и надёжно. Каждый этап от осмотра до результата провожу сам: 10 лет практики, более 10 000 пациентов.",
+    uz: "Ko‘rikdan yakuniy natijagacha har bir bosqichni o‘zim bajaraman. 10 yillik tajriba, 10 000 dan ortiq bemor.",
+    ru: "Каждый этап от осмотра до результата провожу сам. 10 лет практики, более 10 000 пациентов.",
   },
   // His own words, from his Instagram captions.
   manifesto: {
     uz: [
-      "Zamonaviy stomatologiyada maksimal tabiiylikni saqlab qolish va sog‘lom tishlarga zarar yetkazmaslik vazifasi har kungi kun tartibimizda.",
+      "Zamonaviy stomatologiyada maksimal tabiiylikni saqlab qolish va sog‘lom tishlarga zarar yetkazmaslik vazifasi har kungi kun tartibimda.",
       "Go‘zal tabassum ishonch manbai. Shuning uchun tishlarning rangi va shaklini tabiiy ko‘rinishda tiklayman.",
     ],
     ru: [
@@ -862,7 +863,7 @@ const iqboljon: DoctorProfile = {
       source: { url: "https://www.instagram.com/p/DclSKG7gkM4/", date: { uz: "28.08.2026", ru: "28.08.2026" } },
       problem: { uz: "O‘ng yon kurak tishning shakli tug‘ma o‘zgargan, chap yon kurak tish tug‘ma yo‘q va uning o‘rniga qoziq tish siljigan.", ru: "Врождённо изменена форма правого бокового резца; левого бокового резца нет с рождения, на его место сместился клык." },
       system: { uz: "Estetik keramik vinirlar", ru: "Эстетические керамические виниры" },
-      note: { uz: "Sog‘lom tishlarga tegmasdan, nuqsonni estetik keramik vinirlar bilan bartaraf qildik.", ru: "Устранили дефект эстетическими керамическими винирами, не трогая здоровые зубы." },
+      note: { uz: "Sog‘lom tishlarga tegmasdan, nuqsonni estetik keramik vinirlar bilan bartaraf qildim.", ru: "Устранил дефект эстетическими керамическими винирами, не трогая здоровые зубы." },
     },
     {
       id: "ig-zirconia-renew",
@@ -874,7 +875,7 @@ const iqboljon: DoctorProfile = {
       source: { url: "https://www.instagram.com/p/DbIuTPagoYE/", date: { uz: "22.07.2026", ru: "22.07.2026" } },
       problem: { uz: "Eski metall koronkalar tabassumni buzib turardi.", ru: "Старые металлические коронки портили улыбку." },
       system: { uz: "Sirkon keramik qoplamalar", ru: "Циркониевые керамические коронки" },
-      note: { uz: "Eski koronkalarni sirkon keramikaga almashtirdik, tishlarning tabiiy shaklini saqlab qoldik.", ru: "Заменили старые коронки на циркониевую керамику и сохранили естественную форму зубов." },
+      note: { uz: "Eski koronkalarni sirkon keramikaga almashtirdim, tishlarning tabiiy shaklini saqlab qoldim.", ru: "Заменил старые коронки на циркониевую керамику и сохранил естественную форму зубов." },
     },
     {
       id: "ig-composite",
@@ -886,7 +887,7 @@ const iqboljon: DoctorProfile = {
       source: { url: "https://www.instagram.com/p/DbDkpLZArAd/", date: { uz: "20.07.2026", ru: "20.07.2026" } },
       problem: { uz: "Yuqori oldingi tishlarda karies va estetik nuqson.", ru: "Кариес и эстетический дефект передних зубов верхней челюсти." },
       system: { uz: "Nur bilan qotuvchi kompozit plombalar", ru: "Светоотверждаемые композитные пломбы" },
-      note: { uz: "Kariesni davoladik va tishlarning tabiiy ko‘rinishini tikladik.", ru: "Вылечили кариес и вернули зубам естественный вид." },
+      note: { uz: "Kariesni davoladim va tishlarning tabiiy ko‘rinishini tikladim.", ru: "Вылечил кариес и вернул зубам естественный вид." },
     },
     {
       id: "ig-emax",
@@ -922,12 +923,12 @@ const iqboljon: DoctorProfile = {
       source: { url: "https://www.instagram.com/p/DQUJ2DHAoDr/", date: { uz: "27.10.2025", ru: "27.10.2025" } },
       problem: { uz: "Yuqori va pastki jag‘da tishlar to‘liq yo‘q edi.", ru: "На верхней и нижней челюсти полностью отсутствовали зубы." },
       system: { uz: "12 ta implant va metallokeramik qoplamalar", ru: "12 имплантов и металлокерамические коронки" },
-      note: { uz: "Tish qatorlarini funksional va estetik tikladik.", ru: "Восстановили зубные ряды функционально и эстетично." },
+      note: { uz: "Tish qatorlarini funksional va estetik tikladim.", ru: "Восстановил зубные ряды функционально и эстетично." },
     },
   ],
   copy: {
     uz: {
-      hero: { tail: "Har bir ishimga o‘zim javob beraman va kafolat beraman." },
+      hero: { tail: "" },
       cases: { title: "Mening ishlarim", system: "Qanday davolandi" },
       nav: { cases: "Ishlarim" },
       footer: { demo: "Narxlar taxminiy. Aniq narxni ko‘rikdan keyin aytaman.", rights: "" },
@@ -935,7 +936,7 @@ const iqboljon: DoctorProfile = {
         closeLine: "",
         sub: "Telegram yoki telefon orqali o‘zim javob beraman.",
         successBody: "Tez orada o‘zim bog‘lanaman. So‘rov raqami:",
-        next: "Keyin nima bo‘ladi: o‘zim qo‘ng‘iroq qilaman yoki Telegramda yozaman va qulay vaqtni kelishamiz. Birinchi ko‘rikda davolash rejasi va narxini aytaman.",
+        next: "Keyin nima bo‘ladi: o‘zim qo‘ng‘iroq qilaman yoki Telegramda yozaman va qulay vaqtni kelishamiz. Birinchi ko‘rikda davolash rejasi va narxini aytaman. Manzilni Telegramda so‘rashingiz mumkin.",
       },
       approach: {
         title: "Qanday ishlayman",
@@ -956,7 +957,7 @@ const iqboljon: DoctorProfile = {
             title: "Ko‘rik va rentgen",
             short: "Muammoni aniq ko‘ramiz",
             body: "Tishlarni tekshiraman va rentgen olaman. Karies qayerda va qanchalik chuqur ekanini birga ekranda ko‘ramiz.",
-            duration: "15–20 daqiqa",
+            duration: "30–40 daqiqa",
             equipment: [],
             comfortText: "",
           },
@@ -1038,7 +1039,7 @@ const iqboljon: DoctorProfile = {
       },
     },
     ru: {
-      hero: { tail: "За каждую работу отвечаю лично и даю гарантию." },
+      hero: { tail: "" },
       cases: { title: "Мои работы", system: "Как лечили" },
       nav: { cases: "Мои работы" },
       footer: { demo: "Цены ориентировочные. Точную цену назову после осмотра.", rights: "" },
@@ -1046,7 +1047,7 @@ const iqboljon: DoctorProfile = {
         closeLine: "",
         sub: "Отвечаю лично, в Telegram или по телефону.",
         successBody: "Скоро сам свяжусь с вами. Номер заявки:",
-        next: "Что дальше: я позвоню или напишу в Telegram, и мы согласуем удобное время. На первом приёме расскажу план лечения и назову цену.",
+        next: "Что дальше: я позвоню или напишу в Telegram, и мы согласуем удобное время. На первом приёме расскажу план лечения и назову цену. Адрес можно уточнить в Telegram.",
       },
       approach: {
         title: "Как я работаю",
@@ -1067,7 +1068,7 @@ const iqboljon: DoctorProfile = {
             title: "Осмотр и снимок",
             short: "Видим проблему точно",
             body: "Осматриваю зубы и делаю снимок. Вместе смотрим на экране, где кариес и насколько он глубокий.",
-            duration: "15–20 минут",
+            duration: "30–40 минут",
             equipment: [],
             comfortText: "",
           },

@@ -89,7 +89,7 @@ export function Cases() {
                           style={{ objectPosition: c.focus }}
                         />
                       </span>
-                      <span className={`mt-2 line-clamp-2 block text-[13px] leading-snug ${active ? "font-medium text-ink" : "text-ink-soft"}`}>
+                      <span className={`mt-2 line-clamp-3 block text-[13px] leading-snug ${active ? "font-medium text-ink" : "text-ink-soft"}`}>
                         {c.title[lang]}
                       </span>
                     </button>

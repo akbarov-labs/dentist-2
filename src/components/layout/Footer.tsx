@@ -86,7 +86,8 @@ export function Footer() {
             </p>
           ) : null}
         </div>
-        {site.isDemo ? <p className="mt-3 text-[12.5px] text-muted">{t.footer.demo}</p> : null}
+        {/* The demo note, or for a doctor with a price list the "prices are approximate" note, which must survive launch */}
+        {site.isDemo || doctor.priceList?.length ? <p className="mt-3 text-[12.5px] text-muted">{t.footer.demo}</p> : null}
       </div>
     </footer>
   );

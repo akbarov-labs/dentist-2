@@ -6,7 +6,7 @@ import { doctorPresets } from "@/config/doctorConfig";
  * is delivered to the doctor's Telegram as a formatted message. Without them the
  * request is validated and logged on the server, so the form still works in a demo.
  *
- * Spam guards (no third-party captcha): a honeypot field, a minimum fill time, and in-memory
+ * Spam guards (no third-party captcha): a honeypot field and in-memory
  * rate limits per IP and overall. Bots get a normal-looking success, so they learn nothing.
  * The limits live in this server process; behind several instances use a shared store instead.
  */
@@ -14,7 +14,6 @@ import { doctorPresets } from "@/config/doctorConfig";
 const WINDOW_MS = 10 * 60_000;
 const PER_IP = 5;
 const OVERALL = 40;
-const MIN_FILL_MS = 1500;
 
 const hits = new Map<string, number[]>();
 let overall: number[] = [];
@@ -49,7 +48,6 @@ interface BookingBody {
   doctorId?: unknown;
   selection?: unknown;
   website?: unknown;
-  elapsedMs?: unknown;
 }
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -64,9 +62,8 @@ export async function POST(request: Request) {
     return Response.json({ ok: false, error: "invalid_json" }, { status: 400 });
   }
 
-  // Honeypot filled, or the form was submitted faster than a person can type: pretend it worked.
-  const elapsed = typeof body.elapsedMs === "number" ? body.elapsedMs : 0;
-  if (str(body.website, 200) || (elapsed > 0 && elapsed < MIN_FILL_MS)) {
+  // Honeypot filled: pretend it worked. (A fill-time check was dropped: it also caught people using autofill.)
+  if (str(body.website, 200)) {
     return Response.json({ ok: true, ref: makeRef() });
   }
 
@@ -116,6 +113,10 @@ export async function POST(request: Request) {
       console.error("[booking] Telegram delivery failed", err);
       return Response.json({ ok: false, error: "delivery" }, { status: 502 });
     }
+  } else if (process.env.NODE_ENV === "production") {
+    // Never tell a patient "I'll contact you" when the request can't reach the doctor: fail, so the form offers Telegram.
+    console.error("[booking] Telegram delivery is not configured (TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID)");
+    return Response.json({ ok: false, error: "not_configured" }, { status: 503 });
   } else {
     console.info("[booking] New request (Telegram delivery not configured)\n" + text.replace(/<\/?b>/g, ""));
   }

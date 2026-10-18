@@ -25,8 +25,8 @@ export const VISIT_CALLOUTS: Callout[] = [
   { n: 12, key: "warranty", step: 4, a: 4.7, b: 4.95, bx: 118, by: 28, ax: 94, ay: 44 },
 ];
 
-const INK = "rgb(247 245 240 / 0.78)";
-// Palette tokens, so the drawing follows the doctor's own colours on the night section.
+const INK = "color-mix(in srgb, var(--color-paper) 78%, transparent)";
+// Palette tokens, so the drawing follows the doctor's own colours on the night section (gum and lesion stay anatomical).
 const SAGE = "var(--color-accent-light)";
 const GROUND = "var(--color-night-2)";
 const GUM = "rgb(214 150 140 / 0.75)";
@@ -59,7 +59,7 @@ export function VisitDrawing({ title }: { title: string }) {
     <svg viewBox="0 0 400 520" role="img" aria-label={title} className="h-full w-full" fill="none" strokeLinecap="round" strokeLinejoin="round">
       <defs>
         <pattern id="visit-bone-hatch" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <line x1="0" y1="0" x2="0" y2="9" stroke="rgb(201 173 131 / 0.16)" strokeWidth="1" />
+          <line x1="0" y1="0" x2="0" y2="9" stroke="color-mix(in srgb, var(--color-accent-light) 16%, transparent)" strokeWidth="1" />
         </pattern>
         <clipPath id="visit-bone-clip">
           <path d={BONE_AREA} />
@@ -71,7 +71,7 @@ export function VisitDrawing({ title }: { title: string }) {
       <path d="M8 262 C 60 254 110 246 128 252 M272 252 C 290 246 340 254 392 262" stroke={GUM} strokeWidth="1.4" {...draw(0.05, 0.4)} />
       <path d="M8 292 C 80 286 120 300 140 300 M260 300 C 280 300 320 286 392 292" stroke={INK} strokeWidth="1.2" {...draw(0.1, 0.45)} />
       <path d={MOLAR} fill={GROUND} stroke={INK} strokeWidth="1.5" {...draw(0, 0.5)} />
-      <path d={PULP} stroke="rgb(247 245 240 / 0.3)" strokeWidth="1" strokeDasharray="3 4" {...fade(0.4, 0.6)} />
+      <path d={PULP} stroke="color-mix(in srgb, var(--color-paper) 30%, transparent)" strokeWidth="1" strokeDasharray="3 4" {...fade(0.4, 0.6)} />
       {[180, 228, 276, 324, 372].map((y, i) => (
         <line key={y} x1="112" y1={y} x2="288" y2={y} stroke={SAGE} strokeWidth="1" strokeDasharray="3 4" {...fade(0.45 + i * 0.07, 0.55 + i * 0.07, { oa: 1.1, ob: 1.3 })} />
       ))}
@@ -81,26 +81,26 @@ export function VisitDrawing({ title }: { title: string }) {
       {/* 02: the written plan and price; the planned filling as a ghost */}
       <g {...fade(1.2, 1.45, { oa: 2.0, ob: 2.2 })}>
         <rect x="290" y="40" width="92" height="110" rx="10" fill={GROUND} stroke={INK} strokeWidth="1.2" />
-        <path d="M304 62 L 360 62 M304 78 L 348 78 M304 94 L 364 94" stroke="rgb(247 245 240 / 0.45)" strokeWidth="1.2" />
+        <path d="M304 62 L 360 62 M304 78 L 348 78 M304 94 L 364 94" stroke="color-mix(in srgb, var(--color-paper) 45%, transparent)" strokeWidth="1.2" />
       </g>
       <path d="M304 124 L 340 124" stroke={SAGE} strokeWidth="2.2" {...draw(1.55, 1.8, { oa: 2.0, ob: 2.2 })} />
       <path d="M350 120 L 356 127 L 368 113" stroke={SAGE} strokeWidth="1.8" {...draw(1.7, 1.9, { oa: 2.0, ob: 2.2 })} />
       <path d={FILLING} stroke={SAGE} strokeWidth="1.2" strokeDasharray="4 4" {...fade(1.35, 1.6, { oa: 3.3, ob: 3.5 })} />
 
       {/* 03: gel first, then a slow, even anaesthetic; the numb zone spreads from the gum */}
-      <path d="M64 258 C 90 252 112 248 126 251 M274 251 C 288 248 310 252 336 258" stroke="rgb(169 197 187 / 0.4)" strokeWidth="7" {...draw(2.0, 2.25)} />
+      <path d="M64 258 C 90 252 112 248 126 251 M274 251 C 288 248 310 252 336 258" stroke="color-mix(in srgb, var(--color-accent-light) 40%, transparent)" strokeWidth="7" {...draw(2.0, 2.25)} />
       {[22, 36, 50].map((r, i) => (
         <circle key={r} cx="132" cy="270" r={r} stroke={SAGE} strokeWidth="1" strokeDasharray="2 5" {...fade(2.3 + i * 0.1, 2.45 + i * 0.1, { oa: 4.0, ob: 4.3 })} />
       ))}
       <path d="M92 214 L 124 262" stroke={INK} strokeWidth="1" {...draw(2.35, 2.55, { oa: 2.8, ob: 2.95 })} />
       <g {...fade(2.5, 2.7, { oa: 3.0, ob: 3.2 })}>
-        <rect x="20" y="58" width="104" height="52" rx="10" fill={GROUND} stroke="rgb(247 245 240 / 0.35)" strokeWidth="1" />
+        <rect x="20" y="58" width="104" height="52" rx="10" fill={GROUND} stroke="color-mix(in srgb, var(--color-paper) 35%, transparent)" strokeWidth="1" />
       </g>
       <path d="M30 86 C 44 74 56 98 70 86 C 84 74 96 98 112 86" stroke={SAGE} strokeWidth="1.5" {...draw(2.55, 2.85, { oa: 3.0, ob: 3.2 })} />
 
       {/* 04: cleaned and filled; a raised hand stops everything */}
-      <path d={FILLING} fill="rgb(169 197 187 / 0.3)" {...fade(3.45, 3.75)} />
-      <path d={FILLING} stroke="rgb(247 245 240 / 0.95)" strokeWidth="1.8" {...draw(3.3, 3.7)} />
+      <path d={FILLING} fill="color-mix(in srgb, var(--color-accent-light) 30%, transparent)" {...fade(3.45, 3.75)} />
+      <path d={FILLING} stroke="color-mix(in srgb, var(--color-paper) 95%, transparent)" strokeWidth="1.8" {...draw(3.3, 3.7)} />
       <circle cx="334" cy="92" r="32" stroke={SAGE} strokeWidth="1.2" {...draw(3.2, 3.45)} />
       <g {...fade(3.3, 3.55)}>
         <Hand x={316} y={74} width={36} height={36} stroke={SAGE} strokeWidth={1.6} />
@@ -118,10 +118,10 @@ export function VisitDrawing({ title }: { title: string }) {
       {/* Numbered balloons */}
       {VISIT_CALLOUTS.map((c) => (
         <g key={c.n} {...fade(c.a, c.b, c.oa !== undefined ? { oa: c.oa, ob: c.ob! } : {})}>
-          <line x1={c.ax} y1={c.ay} x2={c.bx} y2={c.by} stroke="rgb(201 173 131 / 0.6)" strokeWidth="0.8" />
+          <line x1={c.ax} y1={c.ay} x2={c.bx} y2={c.by} stroke="color-mix(in srgb, var(--color-accent-light) 60%, transparent)" strokeWidth="0.8" />
           <circle cx={c.ax} cy={c.ay} r="2" fill={SAGE} />
           <circle cx={c.bx} cy={c.by} r="10.5" fill={GROUND} stroke={SAGE} strokeWidth="1" />
-          <text x={c.bx} y={c.by + 3.6} textAnchor="middle" fill="#f5f6f3" style={{ fontFamily: "var(--font-sans)", fontSize: 10.5 }}>
+          <text x={c.bx} y={c.by + 3.6} textAnchor="middle" fill="var(--color-paper)" style={{ fontFamily: "var(--font-sans)", fontSize: 10.5 }}>
             {c.n}
           </text>
         </g>

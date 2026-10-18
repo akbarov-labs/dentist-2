@@ -18,6 +18,7 @@ export function Hero() {
   const { t, doctor, lang, scrollToId, setModal } = useSite();
   const sectionRef = useRef<HTMLElement>(null);
   useScrollVar(sectionRef, "--hp", heroProgress);
+  const long = doctor.heroLead[lang].length > 32;
 
   return (
     <>
@@ -28,18 +29,25 @@ export function Hero() {
           {/* Copy: headline, one line of promise, one sentence, two actions */}
           <div className="lg:col-span-6 xl:pr-8">
             <h1 id="hero-title" className="text-balance">
+              {/* A full sentence in the doctor's own words sets smaller than a two-word slogan would */}
               <span
-                className="enter block font-display text-[40px] leading-[1.05] font-medium tracking-[-0.035em] text-ink sm:text-[54px] xl:text-[64px]"
+                className={`enter block font-display font-medium text-ink ${
+                  long
+                    ? "text-[34px] leading-[1.12] tracking-[-0.02em] sm:text-[44px] xl:text-[52px]"
+                    : "text-[40px] leading-[1.05] tracking-[-0.035em] sm:text-[54px] xl:text-[64px]"
+                }`}
                 style={delay(80)}
               >
                 {doctor.heroLead[lang]}
               </span>
-              <span
-                className="enter mt-4 block pb-1 font-display text-[21px] leading-[1.35] font-normal tracking-[-0.015em] text-accent sm:text-[25px] xl:text-[27px]"
-                style={delay(160)}
-              >
-                {t.hero.tail}
-              </span>
+              {t.hero.tail ? (
+                <span
+                  className="enter mt-4 block pb-1 font-display text-[21px] leading-[1.35] font-normal tracking-[-0.015em] text-accent sm:text-[25px] xl:text-[27px]"
+                  style={delay(160)}
+                >
+                  {t.hero.tail}
+                </span>
+              ) : null}
             </h1>
 
             <p className="enter mt-6 max-w-[52ch] text-[16px] leading-relaxed text-muted sm:text-[17px]" style={delay(240)}>
