@@ -48,6 +48,7 @@ interface BookingBody {
   doctorId?: unknown;
   selection?: unknown;
   website?: unknown;
+  telegram?: unknown;
 }
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -78,6 +79,9 @@ export async function POST(request: Request) {
   const contactMethod = body.contactMethod === "call" ? "call" : "telegram";
   const hasCt = body.hasCt === true;
   const doctorId = str(body.doctorId, 32);
+  // A Telegram username is 5-32 letters, digits or underscores; anything else is dropped, not rejected.
+  const tgUser = str(body.telegram, 64).replace(/^@/, "");
+  const username = /^[A-Za-z0-9_]{5,32}$/.test(tgUser) ? tgUser : "";
 
   if (name.length < 2) return Response.json({ ok: false, error: "name" }, { status: 422 });
   if (!/^\+998\d{9}$/.test(phone)) return Response.json({ ok: false, error: "phone" }, { status: 422 });
@@ -95,7 +99,10 @@ export async function POST(request: Request) {
     `Telefon: ${phone}`,
     contactMethod === "call"
       ? "Aloqa: qo‘ng‘iroq qilishni so‘radi"
-      : `Aloqa: Telegram · <a href="https://t.me/${phone}">Telegramda yozish</a>`,
+      : username
+        ? `Aloqa: Telegram · <a href="https://t.me/${username}">@${username}</a>`
+        : // By number: works unless the patient hides it in Telegram's privacy settings.
+          `Aloqa: Telegram · <a href="https://t.me/${phone}">raqam orqali yozish</a> (ochilmasa, qo‘ng‘iroq qiling)`,
     // The form only asks about a 3D scan for treatments that need one.
     hasCt ? "3D KT: bor" : "",
     selection ? `Tanlov: ${escapeHtml(selection)}` : "",

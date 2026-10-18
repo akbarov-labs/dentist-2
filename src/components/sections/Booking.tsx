@@ -54,6 +54,8 @@ export function Booking() {
   const [method, setMethod] = useState<ContactMethod>("telegram");
   const [hasCt, setHasCt] = useState<"yes" | "no">("no");
   const [comment, setComment] = useState("");
+  // Optional: a patient whose number is hidden in Telegram can't be found by it, but can be by username.
+  const [tgUser, setTgUser] = useState("");
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
   const [status, setStatus] = useState<Status>("idle");
   const [refNo, setRefNo] = useState("");
@@ -125,6 +127,7 @@ export function Booking() {
           contactMethod: method,
           hasCt: askCt && hasCt === "yes",
           comment: comment.trim(),
+          telegram: method === "telegram" ? tgUser : "",
           lang,
           doctorId: doctor.id,
           selection: summary ? [...summary.lines, summary.price].filter(Boolean).join(" · ") : "",
@@ -144,6 +147,7 @@ export function Booking() {
     setName("");
     setDigits("");
     setComment("");
+    setTgUser("");
     setStatus("idle");
     setPrefill(null);
   };
@@ -355,6 +359,33 @@ export function Booking() {
                       ) : null}
                     </div>
   
+                    {method === "telegram" ? (
+                      <div>
+                        <label htmlFor="bk-tg" className="text-[14px] font-medium text-ink">
+                          {t.booking.tgUser}
+                        </label>
+                        <div className="relative">
+                          <span className="pointer-events-none absolute top-1/2 left-4 mt-1 -translate-y-1/2 text-[15px] text-ink-soft">@</span>
+                          <input
+                            id="bk-tg"
+                            name="telegram"
+                            autoComplete="off"
+                            autoCapitalize="none"
+                            spellCheck={false}
+                            value={tgUser}
+                            // Accept a pasted @name or t.me link; keep only what a username can contain.
+                            onChange={(e) => setTgUser(e.target.value.replace(/^.*t\.me\//i, "").replace(/[^A-Za-z0-9_]/g, "").slice(0, 32))}
+                            placeholder={t.booking.tgUserPh}
+                            aria-describedby="bk-tg-hint"
+                            className={`${inputCls()} pl-9`}
+                          />
+                        </div>
+                        <p id="bk-tg-hint" className="mt-2 text-[13px] leading-snug text-muted">
+                          {t.booking.tgUserHint}
+                        </p>
+                      </div>
+                    ) : null}
+
                     <div>
                       <label htmlFor="bk-comment" className="text-[14px] font-medium text-ink">
                         {t.booking.comment}
