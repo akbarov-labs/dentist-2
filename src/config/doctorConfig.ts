@@ -683,13 +683,13 @@ const iqboljon: DoctorProfile = {
     ],
   },
   portrait: {
-    src: "/images/portrait-iqboljon.jpg",
-    cutout: "/images/cutout-iqboljon.webp",
+    src: "/images/portrait-iqboljon-blue.jpg",
+    cutout: "/images/cutout-iqboljon-blue.webp",
     alt: {
-      uz: "Dr. Iqboljon Jo‘raev oq xalatda, qo‘llarini qovushtirgan holda",
-      ru: "Д-р Икболжон Жураев в белом халате, руки скрещены",
+      uz: "Dr. Iqboljon Jo‘raev ko‘k xalatda, qo‘llarini qovushtirgan holda, jilmayib turibdi",
+      ru: "Д-р Икболжон Жураев в синем халате, руки скрещены, улыбается",
     },
-    position: "50% 22%",
+    position: "50% 25%",
   },
   stats: [
     { value: { uz: "10+ yil", ru: "10+ лет" }, label: { uz: "Stomatologik amaliyot tajribasi", ru: "Стоматологической практики" } },
