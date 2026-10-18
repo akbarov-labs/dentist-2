@@ -19,20 +19,28 @@ export function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   useScrollVar(sectionRef, "--hp", heroProgress);
   const long = doctor.heroLead[lang].length > 32;
+  // His own photo is a field, not a framed card: it runs to the screen edge and the sentence leads.
+  const field = doctor.portrait.style === "photo";
 
   return (
     <>
       <section ref={sectionRef} id="top" aria-labelledby="hero-title" className="relative overflow-hidden">
         <div id="top-sentinel" className="absolute top-0 h-px w-px" aria-hidden />
 
-        <div className="shell relative grid items-center gap-10 pt-6 pb-16 md:pt-12 lg:min-h-[calc(100dvh-76px)] lg:grid-cols-12 lg:gap-8 lg:py-10">
+        <div
+          className={`shell grid items-center lg:min-h-[calc(100dvh-76px)] lg:grid-cols-12 lg:gap-8 ${
+            field ? "gap-8 pb-14 lg:py-16" : "relative gap-10 pt-6 pb-16 md:pt-12 lg:py-10"
+          }`}
+        >
           {/* Copy: headline, one line of promise, one sentence, two actions */}
-          <div className="lg:col-span-6 xl:pr-8">
+          <div className={field ? "lg:col-span-6 lg:pr-6 xl:pr-10" : "lg:col-span-6 xl:pr-8"}>
             <h1 id="hero-title" className="text-balance">
               {/* A full sentence in the doctor's own words sets smaller than a two-word slogan would */}
               <span
                 className={`enter block font-display font-medium text-ink ${
-                  long
+                  field
+                    ? "text-[38px] leading-[1.06] tracking-[-0.03em] sm:text-[54px] lg:text-[56px] xl:text-[72px]"
+                    : long
                     ? "text-[36px] leading-[1.08] tracking-[-0.025em] sm:text-[50px] xl:text-[62px]"
                     : "text-[40px] leading-[1.05] tracking-[-0.035em] sm:text-[54px] xl:text-[64px]"
                 }`}
@@ -84,21 +92,21 @@ export function Hero() {
           </div>
 
           {/* Portrait. Desktop: as large as the column allows, but never taller than the screen below the header */}
-          {doctor.portrait.style === "photo" ? (
-            // The real photo in his own surgery, as taken: no cut-out, no borrowed room. Wider and shorter on phones so the buttons stay near the fold.
-            <div className="relative order-first mx-auto w-full sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">
-              <div className="enter relative aspect-[4/3] overflow-hidden rounded-[20px] bg-stone sm:aspect-[4/5]" style={delay(120)}>
-                <SafeImage
-                  src={doctor.portrait.src}
-                  alt={doctor.portrait.alt[lang]}
-                  fill
-                  preload
-                  sizes="(min-width: 1024px) 600px, 100vw"
-                  className="object-cover"
-                  style={{ objectPosition: doctor.portrait.position }}
-                  fallbackLabel={doctor.name[lang]}
-                />
-              </div>
+          {field ? (
+            // The real photo in his own surgery, as taken. Phones: edge to edge above the sentence.
+            // Desktop: a full-height field from the header to the fold, bleeding off the right edge of the screen.
+            <div className="enter relative order-first -mx-4 aspect-[4/3] overflow-hidden bg-stone sm:aspect-[16/10] md:-mx-8 lg:absolute lg:inset-y-0 lg:right-0 lg:mx-0 lg:aspect-auto lg:w-[42vw] xl:w-[min(44vw,880px)]" style={delay(120)}>
+              <SafeImage
+                src={doctor.portrait.src}
+                alt={doctor.portrait.alt[lang]}
+                fill
+                preload
+                sizes="(min-width: 1024px) 44vw, 100vw"
+                className="object-cover"
+                // Phones crop the 4:5 photo to a wide band: keep the top of his head in it.
+                style={{ objectPosition: "50% 12%" }}
+                fallbackLabel={doctor.name[lang]}
+              />
             </div>
           ) : (
             <div className="relative order-first mx-auto w-full max-w-[290px] sm:max-w-[400px] lg:order-none lg:col-span-6 lg:max-w-[min(540px,calc((100dvh-9rem)*0.8))] xl:max-w-[min(600px,calc((100dvh-9rem)*0.8))]">

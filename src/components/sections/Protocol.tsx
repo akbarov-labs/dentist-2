@@ -14,7 +14,8 @@ const DRAWINGS = {
   visit: { callouts: VISIT_CALLOUTS, Drawing: VisitDrawing },
 } as const;
 
-const pad = (n: number) => String(n).padStart(2, "0");
+// The order of the visit matters, so the steps keep their numbers; zero-padding them would only be costume.
+const pad = (n: number) => String(n);
 
 // Below lg the blueprint stage is sticky ABOVE the step texts and covers roughly the top 55-58% of the viewport,
 // so the "reading line" sits just below it, and step content is top-aligned so its title is what crosses that line.

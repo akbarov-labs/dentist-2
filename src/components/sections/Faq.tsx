@@ -1,71 +1,54 @@
 "use client";
 
-import { Plus, Send } from "lucide-react";
-import { useState } from "react";
+import { Send } from "lucide-react";
 import { useSite } from "@/context/SiteContext";
 import { telegramLink } from "@/lib/format";
-import { Reveal } from "@/components/ui/Reveal";
-import { btnSecondary } from "@/components/ui/styles";
+import { SafeImage } from "@/components/ui/SafeImage";
+import { btnPrimary } from "@/components/ui/styles";
 
+/**
+ * The questions as he actually gets them: a Telegram thread seen from the patient's side.
+ * The patient's question sits on the right, his answer on the left under his photo, and the thread ends
+ * where the visitor's own question would go. Every answer is visible: five short replies need no accordion.
+ */
 export function Faq() {
-  const { t, doctor } = useSite();
-  const [open, setOpen] = useState<number | null>(0);
+  const { t, doctor, lang } = useSite();
 
   return (
-    <section id="faq" aria-labelledby="faq-title" className="border-t border-line py-20 md:py-28">
-      <div className="shell grid gap-10 lg:grid-cols-12 lg:gap-10">
-        <Reveal className="lg:col-span-4">
-          <div className="lg:sticky lg:top-28">
-            <h2 id="faq-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
-              {t.faq.title}
-            </h2>
-            <p className="mt-4 max-w-[34ch] text-[16px] leading-relaxed text-muted">{t.faq.sub}</p>
-            <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className={`${btnSecondary} mt-7`}>
-              <Send size={16} strokeWidth={1.7} className="text-accent" /> @{doctor.contact.telegram}
+    <section id="faq" aria-labelledby="faq-title" className="bg-stone/60 py-20 md:py-28">
+      <div className="shell">
+        <div className="mx-auto max-w-[760px]">
+          <h2 id="faq-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
+            {t.faq.title}
+          </h2>
+
+          <ul className="mt-10 space-y-8">
+            {t.faq.items.map((item) => (
+              <li key={item.q} className="space-y-2">
+                <h3 className="ml-auto w-fit max-w-[85%] rounded-[18px] rounded-br-[4px] bg-accent text-[15px] sm:text-[16px] leading-snug font-medium text-paper sm:max-w-[75%]">
+                  <span className="block px-4 py-3">{item.q}</span>
+                </h3>
+                <div className="flex items-end gap-2.5">
+                  <span aria-hidden className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-stone">
+                    <SafeImage src={doctor.portrait.src} alt="" fill sizes="32px" className="object-cover" style={{ objectPosition: "50% 22%" }} />
+                  </span>
+                  <p className="max-w-[calc(100%-2.5rem)] rounded-[18px] rounded-bl-[4px] bg-card px-4 py-3 text-[15px] leading-relaxed sm:text-[16px] text-ink-soft shadow-[0_1px_0_rgb(28_36_33/0.05)] sm:max-w-[80%]">
+                    <span className="sr-only">{doctor.name[lang]}: </span>
+                    {item.a}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Where the visitor's own question goes */}
+          <div className="mt-12 flex flex-col gap-4 border-t border-ink/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-[40ch] text-[16px] leading-relaxed text-ink-soft">{t.faq.sub}</p>
+            <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className={`${btnPrimary} shrink-0`}>
+              <Send size={16} strokeWidth={1.7} /> @{doctor.contact.telegram}
             </a>
           </div>
-        </Reveal>
-
-        <Reveal delay={100} className="lg:col-span-8">
-          <ul className="divide-y divide-line border-y border-line">
-            {t.faq.items.map((item, i) => {
-              const isOpen = open === i;
-              return (
-                <li key={item.q}>
-                  <h3>
-                    <button
-                      type="button"
-                      id={`faq-q-${i}`}
-                      aria-expanded={isOpen}
-                      aria-controls={`faq-a-${i}`}
-                      onClick={() => setOpen(isOpen ? null : i)}
-                      className="flex w-full items-center justify-between gap-6 py-6 text-left"
-                    >
-                      <span className="text-[18px] leading-snug font-medium text-ink sm:text-[19px]">{item.q}</span>
-                      <span
-                        className={`grid h-9 w-9 shrink-0 place-items-center rounded-full border transition duration-300 ${
-                          isOpen ? "rotate-45 border-accent bg-accent text-paper" : "border-line text-ink"
-                        }`}
-                      >
-                        <Plus size={16} strokeWidth={1.7} />
-                      </span>
-                    </button>
-                  </h3>
-                  <div
-                    id={`faq-a-${i}`}
-                    role="region"
-                    aria-labelledby={`faq-q-${i}`}
-                    className={`grid transition-[grid-template-rows] duration-500 ease-[var(--ease-atelier)] ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
-                  >
-                    <div className="overflow-hidden" inert={!isOpen}>
-                      <p className="max-w-[58ch] pb-7 text-[16px] leading-relaxed text-muted">{item.a}</p>
-                    </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

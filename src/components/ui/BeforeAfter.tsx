@@ -88,7 +88,7 @@ export function BeforeAfter({ before, after, focus, alt, beforeLabel, afterLabel
     e.preventDefault();
   };
 
-  const chip = "pointer-events-none absolute top-4 rounded-full px-3 py-1.5 tabular-nums text-[12px] tracking-[0.1em] backdrop-blur";
+  const chip = "pointer-events-none absolute top-4 rounded-full px-3 py-1 text-[13px] font-medium";
 
   return (
     <div
@@ -111,7 +111,7 @@ export function BeforeAfter({ before, after, focus, alt, beforeLabel, afterLabel
         draggable={false}
         fallbackLabel={afterLabel}
       />
-      <span className={`${chip} right-4 bg-paper/85 text-accent`}>{afterLabel}</span>
+      <span className={`${chip} right-4 bg-paper/90 text-accent`}>{afterLabel}</span>
 
       {/* BEFORE, with its label, clipped to the left of the handle */}
       <div className="absolute inset-0" style={{ clipPath: "inset(0 calc(100% - var(--pos)) 0 0)" }}>
@@ -125,7 +125,7 @@ export function BeforeAfter({ before, after, focus, alt, beforeLabel, afterLabel
           style={{ objectPosition: focus }}
           fallbackLabel={beforeLabel}
         />
-        <span className={`${chip} left-4 bg-night/70 text-paper`}>{beforeLabel}</span>
+        <span className={`${chip} left-4 bg-night/75 text-paper`}>{beforeLabel}</span>
       </div>
 
       {/* Divider and handle; the grip never leaves the frame at either end */}

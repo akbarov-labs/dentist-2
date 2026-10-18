@@ -174,9 +174,29 @@ export function Booking() {
               </figcaption>
             </figure>
           </Reveal>
-          ) : null}
+          ) : (
+            // His photo returns at the close, cropped closer than the hero: the page ends on the person who will answer.
+            <figure className="hidden lg:col-span-5 lg:block">
+              <div className="sticky top-24">
+                <div className="relative aspect-[4/5] overflow-hidden rounded-[16px] bg-stone">
+                  <SafeImage
+                    src={doctor.portrait.src}
+                    alt={doctor.portrait.alt[lang]}
+                    fill
+                    sizes="(min-width: 1024px) 36vw, 1px"
+                    className="origin-[50%_18%] scale-[1.45] object-cover"
+                    style={{ objectPosition: "50% 18%" }}
+                  />
+                </div>
+                <figcaption className="mt-4 leading-snug">
+                  <span className="block text-[15px] font-medium text-ink">{doctor.name[lang]}</span>
+                  <span className="block text-[13.5px] text-muted">{doctor.title[lang]}</span>
+                </figcaption>
+              </div>
+            </figure>
+          )}
 
-          <div className={closePortrait ? "lg:col-span-7" : "lg:col-span-8 lg:col-start-3"}>
+          <div className="lg:col-span-7">
             <Reveal>
               <h2 id="booking-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[40px]">
                 {t.booking.title}
@@ -186,7 +206,7 @@ export function Booking() {
               </p>
               {/* No arch at the close: his face still sits beside the form, so the page ends on him, not on a form */}
               {closePortrait ? null : (
-                <div className="mt-6 flex items-center gap-4">
+                <div className="mt-6 flex items-center gap-4 lg:hidden">
                   <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-stone">
                     <SafeImage src={doctor.portrait.src} alt="" fill sizes="56px" className="object-cover" style={{ objectPosition: "50% 22%" }} />
                   </span>
@@ -382,27 +402,26 @@ export function Booking() {
               )}
             </div>
           </Reveal>
+          {/* Without a map or hours beside it, a whole Telegram card under the form is a third path saying the same thing: one plain line instead */}
+          {sideCard ? null : (
+            <p className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[15px] text-muted">
+              {t.booking.orDirect}
+              <a
+                href={telegramLink(doctor.contact.telegram, tgText)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-1.5 px-1 font-medium text-accent underline-offset-4 hover:underline"
+              >
+                <Send size={15} strokeWidth={1.7} /> Telegram @{doctor.contact.telegram}
+              </a>
+              <span aria-hidden className="hidden sm:inline">·</span>
+              <a href={phoneHref(doctor.contact.phone)} className="inline-flex min-h-11 items-center gap-1.5 px-1 tabular-nums font-medium text-ink underline-offset-4 hover:underline">
+                <Phone size={15} strokeWidth={1.6} className="text-accent" /> {doctor.contact.phone}
+              </a>
+            </p>
+          )}
           </div>
         </div>
-
-        {/* Without a map or hours beside it, a whole Telegram card under the form is a third path saying the same thing: one plain line instead */}
-        {sideCard ? null : (
-          <p className="mx-auto mt-10 flex max-w-[860px] flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center text-[15px] text-muted">
-            {t.booking.orDirect}
-            <a
-              href={telegramLink(doctor.contact.telegram, tgText)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1.5 px-1 font-medium text-accent underline-offset-4 hover:underline"
-            >
-              <Send size={15} strokeWidth={1.7} /> Telegram @{doctor.contact.telegram}
-            </a>
-            <span aria-hidden>·</span>
-            <a href={phoneHref(doctor.contact.phone)} className="inline-flex min-h-11 items-center gap-1.5 px-1 tabular-nums font-medium text-ink underline-offset-4 hover:underline">
-              <Phone size={15} strokeWidth={1.6} className="text-accent" /> {doctor.contact.phone}
-            </a>
-          </p>
-        )}
 
         {/* Concierge + map */}
         {sideCard ? (

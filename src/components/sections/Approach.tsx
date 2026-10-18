@@ -20,12 +20,13 @@ export function Approach({ slot = "early" }: { slot?: "early" | "late" }) {
     <section
       id="approach"
       {...(standalone ? { "aria-label": doctor.name[lang] } : { "aria-labelledby": "approach-title" })}
-      className={`border-t border-line py-20 md:py-28 ${standalone ? "" : "bg-stone/60"}`}
+      className={standalone ? "pb-20 md:pb-28" : "border-t border-line bg-stone/60 py-20 md:py-28"}
     >
       <div className="shell">
         {/* Personal manifesto */}
-        <Reveal className="grid gap-8 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-9 lg:col-start-4">
+        {/* Standalone, his words close the cases: set under the photo column, as the last word on his own work */}
+        <Reveal className={`grid gap-8 lg:grid-cols-12 lg:gap-10 ${standalone ? "border-t border-line pt-12 md:pt-16" : ""}`}>
+          <div className={standalone ? "lg:col-span-8" : "lg:col-span-9 lg:col-start-4"}>
             <blockquote>
               <p
                 className={`font-display leading-[1.32] tracking-[-0.012em] text-ink text-pretty ${
