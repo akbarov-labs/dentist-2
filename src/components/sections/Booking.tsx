@@ -161,7 +161,10 @@ export function Booking() {
             <figure className="lg:sticky lg:top-24">
               <PortraitArch doctor={doctor} lang={lang} sizes="(min-width: 1024px) 34vw, 80vw" />
               <figcaption className="relative z-[2] -mt-4 text-center">
-                <p className="font-display text-[24px] leading-snug text-ink italic text-balance sm:text-[28px]">“{t.booking.closeLine}”</p>
+                {/* A doctor can leave the closing quote empty: the signed portrait still closes the page */}
+                {t.booking.closeLine ? (
+                  <p className="font-display text-[24px] leading-snug text-ink italic text-balance sm:text-[28px]">“{t.booking.closeLine}”</p>
+                ) : null}
                 <Signature name={doctor.signature} className="mx-auto mt-1 h-14 w-auto" />
                 <p className="text-[13px] text-muted">{doctor.name[lang]}</p>
               </figcaption>

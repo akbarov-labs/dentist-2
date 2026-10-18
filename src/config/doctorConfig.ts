@@ -904,6 +904,7 @@ const iqboljon: DoctorProfile = {
   copy: {
     uz: {
       hero: { tail: "Har bir ishimga o‘zim javob beraman va kafolat beraman." },
+      booking: { closeLine: "" },
       approach: {
         points: [
           { k: "Bitta mas’ul shifokor", v: "Ko‘rikdan oxirgi plombagacha sizni faqat men davolayman." },
@@ -1011,6 +1012,7 @@ const iqboljon: DoctorProfile = {
     },
     ru: {
       hero: { tail: "За каждую работу отвечаю лично и даю гарантию." },
+      booking: { closeLine: "" },
       approach: {
         points: [
           { k: "Один ответственный врач", v: "От осмотра до последней пломбы вас лечу только я." },
