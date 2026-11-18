@@ -2,6 +2,8 @@
 
 A bilingual (O‘zbek / Русский) personal-brand site for a solo dental specialist, built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4 and Lucide icons.
 
+This is a template by [Akbarov Labs](https://akbarovlabs.uz). The `jamshid` and `sardor` presets are fictional demo doctors. Code is MIT-licensed.
+
 ```bash
 npm install
 npm run dev      # http://localhost:3000

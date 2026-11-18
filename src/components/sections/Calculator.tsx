@@ -3,14 +3,13 @@
 import { ArrowDown, Check, Send, ShieldCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import type { MaterialId, ProblemId } from "@/config/doctorConfig";
-import { site } from "@/config/doctorConfig";
+import { defaultCalcProblems, site } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
 import { buildTelegramText, computeEstimate } from "@/lib/estimate";
 import { formatMillions, formatUSD, formatUZS, telegramLink } from "@/lib/format";
 import { noBreakHyphens } from "@/lib/text";
 import { Reveal } from "@/components/ui/Reveal";
 
-const PROBLEMS: ProblemId[] = ["single", "multiple", "fullArch", "aesthetic"];
 const MATERIALS: MaterialId[] = ["premium", "swiss"];
 
 function Step({ n, legend, children }: { n: number; legend: string; children: ReactNode }) {
@@ -62,16 +61,24 @@ function Option({
 }
 
 export function Calculator() {
+  const { doctor } = useSite();
+  // A doctor with a price list shows it inside the services section instead (see ServicePriceList).
+  return doctor.priceList?.length ? null : <PriceCalculator />;
+}
+
+function PriceCalculator() {
   const { t, doctor, lang, calc, setCalc, setPrefill, scrollToId } = useSite();
+  const problems = doctor.calcProblems ?? defaultCalcProblems;
   const est = computeEstimate(doctor, calc, lang);
   // 0% instalments over the practice's plan length, rounded to the nearest thousand so'm
-  const months = doctor.installmentMonths;
+  const months = est.installment ? doctor.installmentMonths : undefined;
   const monthly = months ? Math.round(est.min / months / 1000) * 1000 : 0;
   const tgText = buildTelegramText(doctor, lang, t, { kind: "calculator", selection: calc });
 
   const fromNote = (p: ProblemId) => {
     const v = formatMillions(doctor.pricing[p][calc.material].min, lang);
-    return lang === "ru" ? `${t.services.from} ${v} ${t.calc.currency}` : `${v} ${t.calc.currency}${t.services.from}`;
+    const ct = doctor.pricing[p].needsCt !== false && doctor.ctScanPrice ? ` ${t.services.ctExtra}` : "";
+    return lang === "ru" ? `${t.services.from} ${v} ${t.calc.currency}${ct}` : `${v} ${t.calc.currency}${t.services.from}${ct}`;
   };
 
   const bookWithEstimate = () => {
@@ -83,7 +90,7 @@ export function Calculator() {
     <section id="calculator" aria-labelledby="calc-title" className="py-20 md:py-28">
       <div className="shell">
         <Reveal className="max-w-[680px]">
-          <h2 id="calc-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="calc-title" data-scroll-target tabIndex={-1} className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink outline-none sm:text-[40px]">
             {t.calc.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.calc.sub}</p>
@@ -92,19 +99,23 @@ export function Calculator() {
         <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:gap-10">
           <Reveal className="space-y-10 lg:col-span-7">
             <Step n={1} legend={t.calc.q1}>
-              {PROBLEMS.map((p) => (
+              {problems.map((p) => (
                 <Option key={p} name="problem" checked={calc.problem === p} onSelect={() => setCalc({ problem: p })} title={t.calc.problems[p]} note={fromNote(p)} />
               ))}
             </Step>
-            <Step n={2} legend={t.calc.q2}>
-              {MATERIALS.map((m) => (
-                <Option key={m} name="material" checked={calc.material === m} onSelect={() => setCalc({ material: m })} title={t.calc.materials[m]} note={t.calc.materialNotes[m]} />
-              ))}
-            </Step>
-            <Step n={3} legend={t.calc.q3}>
-              <Option name="ct" checked={calc.hasCt} onSelect={() => setCalc({ hasCt: true })} title={t.calc.ct.yes} note={t.calc.ctNotes.yes} />
-              <Option name="ct" checked={!calc.hasCt} onSelect={() => setCalc({ hasCt: false })} title={t.calc.ct.no} note={t.calc.ctNotes.no} />
-            </Step>
+            {est.singleTier ? null : (
+              <Step n={2} legend={t.calc.q2}>
+                {MATERIALS.map((m) => (
+                  <Option key={m} name="material" checked={calc.material === m} onSelect={() => setCalc({ material: m })} title={t.calc.materials[m]} note={t.calc.materialNotes[m]} />
+                ))}
+              </Step>
+            )}
+            {est.needsCt ? (
+              <Step n={est.singleTier ? 2 : 3} legend={t.calc.q3}>
+                <Option name="ct" checked={calc.hasCt} onSelect={() => setCalc({ hasCt: true })} title={t.calc.ct.yes} note={t.calc.ctNotes.yes} />
+                <Option name="ct" checked={!calc.hasCt} onSelect={() => setCalc({ hasCt: false })} title={t.calc.ct.no} note={t.calc.ctNotes.no} />
+              </Step>
+            ) : null}
           </Reveal>
 
           <Reveal delay={120} className="lg:col-span-5">
@@ -116,7 +127,7 @@ export function Calculator() {
                   <span className="text-paper/50"> – </span>
                   <span className="whitespace-nowrap">{formatUZS(est.max)}</span>
                 </p>
-                <p className="mt-2 text-[13.5px] text-paper/70">
+                <p className="mt-2 text-[13.5px] text-paper/85">
                   {t.calc.currency}
                   {est.unitNote ? ` · ${est.unitNote}` : ""}
                   <span className="tabular-nums"> · {t.calc.usd} {formatUSD(est.min, site.usdRate)}–{formatUSD(est.max, site.usdRate).slice(1)}</span>
@@ -146,12 +157,14 @@ export function Calculator() {
                     <dt className="text-[12.5px] text-muted">{t.calc.surgery}</dt>
                     <dd className="mt-1 tabular-nums text-[14.5px] text-ink">{est.surgeryTime}</dd>
                   </div>
-                  <div className="col-span-2">
-                    <dt className="text-[12.5px] text-muted">{t.calc.ctLine}</dt>
-                    <dd className="mt-1 tabular-nums text-[14.5px] text-ink">
-                      {est.ctCost ? `+${formatUZS(est.ctCost)} ${t.calc.currency} · ${t.calc.ctAdded}` : t.calc.ctIncluded}
-                    </dd>
-                  </div>
+                  {est.needsCt ? (
+                    <div className="col-span-2">
+                      <dt className="text-[12.5px] text-muted">{t.calc.ctLine}</dt>
+                      <dd className="mt-1 tabular-nums text-[14.5px] text-ink">
+                        {est.ctCost ? `+${formatUZS(est.ctCost)} ${t.calc.currency} · ${t.calc.ctAdded}` : t.calc.ctIncluded}
+                      </dd>
+                    </div>
+                  ) : null}
                 </dl>
 
                 <div className="mt-6 border-t border-line pt-5">
@@ -172,7 +185,7 @@ export function Calculator() {
                   <button
                     type="button"
                     onClick={bookWithEstimate}
-                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-center text-[15px] leading-tight font-medium text-paper shadow-[0_10px_24px_-12px_rgb(15_61_62/0.7)] transition hover:bg-accent-2 active:translate-y-px"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-accent px-6 py-3 text-center text-[15px] leading-tight font-medium text-paper shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-accent)_70%,transparent)] transition hover:bg-accent-2 active:translate-y-px"
                   >
                     {t.calc.bookWith}
                     <ArrowDown size={16} strokeWidth={1.8} className="shrink-0" />

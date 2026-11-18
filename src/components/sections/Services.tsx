@@ -1,15 +1,21 @@
 "use client";
 
-import { ArrowRight, ArrowUpRight, Microscope } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Hand, Microscope } from "lucide-react";
 import type { ServiceItem } from "@/config/doctorConfig";
 import { useSite } from "@/context/SiteContext";
 import { formatMillions } from "@/lib/format";
 import { noBreakHyphens } from "@/lib/text";
+import { ServicePriceList } from "@/components/sections/ServicePriceList";
 import { Reveal } from "@/components/ui/Reveal";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { btnPrimary } from "@/components/ui/styles";
 
 export function Services() {
+  const { doctor } = useSite();
+  return doctor.priceList?.length ? <ServicePriceList /> : <ServiceGrid />;
+}
+
+function ServiceGrid() {
   const { t, doctor, lang, setCalc, setPrefill, scrollToId } = useSite();
   const [featured, second, third, fourth] = doctor.services;
 
@@ -23,9 +29,13 @@ export function Services() {
     }
   };
   const actionLabel = (s: ServiceItem) => (s.calcProblem ? t.services.calc : t.services.book);
+  // A treatment that needs a 3D scan says so next to its price, so the card and the calculator total agree.
+  const ctNote = (s: ServiceItem) =>
+    s.calcProblem && doctor.pricing[s.calcProblem].needsCt !== false && doctor.ctScanPrice ? ` ${t.services.ctExtra}` : "";
   const from = (s: ServiceItem) => (
     <span className="text-[15px] font-medium whitespace-nowrap tabular-nums">
       {lang === "ru" ? `${t.services.from} ${formatMillions(s.priceFrom, lang)} ${t.calc.currency}` : `${formatMillions(s.priceFrom, lang)} ${t.calc.currency}${t.services.from}`}
+      {ctNote(s)}
     </span>
   );
 
@@ -33,7 +43,7 @@ export function Services() {
     <section id="services" aria-labelledby="services-title" className="border-t border-line bg-stone/60 py-20 md:py-28">
       <div className="shell">
         <Reveal className="max-w-[680px]">
-          <h2 id="services-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="services-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
             {t.services.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.services.sub}</p>
@@ -103,7 +113,12 @@ export function Services() {
 
           {/* Fourth: stone with microscope motif */}
           <Reveal delay={200} className="relative flex min-h-[300px] flex-col overflow-hidden rounded-[16px] bg-stone p-6">
-            <Microscope size={26} strokeWidth={1.4} className="text-accent" />
+            {fourth.icon === "hand" ? (
+              // The raised hand: "lift your hand and I stop", his promise for painless treatment
+              <Hand size={26} strokeWidth={1.4} className="text-accent" />
+            ) : (
+              <Microscope size={26} strokeWidth={1.4} className="text-accent" />
+            )}
             <h3 className="mt-6 font-display text-[21px] leading-tight text-ink">{noBreakHyphens(fourth.title[lang])}</h3>
             <p className="mt-2 text-[14px] leading-relaxed text-muted">{fourth.lead[lang]}</p>
             <div className="mt-auto flex flex-wrap items-center justify-between gap-3 pt-5">

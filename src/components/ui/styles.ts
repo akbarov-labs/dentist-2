@@ -3,7 +3,7 @@
 const base =
   "inline-flex items-center justify-center gap-2 rounded-full font-medium whitespace-nowrap transition duration-300 ease-[var(--ease-atelier)] active:translate-y-px active:scale-[0.99] disabled:pointer-events-none disabled:opacity-60";
 
-export const btnPrimary = `${base} h-12 px-6 text-[15px] bg-accent text-paper shadow-[0_10px_24px_-12px_rgb(15_61_62/0.7)] hover:bg-accent-2`;
+export const btnPrimary = `${base} h-12 px-6 text-[15px] bg-accent text-paper shadow-[0_10px_24px_-12px_color-mix(in_srgb,var(--color-accent)_70%,transparent)] hover:bg-accent-2`;
 
 export const btnSecondary = `${base} h-12 px-6 text-[15px] border border-ink/15 bg-card text-ink hover:border-ink/35`;
 

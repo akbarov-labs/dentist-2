@@ -12,12 +12,15 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
+import type { CopyOverride } from "@/i18n/dictionary";
+import type { Review } from "@/config/reviews";
+
 export type Lang = "uz" | "ru";
 export type Localized<T = string> = Record<Lang, T>;
 
-export type ProblemId = "single" | "multiple" | "fullArch" | "aesthetic";
+export type ProblemId = "single" | "multiple" | "fullArch" | "aesthetic" | "checkup" | "treatment" | "rootCanal";
 export type MaterialId = "premium" | "swiss";
-export type CaseCategory = "implant" | "veneers" | "allOn6";
+export type CaseCategory = "implant" | "veneers" | "allOn6" | "crowns" | "composite" | "rehab";
 
 export interface PriceTier {
   /** Price range in UZS. */
@@ -33,6 +36,12 @@ export interface ProblemPricing {
   visits: Localized;
   surgeryTime: Localized;
   bonuses: Localized[];
+  /** false: no 3D CT is involved, so the calculator skips the CT question and adds no scan cost. */
+  needsCt?: boolean;
+  /** false: the 0% instalment line is hidden (small one-visit treatments). */
+  installment?: boolean;
+  /** true: no material choice; the calculator skips that question and quotes the full premium-to-swiss range. */
+  singleTier?: boolean;
 }
 
 export interface ServiceItem {
@@ -44,6 +53,8 @@ export interface ServiceItem {
   /** Calculator problem this service maps to (for "Narxni hisoblash"). */
   calcProblem?: ProblemId;
   priceFrom: number;
+  /** Icon for the plain (fourth) service card. */
+  icon?: "microscope" | "hand";
 }
 
 export interface Credential {
@@ -69,10 +80,17 @@ export interface ClinicalCase {
    * Real, consented before/after photos of THIS patient. When set, the drag slider is shown.
    * Never fake a "before" from the "after" image.
    */
-  photos?: { before: string; after: string };
+  photos?: {
+    before: string;
+    after: string;
+    /** false when the two shots differ in framing or scale: shown side by side instead of on the drag slider. */
+    aligned?: boolean;
+  };
+  /** Where a real case was published (the doctor's own post); replaces the "illustrative" note. */
+  source?: { url: string; date: Localized };
   problem: Localized;
   system: Localized;
-  duration: Localized;
+  duration?: Localized;
   note: Localized;
 }
 
@@ -81,25 +99,36 @@ export interface DoctorProfile {
   /** Shown in the Demo switcher only. */
   presetLabel: Localized;
   name: Localized;
-  /** Latin name used in the handwritten signature. */
+  /** Latin name for the handwritten signature; empty when the doctor has no real one to show. */
   signature: string;
   firstName: Localized;
+  /** Initials for the round mark; empty to show the name alone. */
   monogram: string;
   title: Localized;
   practice: Localized;
   heroLead: Localized;
   heroSub: Localized;
   manifesto: Localized<string[]>;
-  portrait: { src: string; alt: Localized; position: string; /** Transparent cut-out (WebP with alpha) for the layered hero and the close. */ cutout: string };
+  portrait: {
+    src: string;
+    alt: Localized;
+    position: string;
+    /** Transparent cut-out (WebP with alpha) for the layered arch hero and the close. */
+    cutout: string;
+    /** "photo": the real photo, in its own room, in a plain frame (no cut-out, no stock room, no closing repeat). */
+    style?: "arch" | "photo";
+  };
   stats: { value: Localized; label: Localized }[];
+  /** licenseId is shown in the footer; empty until the real number is known. */
   idCard: { licenseId: string; lines: Localized[] };
   contact: {
     phone: string;
     telegram: string;
     instagram: string;
-    email: string;
+    email?: string;
   };
-  address: {
+  /** Omitted until the real address is known: the map, directions and address lines are then hidden. */
+  address?: {
     full: Localized;
     short: Localized;
     landmark: Localized;
@@ -115,7 +144,7 @@ export interface DoctorProfile {
     openHour: number;
     closeHour: number;
   };
-  dailyPatients: number;
+  dailyPatients?: number;
   services: ServiceItem[];
   pricing: Record<ProblemId, ProblemPricing>;
   /** Cost of a CBCT scan done at the first visit, in UZS. */
@@ -126,7 +155,27 @@ export interface DoctorProfile {
   cases: ClinicalCase[];
   /** Optional MP4 / YouTube-embed URL for the 1-minute intro. */
   introVideoUrl?: string;
+  /** Which scroll-built drawing tells the protocol story: an implant (default) or a painless general visit. */
+  protocolDrawing?: "implant" | "visit";
+  /** Hero's second action becomes "my tooth hurts" (Telegram with a prefilled urgent message) instead of the intro. */
+  urgentCta?: boolean;
+  /** Calculator answers for "what bothers you", in display order (2 or 4 read best). Defaults to the implant set. */
+  calcProblems?: ProblemId[];
+  /** Per-doctor overrides of the shared UI copy, merged over the dictionary (arrays replace, objects merge). */
+  copy?: Partial<Record<Lang, CopyOverride>>;
+  /** This doctor's own reviews; falls back to the shared example set. An empty list hides the section. */
+  reviews?: Review[];
+  /** false until the doctor confirms his hours: no live open/closed status, no hours in search data. */
+  hoursConfirmed?: boolean;
+  /** Colour tokens drawn from the doctor's own world (keys are the CSS custom properties without "--color-"). */
+  theme?: Record<string, string>;
+  /** false hides the "big clinic or private doctor" comparison (it rests on claims about other clinics). */
+  compareClinics?: boolean;
+  /** A plain price list replaces the calculator: one row per treatment, "from" price or a note. */
+  priceList?: { label: Localized; lead?: Localized; from?: number; note?: Localized }[];
 }
+
+export const defaultCalcProblems: ProblemId[] = ["single", "multiple", "fullArch", "aesthetic"];
 
 /* ───────────────────────────── Shared data ───────────────────────────── */
 
@@ -171,11 +220,56 @@ const sharedPricing: Record<ProblemId, ProblemPricing> = {
     swiss: { min: 5_200_000, max: 6_100_000 },
     unitNote: { uz: "1 birlik (vinir / toj) uchun", ru: "за 1 единицу (винир / коронка)" },
     visits: { uz: "2 tashrif", ru: "2 визита" },
+    needsCt: false,
     surgeryTime: { uz: "Jarrohliksiz · 2×90 daqiqa", ru: "Без хирургии · 2×90 минут" },
     bonuses: [
       { uz: "Bepul raqamli tabassum dizayni", ru: "Бесплатный цифровой дизайн улыбки" },
       { uz: "Og‘izda sinov modeli (mock-up)", ru: "Примерка во рту (mock-up)" },
       { uz: "Oqartirish sovg‘a sifatida", ru: "Отбеливание в подарок" },
+    ],
+  },
+  checkup: {
+    premium: { min: 350_000, max: 500_000 },
+    swiss: { min: 550_000, max: 750_000 },
+    visits: { uz: "1 tashrif", ru: "1 визит" },
+    surgeryTime: { uz: "45–60 daqiqa", ru: "45–60 минут" },
+    needsCt: false,
+    installment: false,
+    singleTier: true,
+    bonuses: [
+      { uz: "Davolash rejasi va yozma narx", ru: "План лечения и письменная цена" },
+      { uz: "Air-Flow va ultratovush bilan tozalash", ru: "Чистка Air-Flow и ультразвуком" },
+      { uz: "Uy gigienasi bo‘yicha shaxsiy maslahat", ru: "Личные рекомендации по гигиене" },
+    ],
+  },
+  treatment: {
+    premium: { min: 450_000, max: 700_000 },
+    swiss: { min: 750_000, max: 1_100_000 },
+    unitNote: { uz: "1 tish uchun", ru: "за 1 зуб" },
+    visits: { uz: "1 tashrif", ru: "1 визит" },
+    surgeryTime: { uz: "40–60 daqiqa", ru: "40–60 минут" },
+    needsCt: false,
+    installment: false,
+    singleTier: true,
+    bonuses: [
+      { uz: "Og‘riqsiz kompyuterli anesteziya", ru: "Безболезненная компьютерная анестезия" },
+      { uz: "Rentgen tasvir narxga kiritilgan", ru: "Рентген-снимок включён в цену" },
+      { uz: "Plombaga 2 yillik yozma kafolat", ru: "Письменная гарантия на пломбу 2 года" },
+    ],
+  },
+  rootCanal: {
+    premium: { min: 1_200_000, max: 1_800_000 },
+    swiss: { min: 1_900_000, max: 2_800_000 },
+    unitNote: { uz: "1 tish uchun", ru: "за 1 зуб" },
+    visits: { uz: "1–2 tashrif", ru: "1–2 визита" },
+    surgeryTime: { uz: "60–90 daqiqa", ru: "60–90 минут" },
+    needsCt: false,
+    installment: false,
+    singleTier: true,
+    bonuses: [
+      { uz: "Mikroskop ostida kanal davolash", ru: "Лечение каналов под микроскопом" },
+      { uz: "Nazorat rentgeni narxga kiritilgan", ru: "Контрольный снимок включён в цену" },
+      { uz: "Vaqtinchalik plomba bepul", ru: "Временная пломба бесплатно" },
     ],
   },
 };
@@ -591,12 +685,13 @@ export const site = {
   activePresetId: "jamshid" as PresetId,
   defaultLang: "uz" as Lang,
   /** Floating "Demo Rejimi" pill. Turn off for a real client launch. */
-  showDemoSwitcher: true,
+  showDemoSwitcher: false,
   /** Adds a one-line note in the footer that names and cases are illustrative. */
   isDemo: true,
   /** UZS per 1 USD, used for the "≈ $" hint in the calculator. */
   usdRate: 12_650,
-  url: "https://drolimov.uz",
+  // Set NEXT_PUBLIC_SITE_URL to the real domain at launch (canonical, Open Graph, sitemap, structured data).
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3030",
 };
 
 export const defaultDoctor: DoctorProfile = doctorPresets[site.activePresetId];

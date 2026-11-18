@@ -8,6 +8,8 @@ interface SignatureProps {
 
 /** Handwritten signature that draws itself in once scrolled into view. */
 export function Signature({ name, className = "h-14 w-auto", tone = "ink" }: SignatureProps) {
+  // No real signature on file: render nothing rather than fake one.
+  if (!name) return null;
   const ink = tone === "ink" ? "var(--color-ink)" : "var(--color-paper)";
   return (
     <Reveal bare className="inline-block">

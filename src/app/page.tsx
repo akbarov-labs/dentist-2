@@ -27,19 +27,25 @@ function StructuredData() {
     image: `${site.url}${d.portrait.src}`,
     telephone: d.contact.phone.replace(/\s/g, ""),
     email: d.contact.email,
+    // Street and pin only once the real address is known; the city is true either way.
     address: {
       "@type": "PostalAddress",
-      streetAddress: d.address.short.uz,
+      ...(d.address ? { streetAddress: d.address.short.uz } : {}),
       addressLocality: "Toshkent",
       addressCountry: "UZ",
     },
-    geo: { "@type": "GeoCoordinates", latitude: d.address.lat, longitude: d.address.lng },
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-      opens: `${String(d.hours.openHour).padStart(2, "0")}:00`,
-      closes: `${String(d.hours.closeHour).padStart(2, "0")}:00`,
-    },
+    ...(d.address ? { geo: { "@type": "GeoCoordinates", latitude: d.address.lat, longitude: d.address.lng } } : {}),
+    // Hours go to search engines only once the doctor has confirmed them.
+    ...(d.hoursConfirmed === false
+      ? {}
+      : {
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+            opens: `${String(d.hours.openHour).padStart(2, "0")}:00`,
+            closes: `${String(d.hours.closeHour).padStart(2, "0")}:00`,
+          },
+        }),
     sameAs: [`https://t.me/${d.contact.telegram}`, `https://instagram.com/${d.contact.instagram}`],
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
@@ -54,11 +60,13 @@ export default function Home() {
         <Hero />
         <Approach />
         <Protocol />
+        {/* Patients' own words right after the painless-visit story: the proof the anxious visitor looks for first */}
+        <Reviews />
         <Cases />
+        <Approach slot="late" />
         <Services />
         <Calculator />
         <Credentials />
-        <Reviews />
         <Faq />
         <Booking />
       </main>

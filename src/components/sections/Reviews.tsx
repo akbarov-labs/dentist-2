@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight, CheckCheck, Star } from "lucide-react";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { reviews, type Review } from "@/config/reviews";
 import { useSite } from "@/context/SiteContext";
 import { Reveal } from "@/components/ui/Reveal";
@@ -89,22 +89,56 @@ function ReviewCard({ r }: { r: Review }) {
 export function Reviews() {
   const { t, lang, doctor } = useSite();
   // The lead quote is attributed with the Google badge and stars, so it must be a Google review.
-  const lead = reviews.find((r) => r.source === "google");
-  const rest = reviews.filter((r) => r !== lead);
+  const list = doctor.reviews ?? reviews;
+  const lead = list.find((r) => r.source === "google");
+  const rest = list.filter((r) => r !== lead);
   const strip = useRef<HTMLUListElement>(null);
+  const [edges, setEdges] = useState({ start: true, end: false });
+
+  // Arrows reflect where the strip is, so a tap at either end never looks like a dead button.
+  const syncEdges = useCallback(() => {
+    const el = strip.current;
+    if (el) setEdges({ start: el.scrollLeft < 8, end: el.scrollLeft > el.scrollWidth - el.clientWidth - 8 });
+  }, []);
+  useEffect(() => {
+    const el = strip.current;
+    if (!el) return;
+    syncEdges();
+    el.addEventListener("scroll", syncEdges, { passive: true });
+    window.addEventListener("resize", syncEdges);
+    return () => {
+      el.removeEventListener("scroll", syncEdges);
+      window.removeEventListener("resize", syncEdges);
+    };
+  }, [syncEdges]);
+
+  // Step exactly one card (snap-aligned), and land there even where smooth scrolling is throttled or ignored.
   const nudge = (dir: number) => {
     const el = strip.current;
     if (!el) return;
+    const pad = parseFloat(getComputedStyle(el).scrollPaddingLeft) || 0;
+    const lefts = Array.from(el.children, (c) => (c as HTMLElement).offsetLeft - el.offsetLeft - pad);
+    const now = el.scrollLeft;
+    const target = dir > 0 ? lefts.find((l) => l > now + 4) : [...lefts].reverse().find((l) => l < now - 4);
+    if (target === undefined) return;
+    const left = Math.max(0, Math.min(target, el.scrollWidth - el.clientWidth));
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: reduce ? "auto" : "smooth" });
+    el.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
+    window.setTimeout(() => {
+      if (Math.abs(el.scrollLeft - now) < 2) el.scrollTo({ left, behavior: "auto" });
+      syncEdges();
+    }, 450);
   };
   const leadText = lead?.text[lang].replaceAll("{doctor}", doctor.firstName[lang]);
+
+  // No real reviews yet: show nothing rather than examples about a real doctor.
+  if (!list.length) return null;
 
   return (
     <section id="reviews" aria-labelledby="reviews-title" className="py-20 md:py-28">
       <div className="shell">
         <Reveal className="max-w-[680px]">
-          <h2 id="reviews-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[46px]">
+          <h2 id="reviews-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] text-ink sm:text-[40px]">
             {t.reviews.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-muted">{t.reviews.sub}</p>
@@ -133,10 +167,10 @@ export function Reviews() {
 
         {/* The rest, as a strip */}
         <div className="mt-14 flex items-center justify-end gap-2">
-          <button type="button" onClick={() => nudge(-1)} aria-label={t.reviews.prev} className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink transition hover:bg-stone">
+          <button type="button" onClick={() => nudge(-1)} disabled={edges.start} aria-label={t.reviews.prev} className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink transition hover:bg-stone disabled:opacity-40">
             <ArrowLeft size={17} strokeWidth={1.6} />
           </button>
-          <button type="button" onClick={() => nudge(1)} aria-label={t.reviews.next} className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink transition hover:bg-stone">
+          <button type="button" onClick={() => nudge(1)} disabled={edges.end} aria-label={t.reviews.next} className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink transition hover:bg-stone disabled:opacity-40">
             <ArrowRight size={17} strokeWidth={1.6} />
           </button>
         </div>

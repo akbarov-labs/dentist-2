@@ -7,18 +7,28 @@ import { phoneHref, telegramLink } from "@/lib/format";
 
 /** Fixed thumb-reach action bar for phones (< 768px). */
 export function MobileBar() {
-  const { t, doctor, scrollToId } = useSite();
-  const [hidden, setHidden] = useState(false);
+  const { t, doctor, lang, scrollToId } = useSite();
+  // A neutral greeting: not everyone tapping Telegram is in pain (the hero has its own urgent button).
+  const tgText = `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.generic}`;
+  const [overForm, setOverForm] = useState(false);
+  const [overHero, setOverHero] = useState(true);
+  const hidden = overForm || overHero;
 
-  // Step aside while the booking form itself is on screen, so the bar never covers its fields.
+  // Step aside while the booking form itself is on screen, so the bar never covers its fields,
+  // and while the hero's own buttons are visible: the bar would only repeat them, on top of the second one.
   useEffect(() => {
     // Observe the form card itself: the whole #booking section is several viewports tall on phones,
     // so a ratio threshold on it would never be reached.
-    const target = document.querySelector("#booking [data-booking-card]");
-    if (!target) return;
-    const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting));
-    io.observe(target);
-    return () => io.disconnect();
+    const form = document.querySelector("#booking [data-booking-card]");
+    const hero = document.querySelector("#top [data-hero-actions]");
+    const watch = (el: Element | null, set: (v: boolean) => void) => {
+      if (!el) return set(false);
+      const io = new IntersectionObserver(([e]) => set(e.isIntersecting));
+      io.observe(el);
+      return io;
+    };
+    const ios = [watch(form, setOverForm), watch(hero, setOverHero)];
+    return () => ios.forEach((io) => io?.disconnect());
   }, []);
 
   const item = "flex h-12 flex-col items-center justify-center gap-0.5 rounded-full text-[12px] font-medium";
@@ -35,7 +45,7 @@ export function MobileBar() {
           <Phone size={18} strokeWidth={1.6} className="text-accent" />
           {t.cta.call}
         </a>
-        <a href={telegramLink(doctor.contact.telegram)} target="_blank" rel="noopener noreferrer" className={`${item} text-ink`}>
+        <a href={telegramLink(doctor.contact.telegram, tgText)} target="_blank" rel="noopener noreferrer" className={`${item} text-ink`}>
           <Send size={18} strokeWidth={1.6} className="text-accent" />
           {t.cta.telegram}
         </a>

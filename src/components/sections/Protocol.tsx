@@ -1,11 +1,21 @@
 "use client";
 
+import { ArrowRight, Send } from "lucide-react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useSite } from "@/context/SiteContext";
+import { telegramLink } from "@/lib/format";
 import { useScrollVar } from "@/lib/useScrollVar";
 import { CALLOUTS, ImplantDrawing, applyDrawing } from "@/components/ui/ImplantDrawing";
+import { VISIT_CALLOUTS, VisitDrawing } from "@/components/ui/VisitDrawing";
 
-const pad = (n: number) => String(n).padStart(2, "0");
+// Each doctor's story picks its drawing; both run on the same scroll engine and five-step windows.
+const DRAWINGS = {
+  implant: { callouts: CALLOUTS, Drawing: ImplantDrawing },
+  visit: { callouts: VISIT_CALLOUTS, Drawing: VisitDrawing },
+} as const;
+
+// The order of the visit matters, so the steps keep their numbers; zero-padding them would only be costume.
+const pad = (n: number) => String(n);
 
 // Below lg the blueprint stage is sticky ABOVE the step texts and covers roughly the top 55-58% of the viewport,
 // so the "reading line" sits just below it, and step content is top-aligned so its title is what crosses that line.
@@ -23,8 +33,11 @@ const useIsLg = () =>
   );
 
 export function Protocol() {
-  const { t } = useSite();
+  const { t, doctor, lang, scrollToId } = useSite();
   const steps = t.protocol.steps;
+  const drawingKind = doctor.protocolDrawing ?? "implant";
+  // The graph-paper grid belongs to the implant plan (a measuring surface); a filling visit doesn't need the costume.
+  const { callouts, Drawing } = DRAWINGS[drawingKind];
   const [active, setActive] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const stepsRef = useRef<HTMLOListElement>(null);
@@ -80,13 +93,13 @@ export function Protocol() {
   };
 
   const step = steps[active];
-  const activeCallouts = CALLOUTS.filter((c) => c.step === active).map((c) => t.protocol.callouts[c.key]);
+  const activeCallouts = callouts.filter((c) => c.step === active).map((c) => t.protocol.callouts[c.key]);
 
   return (
     <section id="protocol" aria-labelledby="protocol-title" className="relative bg-night py-20 text-paper md:py-28">
       <div className="shell">
         <div className="max-w-[640px]">
-          <h2 id="protocol-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] sm:text-[46px]">
+          <h2 id="protocol-title" className="font-display text-[34px] leading-[1.08] tracking-[-0.02em] sm:text-[40px]">
             {t.protocol.title}
           </h2>
           <p className="mt-4 text-[16px] leading-relaxed text-paper/70">{t.protocol.sub}</p>
@@ -95,9 +108,9 @@ export function Protocol() {
         <div className="mt-10 grid lg:mt-14 lg:grid-cols-12 lg:gap-10">
           {/* Sticky blueprint stage */}
           <div className="sticky top-[68px] z-[3] -mx-4 min-w-0 bg-night px-4 pt-2 pb-3 lg:top-24 lg:col-span-7 lg:col-start-6 lg:row-start-1 lg:mx-0 lg:h-[calc(100dvh-8rem)] lg:self-start lg:p-0">
-            <div ref={stageRef} className="blueprint flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-night-line lg:h-full">
+            <div ref={stageRef} className={`${drawingKind === "implant" ? "blueprint " : ""}flex h-[46vh] min-h-[300px] flex-col overflow-hidden rounded-[16px] border border-night-line lg:h-full`}>
               <div className="flex items-center justify-between gap-3 border-b border-night-line px-4 py-2.5 sm:px-5">
-                <p className="min-w-0 truncate text-[13px] text-paper/80">{step.title}</p>
+                <p className="min-w-0 line-clamp-2 text-[13px] leading-snug text-paper/80">{step.title}</p>
                 <div className="flex shrink-0 gap-1" role="group" aria-label={t.protocol.title}>
                   {steps.map((s, i) => (
                     <button
@@ -106,7 +119,7 @@ export function Protocol() {
                       onClick={() => goTo(i)}
                       aria-label={`${pad(i + 1)}. ${s.title}`}
                       aria-current={i === active ? "step" : undefined}
-                      className={`grid h-9 w-9 place-items-center rounded-full tabular-nums text-[12px] transition-colors lg:h-10 lg:w-10 ${
+                      className={`grid h-11 w-11 place-items-center rounded-full tabular-nums text-[12px] transition-colors ${
                         i === active ? "bg-accent-light text-night" : i < active ? "text-accent-light hover:bg-night-line" : "text-paper/60 hover:bg-night-line"
                       }`}
                     >
@@ -117,12 +130,12 @@ export function Protocol() {
               </div>
 
               <div className="relative min-h-0 flex-1 px-3 py-2 lg:px-8 lg:py-5">
-                <ImplantDrawing title={t.protocol.drawingLabel} />
+                <Drawing key={doctor.id} title={t.protocol.drawingLabel} />
               </div>
 
               {/* Desktop legend: a record that fills in as the drawing does */}
-              <ol className="hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-night-line px-6 py-4 lg:grid xl:grid-cols-3">
-                {CALLOUTS.map((c) => (
+              <ol className={`hidden grid-cols-2 gap-x-6 gap-y-1.5 border-t border-night-line px-6 py-4 xl:grid-cols-3 ${drawingKind === "implant" ? "lg:grid" : ""}`}>
+                {callouts.map((c) => (
                   <li
                     key={c.n}
                     data-mode="fade"
@@ -137,7 +150,7 @@ export function Protocol() {
               </ol>
 
               {/* Phone caption: just this step's parts */}
-              <p className="border-t border-night-line px-4 py-2 text-[12.5px] leading-snug text-paper/75 lg:hidden">{activeCallouts.join(" · ")}</p>
+              <p className={`border-t border-night-line px-4 py-2 text-[12.5px] leading-snug text-paper/75 lg:px-6 lg:py-4 lg:text-[13.5px] ${drawingKind === "implant" ? "lg:hidden" : ""}`}>{activeCallouts.join(" · ")}</p>
             </div>
             <div aria-hidden className="pointer-events-none absolute inset-x-0 top-full h-8 bg-gradient-to-b from-night to-transparent lg:hidden" />
           </div>
@@ -151,36 +164,66 @@ export function Protocol() {
                   key={s.title}
                   id={`protocol-step-${i}`}
                   data-step={i}
-                  className={`flex min-h-[72vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[80vh] ${isActive ? "opacity-100" : "opacity-45"}`}
+                  className={`flex min-h-[34vh] flex-col justify-start pt-4 pb-10 transition-opacity lg:justify-center lg:py-10 duration-500 lg:min-h-[40vh] ${isActive ? "opacity-100" : "opacity-80"}`}
                 >
                   <h3 className="font-display text-[28px] leading-[1.15] tracking-[-0.015em] text-balance sm:text-[34px]">{s.title}</h3>
                   <p className="mt-2 text-[15px] text-accent-light/90">{s.short}</p>
                   <p className="mt-5 max-w-[52ch] text-[16px] leading-relaxed text-paper/75">{s.body}</p>
 
-                  <dl className="mt-7 grid gap-5 border-t border-night-line pt-6 sm:grid-cols-3 sm:gap-4">
+                  <dl className={`mt-7 grid gap-5 border-t border-night-line pt-6 sm:gap-4 ${s.equipment.length ? "sm:grid-cols-3" : "grid-cols-2"}`}>
                     <div>
                       <dt className="text-[13px] text-paper/60">{t.protocol.duration}</dt>
                       <dd className="mt-1.5 tabular-nums text-[15px]">{s.duration}</dd>
                     </div>
-                    <div>
-                      <dt className="text-[13px] text-paper/60">{t.protocol.equipment}</dt>
-                      <dd className="mt-1.5">
-                        <ul className="space-y-0.5 text-[14px] text-paper/85">
-                          {s.equipment.map((e) => (
-                            <li key={e}>{e}</li>
-                          ))}
-                        </ul>
-                      </dd>
-                    </div>
-                    <div>
-                      <dt className="text-[13px] text-paper/60">{t.protocol.comfort}</dt>
-                      <dd className="mt-1.5 text-[14px] text-paper/85">{s.comfortText}</dd>
-                    </div>
+                    {s.equipment.length ? (
+                      <div>
+                        <dt className="text-[13px] text-paper/60">{t.protocol.equipment}</dt>
+                        <dd className="mt-1.5">
+                          <ul className="space-y-0.5 text-[14px] text-paper/85">
+                            {s.equipment.map((e) => (
+                              <li key={e}>{e}</li>
+                            ))}
+                          </ul>
+                        </dd>
+                      </div>
+                    ) : null}
+                    {s.comfortText ? (
+                      <div>
+                        <dt className="text-[13px] text-paper/60">{t.protocol.comfort}</dt>
+                        <dd className="mt-1.5 text-[14px] text-paper/85">{s.comfortText}</dd>
+                      </div>
+                    ) : null}
                   </dl>
                 </li>
               );
             })}
           </ol>
+        </div>
+
+        {/* The story ends on its peak, so the next step is offered right here, not twelve screens later */}
+        <div className="mt-10 flex flex-col gap-5 border-t border-night-line pt-10 sm:flex-row sm:items-center sm:justify-between lg:mt-4">
+          <p className="font-display text-[24px] leading-tight tracking-[-0.01em] text-balance sm:text-[28px]">{t.protocol.ctaTitle}</p>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => scrollToId("booking")}
+              className="group inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-paper px-6 py-3 text-[15px] font-medium text-accent transition hover:bg-white active:translate-y-px"
+            >
+              {t.protocol.cta}
+              <ArrowRight size={17} strokeWidth={1.7} className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
+            {doctor.urgentCta ? (
+              <a
+                href={telegramLink(doctor.contact.telegram, `${t.tg.hello} ${doctor.firstName[lang]}!\n${t.tg.urgent}`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-night-line px-6 py-3 text-[15px] text-paper transition hover:border-accent-light"
+              >
+                <Send size={16} strokeWidth={1.7} className="text-accent-light" />
+                {t.cta.urgent}
+              </a>
+            ) : null}
+          </div>
         </div>
 
         {/* Screen-reader summary of the current step for the sticky stage */}
