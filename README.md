@@ -2,7 +2,7 @@
 
 A bilingual (O‘zbek / Русский) personal-brand site for a solo dental specialist, built with Next.js 16 (App Router), TypeScript, Tailwind CSS v4 and Lucide icons.
 
-This is a template by [Akbarov Labs](https://akbarovlabs.uz). The `jamshid` and `sardor` presets are fictional demo doctors. Code is MIT-licensed.
+This is a template by [Akbarov Labs](https://akbarovlabs.uz). The `sarvar` and `sardor` presets are demo doctors with illustrative credentials. Code is MIT-licensed.
 
 ```bash
 npm install
@@ -16,7 +16,7 @@ Everything doctor-specific lives in **`src/config/doctorConfig.ts`**:
 
 | What | Where |
 | --- | --- |
-| Name, title, monogram, signature, hero copy, manifesto | the preset object (`jamshid`, `sardor`) |
+| Name, title, monogram, signature, hero copy, manifesto | the preset object (`sarvar`, `sardor`) |
 | Phone, Telegram, Instagram, email | `contact` |
 | Address, landmark, map coordinates | `address` |
 | Working days and hours (drives the live "open now" dot) | `hours` |

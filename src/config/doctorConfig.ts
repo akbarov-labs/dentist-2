@@ -2,7 +2,7 @@
  * ─────────────────────────────────────────────────────────────────────────────
  *  DOCTOR CONFIG: the only file you need to edit to re-brand this site.
  *
- *  1. Duplicate the `jamshid` preset below, change the values, and add it to
+ *  1. Duplicate the `sarvar` preset below, change the values, and add it to
  *     `doctorPresets`.
  *  2. Point `activePresetId` at your new preset.
  *  3. Drop the doctor's photos into /public/images and update the `src` paths.
@@ -330,13 +330,13 @@ const sharedCases: ClinicalCase[] = [
 
 /* ─────────────────────────────── Presets ─────────────────────────────── */
 
-const jamshid: DoctorProfile = {
-  id: "jamshid",
+const sarvar: DoctorProfile = {
+  id: "sarvar",
   presetLabel: { uz: "Jarroh-implantolog va ortoped", ru: "Хирург-имплантолог и ортопед" },
-  name: { uz: "Dr. Jamshid Olimov", ru: "Д-р Джамшид Олимов" },
-  signature: "Jamshid Olimov",
-  firstName: { uz: "Jamshid", ru: "Джамшид" },
-  monogram: "JO",
+  name: { uz: "Dr. Sarvar Akbarov", ru: "Д-р Сарвар Акбаров" },
+  signature: "Sarvar Akbarov",
+  firstName: { uz: "Sarvar", ru: "Сарвар" },
+  monogram: "SA",
   title: {
     uz: "Xalqaro toifadagi jarroh-implantolog va stomatolog-ortoped",
     ru: "Хирург-имплантолог и стоматолог-ортопед международной категории",
@@ -347,8 +347,8 @@ const jamshid: DoctorProfile = {
   },
   heroLead: { uz: "Bu yerda konveyer yo‘q.", ru: "Здесь нет конвейера." },
   heroSub: {
-    uz: "3D tashxisdan yakuniy tojgacha davolashning har bir bosqichini Dr. Jamshid Olimov o‘zi bajaradi. Sizni assistentlarga topshirmaydi.",
-    ru: "От 3D-диагностики до финальной коронки каждый этап лечения проводит лично Д-р Джамшид Олимов. Без передачи ассистентам.",
+    uz: "3D tashxisdan yakuniy tojgacha davolashning har bir bosqichini Dr. Sarvar Akbarov o‘zi bajaradi. Sizni assistentlarga topshirmaydi.",
+    ru: "От 3D-диагностики до финальной коронки каждый этап лечения проводит лично Д-р Сарвар Акбаров. Без передачи ассистентам.",
   },
   manifesto: {
     uz: [
@@ -364,8 +364,8 @@ const jamshid: DoctorProfile = {
     src: "/images/portrait-jamshid.jpg",
     cutout: "/images/cutout-jamshid.webp",
     alt: {
-      uz: "Dr. Jamshid Olimov oq xalatda, qo‘llarini qovushtirgan holda",
-      ru: "Д-р Джамшид Олимов в белом халате, руки скрещены",
+      uz: "Dr. Sarvar Akbarov oq xalatda, qo‘llarini qovushtirgan holda",
+      ru: "Д-р Сарвар Акбаров в белом халате, руки скрещены",
     },
     position: "50% 20%",
   },
@@ -383,9 +383,9 @@ const jamshid: DoctorProfile = {
   },
   contact: {
     phone: "+998 90 000 00 00",
-    telegram: "dr_jamshid_uz",
-    instagram: "dr.jamshid.olimov",
-    email: "qabul@drolimov.uz",
+    telegram: "demo_dentist",
+    instagram: "demo.dentist",
+    email: "qabul@example.com",
   },
   address: {
     full: {
@@ -513,7 +513,7 @@ const jamshid: DoctorProfile = {
 };
 
 const sardor: DoctorProfile = {
-  ...jamshid,
+  ...sarvar,
   id: "sardor",
   presetLabel: { uz: "Estetik stomatolog · mikro-vinirlar", ru: "Эстетический стоматолог · Микро-виниры" },
   name: { uz: "Dr. Sardor Rahimov", ru: "Д-р Сардор Рахимов" },
@@ -676,13 +676,13 @@ const sardor: DoctorProfile = {
   cases: [sharedCases[1], sharedCases[0], sharedCases[2]],
 };
 
-export const doctorPresets = { jamshid, sardor } satisfies Record<string, DoctorProfile>;
+export const doctorPresets = { sarvar, sardor } satisfies Record<string, DoctorProfile>;
 export type PresetId = keyof typeof doctorPresets;
 
 /* ───────────────────────────── Site settings ───────────────────────────── */
 
 export const site = {
-  activePresetId: "jamshid" as PresetId,
+  activePresetId: "sarvar" as PresetId,
   defaultLang: "uz" as Lang,
   /** Floating "Demo Rejimi" pill. Turn off for a real client launch. */
   showDemoSwitcher: false,
